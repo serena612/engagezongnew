@@ -59,7 +59,12 @@ def send_pincode(phone_number, idnetwork="1"):
     headers = {'msisdn': phone_number,
                 'idnetwork': idnetwork} # post data
     print(phone_number)
-    api_call = requests.post(url, headers=headers, data={})
+    try:
+        api_call = requests.post(url, headers=headers, data={}, timeout=1)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        # raise SystemExit(e)
+        print(e)
+        return 'Server error', 555
     if api_call.status_code==200:
         # print(api_call)
         res = api_call.json()['statusCode']
@@ -80,7 +85,12 @@ def verify_pincode(phone_number, pincode):
     data = {
             'pincode': pincode,
             } 
-    api_call = requests.post(url, headers=headers, json=data)
+    try:
+        api_call = requests.post(url, headers=headers, json=data, timeout=1)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        # raise SystemExit(e)
+        print(e)
+        return 'Server error', 555
     if api_call.status_code==200:
         print(api_call.json())
         res = api_call.json()['statusCode']
@@ -94,7 +104,12 @@ def load_data_api(phone_number, idnetwork):
     headers = {'msisdn': phone_number, 
             'idnetwork': idnetwork
             } 
-    api_call = requests.post(url, headers=headers, data={})
+    try:
+        api_call = requests.post(url, headers=headers, data={}, timeout=1)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        # raise SystemExit(e)
+        print(e)
+        return 'Server error', 555
     if api_call.status_code==200:
         
         apijson = api_call.json()
@@ -117,8 +132,13 @@ def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default ch
             'idBundle':idbundle,
             'idService':idservice,
             'transactionId':uniqueid,
-            } 
-    api_call = requests.post(url, headers={}, json=data)
+            }
+    try: 
+        api_call = requests.post(url, headers={}, json=data, timeout=1)
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        # raise SystemExit(e)
+        print(e)
+        return 'Server error', 555
     if api_call.status_code==200:
         print(api_call.json())
         res = api_call.json()['statusCode']
