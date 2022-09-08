@@ -1,0 +1,1770 @@
+{% load i18n %}
+{% load static %}
+{% load big_number %}
+{% load countries %}
+{% load call_method %}
+{% load humanize %}
+{% get_countries as countries %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    {% block meta %}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Engage App</title>
+    {% endblock %}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{% static 'libs/bs4/bootstrap.min.css' %}">
+        <link rel=" stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+              integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link rel="stylesheet" href="{% static 'libs/slick/slick.min.css' %}">
+        <link rel="stylesheet"
+              href="{% static 'libs/slick/slick-theme.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/sidebar.min.css' %}">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+              rel="stylesheet"/>
+        <link rel="stylesheet"
+              href="{% static 'libs/videojs/video-js.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=7">
+        <link rel="stylesheet" href="{% static 'css/mobile.css' %}?v=7">
+    {% endblock %}
+
+    {% block scripts %}
+        <script type="application/javascript"
+                src="{% static 'libs/moment.min.js' %}"></script>
+        <script type="application/javascript"
+                src="{% static 'libs/jquery-3.6.0.min.js' %}"></script>
+        <script type="application/javascript"
+                src="{% static 'libs/bs4/bootstrap.min.js' %}"></script>
+        <script type="application/javascript"
+                src="{% static 'libs/slick/slick.min.js' %}"></script>
+        <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+        <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script type="application/javascript"
+                src="{% static 'libs/videojs/video.min.js' %}"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
+                integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script>
+            var serverTime = Math.floor(Date.parse("{% now 'c' %}") / 1000);
+            var xtoken = $.cookie("csrftoken");
+
+            
+            var is_authenticated = false;
+            var get_tournaments_url = '/api/tournaments/'
+            var get_list_tournaments = '/api/tournaments/get_tournaments'
+            var get_html5games_url = '/api/html5_games/'
+            var get_prizes_url = '/api/tournaments-prizes/'
+            var get_winners_url = '/api/winners/'
+            var post_contact_engage_url = "/api/contact/engage/";
+            var post_contact_support_url = "/api/contact/support/";
+            var get_tournament_participants = '{% url "tournament-get-participants" %}';
+            var set_game_account = "{% url 'set-game-account' %}";
+            var tournament_join = "{% url 'tournament-join' '$1' %}";
+            var sections_log = '/api/users/sections_log/sections_log/';
+
+            
+            function openModal(index,param0,param1,param2){
+                
+                 var str="";var title="";var body="";
+				if(index==1){
+				 title='Congratulations';
+				 body='You have played and won the tournament ('+param0+'). You won ('+param1+').'
+				}
+				else if(index==2){
+				 title='Congratulations';
+				 body='You have played and won a prize in the tournament ('+param0+'). You won ('+param1+').'
+			 
+				}
+                else if(index==3){
+                    title='Congratulations';
+                    if(param0=="1")
+                    {
+                        str="a new sticker";
+                    }
+                    if(param1!=null && parseInt(param1) > 0){
+                        str=(str!="" ? str+" and " : " ")+ parseInt(param1)+ " coins";
+                    }
+                    if(str!=""){
+                    body='You have played in this tournament and earned '+str+'.'
+                    }else{
+                        title='Tournament Ended'
+                        body='Thank you for participating in this tournament!'
+                    }
+                   }
+                   else if(index==4){
+                    if (!is_complete_profile) {
+                        var now = new Date();
+                        var lastCheck = localStorage.getItem('last_profile_edit');
+                        $('#notifications-popup > .modal').removeClass('show');
+                        openEditProfileModal(); 
+                        //if (!lastCheck) {
+                        //   localStorage.setItem('last_profile_edit', now.toString())
+                        //   $('#notifications-popup > modal').removeClass('show');
+                        //     openEditProfileModal()
+                        // } else {
+                        //     const diffTime = Math.abs(now - new Date(lastCheck));
+                        //     var diffHours = diffTime / 1000 / 60 / 60;
+                        //     if (diffHours >= 24) {
+                        //         localStorage.setItem('last_profile_edit', now.toString())
+                        //         $('#notifications-popup > modal').removeClass('show');
+                        //         openEditProfileModal()
+                        //    }
+                        //} 
+                    } 
+                    return;
+                   }
+				if(index>0){
+				  $('#notifications-popup').find('.modal').modal('hide');
+				   var modal = $("#info-modal1");
+				   modal.find(".modal-title").html(title);
+				   modal.find(".info-box").html(body);
+                   var gougou = param2.split("/");
+				   if(param2!="-" && gougou[gougou.length-1]!="-")
+				   modal.find(".info-box").append('<img src="'+param2+'"  style="display:block;cursor:pointer;" />')
+				   modal.modal();
+				}
+				
+			   }
+            $(document).ready(function(){
+                var currentyear = new Date().getFullYear();
+                $('.currentyear').text(currentyear);
+            })
+           
+            
+        </script>
+       
+        {% if user.is_authenticated %}
+            <script>
+                {% comment %} var firebaseConfig = {
+                    apiKey: "{{ fcm_config.apiKey }}",
+                    authDomain: "{{ fcm_config.authDomain }}",
+                    projectId: "{{ fcm_config.projectId }}",
+                    storageBucket: "{{ fcm_config.storageBucket }}",
+                    messagingSenderId: "{{ fcm_config.messagingSenderId }}",
+                    appId: "{{ fcm_config.appId }}",
+                    measurementId: "{{ fcm_config.measurementId }}",
+                }; {% endcomment %}
+                var firebaseConfig = {
+                    apiKey: "AIzaSyA0HHeMbJieI4Qp5tyxn765mk0IWllTCco",
+                    authDomain: "engageplaywin-ced7f.firebaseapp.com",
+                    projectId: "engageplaywin-ced7f",
+                    storageBucket: "engageplaywin-ced7f.appspot.com",
+                    messagingSenderId: "615474016768",
+                    appId: "1:615474016768:web:7cfa190a078416cc3a9ee5",
+                    measurementId: "G-4FTX1VRLYN"
+                  };
+                var user_subscription = '{{ user.subscription }}';
+                var profileData = {
+                    'avatar_id': {% if user.avatar %}'{{ user.avatar.id }}'{% else %}''{% endif %},
+                    'avatar_url': {% if user.avatar %}'{{ user.avatar.image.url }}'{% else %}''{% endif %},
+                    'nickname': '{{ user.nickname|default_if_none:"" }}',
+                    'email': '{{ user.email|default_if_none:"" }}',
+                    'birthdate_year': '{{ user.profile.birthdate|date:'Y' }}',
+                    'birthdate_month': '{{ user.profile.birthdate|date:'m' }}',
+                    'birthdate_day': '{{ user.profile.birthdate|date:'d' }}',
+                    'country': '{{ user.country }}',
+                    'gender': '{{ user.profile.gender }}',
+                    'residency': '{{ user.profile.residency }}'
+                }
+
+                setInterval(() => {
+                    serverTime++;
+                }, 1000);
+                var is_created_now = "{{ user.created.date }}";
+                var is_complete_profile = {{ user.is_complete_profile|yesno:"true,false" }};
+                var get_avatars_url = '/api/avatars/';
+                var send_coins_url = '/api/users/send_coins/';
+                var set_fav_friend_url = '/api/users/friends/set_favorite/';
+                var edit_profile_url = '/api/users/profile/';
+
+                var profile_mg = "{% static 'img/profile.png' %}";
+                var flag_img = "{% static 'img/usa.svg' %}";
+
+                var fcm_web_token_url = '{% url "fcm-set-web-token" %}';
+                is_authenticated = true;
+                var get_user_notifications_url = '{% url "fcm-get-user-notifications" %}'; 
+                var get_new_notifications_url = '{% url "fcm-get-new-notifications" %}';
+                var get_early_notifications_url = '{% url "fcm-get-early-notifications" %}';
+
+                var set_notification_status_url = '{% url "fcm-set-notification-status" %}';
+                var claim_gift_url = '{% url "fcm-claim-gift" %}';
+                var get_my_coins = '{% url "fcm-get-my-coins" %}';
+
+                var friends_list = '{% url "friendlist-list" %}';
+                var add_new_friend = '{% url "user-add-new-friend" "user_uid" %}';
+                var remove_friend = '{% url "user-remove-friend" "user_uid" %}';
+
+                var friends_list_accept = '{% url "friendlist-accept-friend-request" %}';
+                var friends_list_reject = '{% url "friendlist-reject-friend-request" %}';
+                var user_uid = '{{ user.uid }}'
+                var upgrade_subscription = "{% url 'user-upgrade-subscription' 'user_uid' %}";
+                var update_log = "{% url 'user-update-log' 'user_uid' %}"; 
+                var check_usercoin = "{% url 'user-check-usercoin' 'user_uid' %}"; 
+                var featured_game_retrieve =  '/api/featured_games/';
+            </script>
+            <script type="application/javascript"
+                src="{% static 'js/fcm.js' %}"></script>
+        {% endif %}
+
+        <script type="application/javascript"
+                src="{% static 'js/scripts.js' %}?v=6"></script>
+        <script type="application/javascript"
+                src="{% static 'js/forms.js' %}?v=6"></script>
+        <script type="application/javascript"
+                src="{% static 'js/api.js' %}?v=6"></script>
+    {% endblock %}
+</head>
+
+<body>
+<nav>
+    <div class="top-nav">
+        <div class="row">
+            {% block header %}
+                <div class="col-md-6">
+                    <div class="left">
+                        <button id="open-left" class="nav-toggle"><img
+                                src="{% static 'img/bars.svg' %}" alt="">
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="right r-nav">
+                        <form action="#" class="search-box"
+                              style="display: none;">
+                            <select name="option" id="nav-search-select">
+                                {% comment %} <option value="tournaments">Tournaments</option>
+                                <option value="games">Games</option> {% endcomment %}
+                                <option value="users">Users</option>
+                            </select>
+                            <input name="search" type="text"
+                                   placeholder="Search"/>
+                            <button disabled type="submit"><i
+                                    class="fas fa-angle-right"></i></button>
+                            <button type="button" class="close-btn"><i
+                                    class="fas fa-times"></i></button>
+
+                            <div class="results-box">
+                                <ul>
+
+                                </ul>
+                            </div>
+                        </form>
+                        <a class="raw-btn search-btn" href="">
+                            <div class="fas fa-search"></div>
+                        </a>
+                        {% if not user.is_authenticated %}
+                            <a href="" data-toggle="modal"
+                               data-target="#login-modal">
+                            <span>
+                                <i class="far fa-user-circle"></i> {% translate 'LOGIN / SIGNUP' %}
+                            </span>
+                            </a>
+                        {% else %}
+                            <a class="nav-my-profile"
+                               href="{% url 'profile' %}">
+                                <i class="far fa-user-circle"></i>
+                                <span>{% translate 'My Profile' %}</span>
+                            </a>
+
+                            <div class="n-nav notification-dropdown">
+                                <span class="notification-btn">
+                                    <span><i style="font-size: 18px;"
+                                             class="fas fa-bell"></i></span>
+                                {% if notifications > 0 %}         
+                                    <span class="badge badge-pill" style='background:#EA2D2D'
+                                          id="notifications-count">{{ notifications }}</span>
+                                {% else %}  
+                                    <span class="badge badge-pill" 
+                                          id="notifications-count">{{ notifications }}</span>
+                                {% endif %}             
+                                </span>
+
+                                <div class="notification-drop">
+                                    <div class="heading">
+                                        <h4>{% translate 'Notifications' %}</h4>
+                                    </div>
+
+                                    <ul id="notification-list"
+                                        style="min-height: 200px;">
+                                        <div class="d-flex flex-row justify-content-center align-items-center align-content-center"
+                                             style="height: 200px;">
+                                            <div class="align-self-center spinner-grow text-dark"
+                                                 role="status"></div>
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <a href="/prizes#redeem-coins" class="n-nav p-0">
+                                <span>
+                                    <img src="{% static 'img/engage-coin.png' %}"
+                                         height="20" alt="">
+                                    <span class="badge badge-pill user-coins"
+                                          id="user-coins">{{ user.coins|intcomma }}</span>
+                                    <span id="actual-user-coins" style="display: none">{{ user.coins }}</span>
+                                </span>
+                            </a>
+
+                            <div id="notifications-popup">
+
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+    {% block menu %}
+        <div class="midlle">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'img/top-logo.png' %}" alt="logo">
+                    </a>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <ul>
+                <li>
+                    <a id="hometournaments" href="/#home-tournaments">{% translate 'TOURNAMENTS' %}
+                        {% if user.is_authenticated%}
+                        <i>{% translate 'new' %}</i>
+                        {% endif%}
+                    </a>
+                </li>
+                <li>
+                    <a id="homegames" href="/#home-games">{% translate 'GAMES' %}
+                        {% if user.is_authenticated %}
+                        <i>{% translate 'new' %}</i>
+                        {% endif%}
+                    </a>
+                </li>
+                <li>
+                    <a href="/prizes" id="a-prize">{% translate 'PRIZES' %}
+                        {% if user.is_authenticated %}
+                        <i>{% translate 'new' %}</i>
+                        {% endif%}
+                    </a>
+                </li>
+                <li>
+                    <a href="/prizes#redeem-coins" id="a-redeem">{% translate 'REDEEM' %}
+                        {% if user.is_authenticated %}
+                        <i>{% translate 'new' %}</i>
+                        {% endif%}
+                    </a>
+                </li>
+                <li>
+                    <a id='li_winners' href='/#winners'>{% translate 'WINNERS' %}
+                        {% if user.is_authenticated %}
+                        <i>{% translate 'new' %}</i>
+                        {% endif%}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    {% endblock %}
+</nav>
+
+<aside class="sidebar" id="sidebar">
+    <div class="close">
+        <a href="" style="text-align: right;" id="sidebar-close">&times;</a>
+    </div>
+    <div class="content">
+        <a class="sidebar-brand" href="{% url 'home' %}">
+            <img src="{% static 'img/top-logo.png' %}" width="70"
+                 alt="">
+        </a>
+        <ul class="s-menu">
+            <li>
+                <a id="hometournaments"
+                   href="/#home-tournaments">{% translate 'TOURNAMENTS' %}</a>
+            </li>
+            <li>
+                <a id="homegames" href="/#home-games">{% translate 'GAMES' %}</a>
+            </li>
+            <li>
+                <a id="a-prize" href="{% url 'prizes' %}" >{% translate 'PRIZES' %}</a>
+            </li>
+            <li>
+                <a href="/prizes#redeem-coins" id="a-redeem">{% translate 'REDEEM' %}</a>
+            </li>
+            <li>
+                <a href='/#winners' id="li_winners">{% translate 'WINNERS' %}</a>
+            </li>
+        </ul>
+    </div>
+</aside>
+
+{% block top_section %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        <div class="row footer-top">
+            <div class="col-md-3 p-0">
+                <div class="brand">
+                    <img src="{% static 'img/bottom-logo.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="row">
+                <div class="col-md-3 left">
+                    <p>© <span class="currentyear"></span>&nbsp;MTN Engage</p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="middle">
+                        <li>
+                            {% comment %} <a href="{% url 'faq' %}">{% translate 'FAQs' %}</a> {% endcomment %}
+                            <a data-toggle="modal"
+                            data-target="#faq-modal">{% translate 'FAQs' %}</a>
+                        </li>
+                        <li>
+                            {% comment %} <a href="{% url 'terms' %}">{% translate 'Terms & Conditions' %}</a> {% endcomment %}
+                            <a data-toggle="modal"
+                            data-target="#terms-modal">{% translate 'Terms & Conditions' %}</a>
+                        </li>
+                        <li>
+                            {% comment %} <a href="{% url 'about' %}">{% translate 'About' %}</a> {% endcomment %}
+                            <a data-toggle="modal"
+                            data-target="#about-modal">{% translate 'About' %}</a> 
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#contact-modal"
+                               href="#contact-modal">{% translate 'Contact Engage' %}</a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#support-modal"
+                               href="#support-modal">{% translate 'Support' %}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-3 right">
+                    <div class="social">
+                        <a href=""><i class="fab fa-youtube"></i></a>
+                        <a href=""><i class="fab fa-twitch"></i></a>
+                        <a href=""><i class="fab fa-twitter"></i></a>
+                        <a href=""><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
+
+{% block social_icons %}
+    <div class="social-fixed" style="z-index: 1200">
+        <ul>
+            <li>
+                <a href="" style="background: #4469b0;">
+                    <span class=" fab fa-facebook-f"></span>
+                </a>
+            </li>
+            <li>
+                <a href="" style="background: #5aadec;">
+                    <span class=" fab fa-twitter"></span>
+                </a>
+            </li>
+            <li>
+                <a href="" style="background: #6441a5;">
+                    <span class=" fab fa-twitch"></span>
+                </a>
+            </li>
+            <li>
+                <a href="" style="background: #ca262f;">
+                    <span class=" fab fa-youtube"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block modals %}
+    {% if not user.is_authenticated %}
+        <div id="login-modal" class="modal fade">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="close-box">
+                        <a data-dismiss="modal" href=""><i
+                                class="fas fa-times"></i></a>
+                    </div>
+                    <div class="modal-header">
+                        <h3>{% translate 'LOGIN' %}</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="message"></p>
+                        <form method="post" class="login-form">
+                            {% csrf_token %}
+                            <div class="row text-center">
+                                <div class="col-md-12 mb-3">
+                                    <input type="text" step="1" class="input1"
+                                           name="phone_number"
+                                           placeholder="Enter MTN Number" autocomplete="off"
+                                           required>
+                                    <div class="text-right">
+                                        <button type="submit" class="btn3">
+                                            {% translate 'Next' %}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <p>{% translate 'Don’t have an account?'%} <a
+                                            class="go-to-register-btn"
+                                            href="/register">{% translate 'Register!' %}</a>
+                                    </p>
+
+                                    <br>
+                                    <div class=" text-center text-color-4-light font-weight-bold"
+                                         style="font-size: .9rem; color: red">
+                                        <span class="response-msg"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+                        <form class="login-otp-form" style="display: none;">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <input class="input1" required
+                                           name="code" step="1"
+                                           placeholder="Enter 6 Digits Code" autocomplete="off">
+                                    <div class="text-right">
+                                        <button type="submit" class="btn3">
+                                            {% translate 'Next' %}
+                                        </button>
+                                    </div>
+
+                                    <br>
+                                    <div class=" text-center text-color-4-light font-weight-bold"
+                                         style="font-size: .9rem; color: red">
+                                        <span class="response-msg"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div id="contact-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="close-box" onclick="$('#contact-modal').find('iframe').remove();$('#contact-modal').removeClass('show');$('#contact-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                    <img src="{% static 'img/bgclose.png' %}"
+                                             height="40" alt="" style="position:absolute;top:0;left:0;">
+                    <a data-dismiss="modal" style="" >
+                        <i class="fas fa-times" style="color:#fff;"></i></a>
+                </div>
+                <div class="modal-header">
+                    <h3>{% translate 'CONTACT ENGAGE' %}</h3>
+                </div>
+                <div class="modal-body">
+                    <form action="#" class="form-box" id="contact-form"
+                          method="POST">
+                        {% csrf_token %}
+                        <div class="alert alert-danger error-msg"
+                             style="display: none;"></div>
+                        <div class="alert alert-success success-msg"
+                             style="display: none;"></div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="name" type="text"
+                                       class="input1 mb-3"
+                                       placeholder="Name" required>
+                                <input name="phone_number" type="number"
+                                       class="input1 mb-3"
+                                       placeholder="Phone Number" required>
+                                <select name="country" class="input1 mb-3"
+                                        required>
+                                    <option value="" disabled selected hidden>
+                                        Country
+                                    </option>
+                                    <option value="AF">Afghanistan</option>
+                                    <option value="AX">Åland Islands</option>
+                                    <option value="AL">Albania</option>
+                                    <option value="DZ">Algeria</option>
+                                    <option value="AS">American Samoa</option>
+                                    <option value="AD">Andorra</option>
+                                    <option value="AO">Angola</option>
+                                    <option value="AI">Anguilla</option>
+                                    <option value="AQ">Antarctica</option>
+                                    <option value="AG">Antigua and Barbuda
+                                    </option>
+                                    <option value="AR">Argentina</option>
+                                    <option value="AM">Armenia</option>
+                                    <option value="AW">Aruba</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="AT">Austria</option>
+                                    <option value="AZ">Azerbaijan</option>
+                                    <option value="BS">Bahamas (the)</option>
+                                    <option value="BH">Bahrain</option>
+                                    <option value="BD">Bangladesh</option>
+                                    <option value="BB">Barbados</option>
+                                    <option value="BY">Belarus</option>
+                                    <option value="BE">Belgium</option>
+                                    <option value="BZ">Belize</option>
+                                    <option value="BJ">Benin</option>
+                                    <option value="BM">Bermuda</option>
+                                    <option value="BT">Bhutan</option>
+                                    <option value="BO">Bolivia</option>
+                                    <option value="BQ">Bonaire, Sint Eustatius
+                                        and Saba
+                                    </option>
+                                    <option value="BA">Bosnia and Herzegovina
+                                    </option>
+                                    <option value="BW">Botswana</option>
+                                    <option value="BV">Bouvet Island</option>
+                                    <option value="BR">Brazil</option>
+                                    <option value="IO">British Indian Ocean
+                                        Territory (the)
+                                    </option>
+                                    <option value="BN">Brunei Darussalam
+                                    </option>
+                                    <option value="BG">Bulgaria</option>
+                                    <option value="BF">Burkina Faso</option>
+                                    <option value="BI">Burundi</option>
+                                    <option value="CV">Cabo Verde</option>
+                                    <option value="KH">Cambodia</option>
+                                    <option value="CM">Cameroon</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="KY">Cayman Islands (the)
+                                    </option>
+                                    <option value="CF">Central African Republic
+                                        (the)
+                                    </option>
+                                    <option value="TD">Chad</option>
+                                    <option value="CL">Chile</option>
+                                    <option value="CN">China</option>
+                                    <option value="CX">Christmas Island</option>
+                                    <option value="CC">Cocos (Keeling) Islands
+                                        (the)
+                                    </option>
+                                    <option value="CO">Colombia</option>
+                                    <option value="KM">Comoros (the)</option>
+                                    <option value="CD">Congo (the Democratic
+                                        Republic of the)
+                                    </option>
+                                    <option value="CG">Congo (the)</option>
+                                    <option value="CK">Cook Islands (the)
+                                    </option>
+                                    <option value="CR">Costa Rica</option>
+                                    <option value="HR">Croatia</option>
+                                    <option value="CU">Cuba</option>
+                                    <option value="CW">Curaçao</option>
+                                    <option value="CY">Cyprus</option>
+                                    <option value="CZ">Czechia</option>
+                                    <option value="CI">Côte d'Ivoire</option>
+                                    <option value="DK">Denmark</option>
+                                    <option value="DJ">Djibouti</option>
+                                    <option value="DM">Dominica</option>
+                                    <option value="DO">Dominican Republic
+                                        (the)
+                                    </option>
+                                    <option value="EC">Ecuador</option>
+                                    <option value="EG">Egypt</option>
+                                    <option value="SV">El Salvador</option>
+                                    <option value="GQ">Equatorial Guinea
+                                    </option>
+                                    <option value="ER">Eritrea</option>
+                                    <option value="EE">Estonia</option>
+                                    <option value="SZ">Eswatini</option>
+                                    <option value="ET">Ethiopia</option>
+                                    <option value="FK">Falkland Islands (the)
+                                        [Malvinas]
+                                    </option>
+                                    <option value="FO">Faroe Islands (the)
+                                    </option>
+                                    <option value="FJ">Fiji</option>
+                                    <option value="FI">Finland</option>
+                                    <option value="FR">France</option>
+                                    <option value="GF">French Guiana</option>
+                                    <option value="PF">French Polynesia</option>
+                                    <option value="TF">French Southern
+                                        Territories (the)
+                                    </option>
+                                    <option value="GA">Gabon</option>
+                                    <option value="GM">Gambia (the)</option>
+                                    <option value="GE">Georgia</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="GH">Ghana</option>
+                                    <option value="GI">Gibraltar</option>
+                                    <option value="GR">Greece</option>
+                                    <option value="GL">Greenland</option>
+                                    <option value="GD">Grenada</option>
+                                    <option value="GP">Guadeloupe</option>
+                                    <option value="GU">Guam</option>
+                                    <option value="GT">Guatemala</option>
+                                    <option value="GG">Guernsey</option>
+                                    <option value="GN">Guinea</option>
+                                    <option value="GW">Guinea-Bissau</option>
+                                    <option value="GY">Guyana</option>
+                                    <option value="HT">Haiti</option>
+                                    <option value="HM">Heard Island and McDonald
+                                        Islands
+                                    </option>
+                                    <option value="VA">Holy See (the)</option>
+                                    <option value="HN">Honduras</option>
+                                    <option value="HK">Hong Kong</option>
+                                    <option value="HU">Hungary</option>
+                                    <option value="IS">Iceland</option>
+                                    <option value="IN">India</option>
+                                    <option value="ID">Indonesia</option>
+                                    <option value="IR">Iran (Islamic Republic
+                                        of)
+                                    </option>
+                                    <option value="IQ">Iraq</option>
+                                    <option value="IE">Ireland</option>
+                                    <option value="IM">Isle of Man</option>
+                                    <option value="IL">Israel</option>
+                                    <option value="IT">Italy</option>
+                                    <option value="JM">Jamaica</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="JE">Jersey</option>
+                                    <option value="JO">Jordan</option>
+                                    <option value="KZ">Kazakhstan</option>
+                                    <option value="KE">Kenya</option>
+                                    <option value="KI">Kiribati</option>
+                                    <option value="KP">Korea (the Democratic
+                                        People's Republic of)
+                                    </option>
+                                    <option value="KR">Korea (the Republic of)
+                                    </option>
+                                    <option value="KW">Kuwait</option>
+                                    <option value="KG">Kyrgyzstan</option>
+                                    <option value="LA">Lao People's Democratic
+                                        Republic (the)
+                                    </option>
+                                    <option value="LV">Latvia</option>
+                                    <option value="LB">Lebanon</option>
+                                    <option value="LS">Lesotho</option>
+                                    <option value="LR">Liberia</option>
+                                    <option value="LY">Libya</option>
+                                    <option value="LI">Liechtenstein</option>
+                                    <option value="LT">Lithuania</option>
+                                    <option value="LU">Luxembourg</option>
+                                    <option value="MO">Macao</option>
+                                    <option value="MG">Madagascar</option>
+                                    <option value="MW">Malawi</option>
+                                    <option value="MY">Malaysia</option>
+                                    <option value="MV">Maldives</option>
+                                    <option value="ML">Mali</option>
+                                    <option value="MT">Malta</option>
+                                    <option value="MH">Marshall Islands (the)
+                                    </option>
+                                    <option value="MQ">Martinique</option>
+                                    <option value="MR">Mauritania</option>
+                                    <option value="MU">Mauritius</option>
+                                    <option value="YT">Mayotte</option>
+                                    <option value="MX">Mexico</option>
+                                    <option value="FM">Micronesia (Federated
+                                        States of)
+                                    </option>
+                                    <option value="MD">Moldova (the Republic
+                                        of)
+                                    </option>
+                                    <option value="MC">Monaco</option>
+                                    <option value="MN">Mongolia</option>
+                                    <option value="ME">Montenegro</option>
+                                    <option value="MS">Montserrat</option>
+                                    <option value="MA">Morocco</option>
+                                    <option value="MZ">Mozambique</option>
+                                    <option value="MM">Myanmar</option>
+                                    <option value="NA">Namibia</option>
+                                    <option value="NR">Nauru</option>
+                                    <option value="NP">Nepal</option>
+                                    <option value="NL">Netherlands (the)
+                                    </option>
+                                    <option value="NC">New Caledonia</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="NI">Nicaragua</option>
+                                    <option value="NE">Niger (the)</option>
+                                    <option value="NG">Nigeria</option>
+                                    <option value="NU">Niue</option>
+                                    <option value="NF">Norfolk Island</option>
+                                    <option value="MP">Northern Mariana Islands
+                                        (the)
+                                    </option>
+                                    <option value="NO">Norway</option>
+                                    <option value="OM">Oman</option>
+                                    <option value="PK">Pakistan</option>
+                                    <option value="PW">Palau</option>
+                                    <option value="PS">Palestine, State of
+                                    </option>
+                                    <option value="PA">Panama</option>
+                                    <option value="PG">Papua New Guinea</option>
+                                    <option value="PY">Paraguay</option>
+                                    <option value="PE">Peru</option>
+                                    <option value="PH">Philippines (the)
+                                    </option>
+                                    <option value="PN">Pitcairn</option>
+                                    <option value="PL">Poland</option>
+                                    <option value="PT">Portugal</option>
+                                    <option value="PR">Puerto Rico</option>
+                                    <option value="QA">Qatar</option>
+                                    <option value="MK">Republic of North
+                                        Macedonia
+                                    </option>
+                                    <option value="RO">Romania</option>
+                                    <option value="RU">Russian Federation
+                                        (the)
+                                    </option>
+                                    <option value="RW">Rwanda</option>
+                                    <option value="RE">Réunion</option>
+                                    <option value="BL">Saint Barthélemy</option>
+                                    <option value="SH">Saint Helena, Ascension
+                                        and Tristan da Cunha
+                                    </option>
+                                    <option value="KN">Saint Kitts and Nevis
+                                    </option>
+                                    <option value="LC">Saint Lucia</option>
+                                    <option value="MF">Saint Martin (French
+                                        part)
+                                    </option>
+                                    <option value="PM">Saint Pierre and
+                                        Miquelon
+                                    </option>
+                                    <option value="VC">Saint Vincent and the
+                                        Grenadines
+                                    </option>
+                                    <option value="WS">Samoa</option>
+                                    <option value="SM">San Marino</option>
+                                    <option value="ST">Sao Tome and Principe
+                                    </option>
+                                    <option value="SA">Saudi Arabia</option>
+                                    <option value="SN">Senegal</option>
+                                    <option value="RS">Serbia</option>
+                                    <option value="SC">Seychelles</option>
+                                    <option value="SL">Sierra Leone</option>
+                                    <option value="SG">Singapore</option>
+                                    <option value="SX">Sint Maarten (Dutch
+                                        part)
+                                    </option>
+                                    <option value="SK">Slovakia</option>
+                                    <option value="SI">Slovenia</option>
+                                    <option value="SB">Solomon Islands</option>
+                                    <option value="SO">Somalia</option>
+                                    <option value="ZA">South Africa</option>
+                                    <option value="GS">South Georgia and the
+                                        South Sandwich Islands
+                                    </option>
+                                    <option value="SS">South Sudan</option>
+                                    <option value="ES">Spain</option>
+                                    <option value="LK">Sri Lanka</option>
+                                    <option value="SD">Sudan (the)</option>
+                                    <option value="SR">Suriname</option>
+                                    <option value="SJ">Svalbard and Jan Mayen
+                                    </option>
+                                    <option value="SE">Sweden</option>
+                                    <option value="CH">Switzerland</option>
+                                    <option value="SY">Syrian Arab Republic
+                                    </option>
+                                    <option value="TW">Taiwan (Province of
+                                        China)
+                                    </option>
+                                    <option value="TJ">Tajikistan</option>
+                                    <option value="TZ">Tanzania, United Republic
+                                        of
+                                    </option>
+                                    <option value="TH">Thailand</option>
+                                    <option value="TL">Timor-Leste</option>
+                                    <option value="TG">Togo</option>
+                                    <option value="TK">Tokelau</option>
+                                    <option value="TO">Tonga</option>
+                                    <option value="TT">Trinidad and Tobago
+                                    </option>
+                                    <option value="TN">Tunisia</option>
+                                    <option value="TR">Turkey</option>
+                                    <option value="TM">Turkmenistan</option>
+                                    <option value="TC">Turks and Caicos Islands
+                                        (the)
+                                    </option>
+                                    <option value="TV">Tuvalu</option>
+                                    <option value="UG">Uganda</option>
+                                    <option value="UA">Ukraine</option>
+                                    <option value="AE">United Arab Emirates
+                                        (the)
+                                    </option>
+                                    <option value="GB">United Kingdom of Great
+                                        Britain and Northern Ireland (the)
+                                    </option>
+                                    <option value="UM">United States Minor
+                                        Outlying Islands (the)
+                                    </option>
+                                    <option value="US">United States of America
+                                        (the)
+                                    </option>
+                                    <option value="UY">Uruguay</option>
+                                    <option value="UZ">Uzbekistan</option>
+                                    <option value="VU">Vanuatu</option>
+                                    <option value="VE">Venezuela (Bolivarian
+                                        Republic of)
+                                    </option>
+                                    <option value="VN">Viet Nam</option>
+                                    <option value="VG">Virgin Islands
+                                        (British)
+                                    </option>
+                                    <option value="VI">Virgin Islands (U.S.)
+                                    </option>
+                                    <option value="WF">Wallis and Futuna
+                                    </option>
+                                    <option value="EH">Western Sahara</option>
+                                    <option value="YE">Yemen</option>
+                                    <option value="ZM">Zambia</option>
+                                    <option value="ZW">Zimbabwe</option>
+                                </select>
+                                <input name="email" type="email"
+                                       class="input1 mb-3"
+                                       placeholder="Email" required>
+                                <input name="company" type="text"
+                                       class="input1 mb-3"
+                                       placeholder="Company">
+                                <textarea name="message" rows="4" class="input1"
+                                          placeholder="Your Message"
+                                          required></textarea>
+
+                                <div class="text-right">
+                                    <button type="submit" class="btn3">{% translate 'SEND' %}
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class=" text-center text-color-4-light font-weight-bold"
+                             style="font-size: .9rem; color: red">
+                            <span class="response-msg"></span>
+                        </div>
+                    </form>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="support-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="close-box" onclick="$('#support-modal').find('iframe').remove();$('#support-modal').removeClass('show');$('#support-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                    <img src="{% static 'img/bgclose.png' %}"
+                                             height="40" alt="" style="position:absolute;top:0;left:0;">
+                    <a data-dismiss="modal" style="" >
+                        <i class="fas fa-times" style="color:#fff;"></i></a>
+                </div>
+                <div class="modal-header">
+                    <h3>{% translate 'CONTACT SUPPORT' %}</h3>
+                </div>
+                <div class="modal-body">
+                    <form action="#" class="form-box" id="support-form"
+                          method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="username" type="text"
+                                       class="input1 mb-3"
+                                       placeholder="Username" required>
+                                <input name="phone_number" type="number"
+                                       class="input1 mb-3"
+                                       placeholder="MTN Phone Number" required>
+                                <select name="country" class="input1 mb-3"
+                                        required>
+                                    <option value="" disabled  hidden>
+                                        Country
+                                    </option>
+                                    <option value="NG" selected>Nigeria</option>
+                                    <option disabled>---------------</option>
+                                    {% for country in countries %}
+                                       {% if country.code != 'NG' %}
+                                        <option value="{{ country.code }}">{{ country.name }}</option>
+                                        {% endif%}
+                                    {% endfor %}
+                                </select>
+                                <select name="support_type" class="input1 mb-3"
+                                        required>
+                                    <option value="" disabled selected hidden>
+                                        {% translate 'I Need Support With' %}
+                                    </option>
+                                    <option value="subscribe_issue">
+                                        {% translate 'Unable to subscribe to Engage' %}
+                                    </option>
+                                    <option value="account_problem">
+                                        {% translate 'Problem with account access' %}
+                                    </option>
+                                    <option value="account_locked">
+                                        {% translate 'Locked or suspended account issue' %}
+                                    </option>
+                                    <option value="tournaments">{% translate 'Queries about tournaments' %}
+                                    </option>
+                                    <option value="games">
+                                        {% translate 'Games not working for me' %}
+                                    </option>
+                                    <option value="help_engage">
+                                        {% translate 'Help using Engage' %}
+                                    </option>
+                                    <option value="help_paid">
+                                        {% translate 'Help with paid features' %}
+                                    </option>
+                                    <option value="prizes">
+                                        {% translate 'Question about Prizes' %}
+                                    </option>
+                                    <option value="redeem_coins">
+                                        {% translate 'Redeem Coins queries' %}
+                                    </option>
+                                    <option value="other">
+                                        {% translate 'Other problem or issue' %}
+                                    </option>
+                                </select>
+                                <input name="email" type="email"
+                                       class="input1 mb-3"
+                                       placeholder="Email" required>
+                                <textarea name="message" rows="4" class="input1"
+                                          placeholder="Describe the Problem You're Facing"
+                                          required></textarea>
+
+                                <div class="text-right">
+                                    <button type="submit" class="btn3">{% translate 'SEND' %}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class=" text-center text-color-4-light font-weight-bold"
+                             style="font-size: .9rem; color: red">
+                            <span class="response-msg"></span>
+                        </div>
+                    </form>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="close-box">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+                </div>
+                <div class="modal-header">
+                    <h3>Register</h3>
+                </div>
+                <div class="modal-body">
+                    <form method="post" class="register-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <input type="text" class="input1"
+                                       name="phone_number"
+                                       placeholder="Enter MTN Number"
+                                       required>
+                                <div class="text-right">
+                                    <button type="submit" class="btn3">{% translate 'Next' %}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <p>{% translate 'You already have an account?' %}
+                                    <a class="go-to-login-btn"
+                                       href="javascript:void(0)">{% translate 'Login!' %}</a>
+                                </p>
+
+                                <br>
+                                <div class=" text-center text-color-4-light font-weight-bold"
+                                     style="font-size: .9rem; color: red">
+                                    <span class="response-msg"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                    <form class="register-otp-form" style="display: none;">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <input type="text" class="input1" required
+                                       name="code"
+                                       placeholder="Enter 6 Digits Code">
+                                <div class="text-right">
+                                    <button type="submit" class="btn3">Next
+                                    </button>
+                                </div>
+
+                                <br>
+                                <div class=" text-center text-color-4-light font-weight-bold"
+                                     style="font-size: .9rem; color: red">
+                                    <span class="response-msg"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="reset-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="title-wrapper horizontal-tabbed no-icon">
+                        <h3 class="box-title">{% translate 'RECOVER PASSWORD' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <input type="text" class="input1"
+                                   placeholder="EMAIL">
+                        </div>
+                        <p class="p-reset">{% translate 'Enter your registered email to receive the password reset' %} </p>
+
+                        <div class="col-md-6">
+                            <button class="btn2 big">{% translate 'RESET PASSWORD' %}</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<div class="modal fade" id="games-subscription-notifications" tabindex="-1" role="dialog"
+     aria-labelledby="games-subscription-notifications" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="games-notifications-title"></h5>
+            </div>
+            <div class="modal-body">
+                <p id="games-notifications-body"></p>
+            </div>
+            <div class="col-md-12 text-center">
+                <div class="info-box"></div>
+                <button id="upgrade-btn" data-dismiss="modal" class="btn2 big c2">
+                    {% translate 'Upgrade' %}
+                </button>
+                <button data-dismiss="modal" class="btn2 big">
+                    {% translate 'Cancel' %}
+                </button>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="games-notifications" tabindex="-1" role="dialog"
+     aria-labelledby="games-notifications" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="games-notifications-title"></h5>
+            </div>
+            <div class="modal-body">
+                <p id="games-notifications-body"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="purchase-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+            </div>
+           
+            <div class="col-md-12 text-center">
+                <div class="info-box"></div>
+                <button id="purchase-btn" data-dismiss="modal" class="btn2 big c2">
+                    {% translate 'Purchase' %}
+                </button>
+                <button data-dismiss="modal" class="btn2 big">
+                    {% translate 'Cancel' %}
+                </button>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+            </div>
+            <div class="modal-body">
+                <div class="info-box"></div>
+                <div class="text-center">
+                    <button data-dismiss="modal" class="btn3 mt-2">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="info-modal1" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+            </div>
+            <div class="modal-body">
+                <div class="info-box"></div>
+                <div class="text-center">
+                    <button data-dismiss="modal" class="btn3 mt-2">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="game-fullscreen-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content" style="background:#000;"> 
+            <div class="close-box" onclick="$('#game-fullscreen-modal').find('iframe').remove();$('#game-fullscreen-modal').removeClass('show');$('#game-fullscreen-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-body" style="padding:0!important;">
+                <div class="info-box">
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="googleadd-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document" style="height:400px;">
+        <div class="modal-content" style="height:400px;">
+            <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+            </div>
+            <div class="modal-body" style="height:300px;position:relative;width:726px;">
+                <div style="width:710px;height:300px;position:relative;">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5410356273400358"
+                    crossorigin="anonymous"></script>
+    <!-- engage add -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:300px"
+         data-ad-client="ca-pub-5410356273400358"
+         data-ad-format="Rewarded"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<div class="modal fade" id="live-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document" style="height:400px;">
+        <div class="modal-content">
+            <div class="close-box">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal">
+                    <i class="fas fa-times" ></i></a>
+            </div>
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+            </div>
+            <div class="modal-body">
+               <iframe src="" width="100%"  height='100%' border="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>  
+<div class="modal fade" id="faq-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content"> 
+            <div class="close-box" onclick="$('#faq-modal').find('iframe').remove();$('#faq-modal').removeClass('show');$('#faq-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3>  {% translate 'FAQs' %}</h3>
+            </div>
+            <div class="modal-body" style="padding:0!important;">
+                <div class="page-box infopage">
+                    <div class="max-page-width">
+                        
+                        
+                        <div class="text-container">
+                            <div class="content">
+                                <div class="accordion" id="accordionFAQ">
+                                    {% for faq in operator.operatorfaq_set.all %}
+                                        <div class="card">
+                                            <div class="card-header"
+                                                 id="heading{{ faq.id }}">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left"
+                                                            type="button"
+                                                            data-toggle="collapse"
+                                                            data-target="#collapse{{ faq.id }}"
+                                                            aria-expanded="false"
+                                                    >
+                                                        {{ faq.title }}
+                                                    </button>
+                                                </h2>
+                                            </div>
+            
+                                            <div id="collapse{{ faq.id }}"
+                                                 class="collapse"
+                                                 aria-labelledby="heading{{ faq.id }}"
+                                                 data-parent="#accordionFAQ">
+                                                <div class="card-body">
+                                                    {{ faq.description|safe }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="privacy-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content"> 
+            <div class="close-box" onclick="$('#privacy-modal').find('iframe').remove();$('#privacy-modal').removeClass('show');$('#privacy-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3> {% translate 'PRIVACY POLICY' %}</h3>
+            </div>
+            <div class='page-box'>
+            <div class="text-container">
+                <div class="content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Mauris malesuada odio tellus, sit amet efficitur augue
+                        pellentesque id. Donec mollis neque a arcu vestibulum,
+                        ac posuere odio tincidunt. Donec malesuada hendrerit
+                        tincidunt. Donec commodo ante nisl, ut euismod orci
+                        iaculis vitae. Donec elementum in augue vitae volutpat.
+                        Aenean lectus est, pellentesque vel enim et, porta
+                        consequat urna. In sed quam vel ex fringilla imperdiet.
+                        Phasellus luctus rutrum hendrerit. Donec mattis
+                        fringilla augue eget congue. Ut vel ullamcorper eros,
+                        nec laoreet nisi. Maecenas convallis tortor odio, sit
+                        amet tincidunt nisi semper pharetra.</p>
+
+                    <p>Curabitur arcu nunc, laoreet et ligula in, volutpat
+                        aliquet est. Nam auctor, mi ac sodales venenatis, massa
+                        diam volutpat lectus, a fermentum massa nunc sed libero.
+                        Quisque ut rutrum odio. Curabitur ex ipsum, volutpat non
+                        magna quis, euismod pharetra ex. Etiam eget metus id
+                        nisi tristique ullamcorper ornare ut quam. Suspendisse
+                        quis nunc faucibus, pretium arcu ut, aliquet massa.
+                        Etiam in tortor quis justo commodo pellentesque sit amet
+                        ut odio. Vivamus pellentesque porttitor mauris, non
+                        rhoncus ex lacinia ut. In facilisis vulputate purus id
+                        imperdiet. Aliquam sit amet porta sem, quis tempus
+                        eros.</p>
+
+                    <p>Maecenas nec felis ac sem maximus vehicula ac in nibh.
+                        Nunc ac vulputate tortor. Proin faucibus accumsan mi
+                        vitae egestas. Proin fringilla malesuada imperdiet. Nunc
+                        ornare risus magna, a ultrices arcu vehicula id. Nam
+                        condimentum erat enim, sed consequat neque hendrerit in.
+                        Suspendisse iaculis et turpis at laoreet.</p>
+
+                    <p>Proin lacinia lorem quis odio accumsan volutpat.
+                        Pellentesque ex felis, semper eu congue a, ornare sed
+                        mauris. Sed porta est eu euismod gravida. In posuere
+                        nunc non turpis sagittis, vitae aliquam nulla
+                        scelerisque. Quisque lacus metus, interdum in tincidunt
+                        vitae, condimentum sit amet neque. Nullam lacinia erat
+                        sagittis mollis dapibus. Etiam elementum nisi sed est
+                        egestas, sodales gravida sapien ornare. In quam dolor,
+                        ornare vitae arcu id, gravida convallis libero.
+                        Curabitur eu neque et magna aliquam facilisis vel ut mi.
+                        Duis ut risus sed sem vehicula porta. Sed maximus nulla
+                        sit amet nulla consequat, quis eleifend ante congue.
+                        Quisque eget nibh in nulla condimentum efficitur in
+                        sodales erat. In eget nisi et ligula accumsan bibendum
+                        et vel ante. Nam fringilla mauris in urna condimentum
+                        ultrices et eget turpis.</p>
+
+                    <p>Vivamus placerat urna sit amet arcu molestie, sit amet
+                        viverra lorem interdum. Vivamus eu libero elit. Sed id
+                        ultricies purus. Praesent tincidunt a enim at sodales.
+                        Quisque eleifend massa id efficitur tempus. Orci varius
+                        natoque penatibus et magnis dis parturient montes,
+                        nascetur ridiculus mus. Integer iaculis auctor massa
+                        vitae tempor. Nam at ipsum molestie, auctor lorem sit
+                        amet, pretium tellus. Pellentesque a porttitor neque.
+                        Praesent eget quam sed neque dapibus sagittis. Nulla
+                        facilisi. Maecenas fermentum aliquet felis, eget
+                        ultricies velit convallis in.</p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="disclaimer-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content"> 
+            <div class="close-box" onclick="$('#disclaimer-modal').find('iframe').remove();$('#disclaimer-modal').removeClass('show');$('#disclaimer-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3> {% translate 'DISCLAIMER' %}</h3>
+            </div>
+            <div class='page-box'>
+            <div class="text-container">
+                <div class="content">
+                    <p>All the information on this website is published in good faith and for general information purpose only.</p>
+
+                    <p>MTN Engage does not make any warranties about the completeness, reliability and accuracy of this information. Any action you take upon the information you find on this website (MTN Engage), is strictly at your own risk. MTN Engage will not be liable for any losses and/or damages in connection with the use of our website.</p>
+    
+                    <p>From our website, you can visit other websites by following hyperlinks to such external sites. While we strive to provide only quality links to useful and ethical websites, we have no control over the content and nature of these sites. These links to other websites do not imply a recommendation for all the content found on these sites. Site owners and content may change without notice and may occur before we have the opportunity to remove a link which may have gone 'bad'.</p>
+    
+                    <p>Please be also aware that when you leave our website, other sites may have different privacy policies and terms which are beyond our control. Please be sure to check the Privacy Policies of these sites as well as their "Terms of Service" before engaging in any business or uploading any information.</p>
+    
+                    </div></div>
+            </div></div>
+    </div>
+</div>
+
+<div class="modal fade" id="terms-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content"> 
+            <div class="close-box" onclick="$('#terms-modal').find('iframe').remove();$('#terms-modal').removeClass('show');$('#terms-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;margin-left: 27px;
+                                         margin-top: 5px;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3> {% translate 'TERMS & CONDITIONS' %}</h3>
+            </div>
+            <div class="page-box">
+                <div class="text-container">
+                    <div class="content">
+                        {{ operator.operatorwebsite.terms_description|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="about-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content"> 
+            <div class="close-box" onclick="$('#about-modal').find('iframe').remove();$('#about-modal').removeClass('show');$('#about-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
+                <img src="{% static 'img/bgclose.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+                <a data-dismiss="modal" style="" >
+                    <i class="fas fa-times" style="color:#fff;"></i></a>
+            </div>
+            <div class="modal-header">
+                <h3> {% translate 'ENGAGE AND MORE' %}</h3>
+            </div>
+            <div class="modal-body" style="padding:0!important;">
+                <div class="page-box infopage">
+                    <div class="max-page-width">
+                        <div class="text-container">
+                            <div class="content">
+                                {{ operator.operatorwebsite.about_us_description|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% if user.is_authenticated %}
+    <div id="settings-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="close-box">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+                </div>
+                <div class="modal-header">
+                    <h3>Edit Profile</h3>
+                </div>
+                <div class="modal-body">
+                    <form action="#" class="form-box" id="edit-profile-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="profile-page">
+                                    <div class="avatar-select"
+                                         for="profile-img">
+                                        <input value="{{ user.avatar.id }}"
+                                               type="text" name="avatar" hidden
+                                               required>
+                                        {% if user.avatar %}
+                                            <img class="selected-avatar-img"
+                                                 src="{{ user.avatar.image.url }}"
+                                                 alt="avatar">
+                                        {% else %}
+                                            <img class="selected-avatar-img"
+                                                 src="{% static 'img/profile.png' %}"
+                                                 alt="avatar">
+                                        {% endif %}
+
+                                        <div class="avatar-drop">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'MTN Number' %}</label>
+                                    <div class="right">
+                                        <input name="mobile" type="text" required readonly='readonly'
+                                               value="{{ user.mobile|default_if_none:"" }}">
+                                    </div>
+                                </div>
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'Name' %}</label>
+                                    <div class="right">
+                                        <input name="name" type="text" required
+                                               value="{{ user.nickname|default_if_none:"" }}">
+                                    </div>
+                                </div>
+
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'Email' %}</label>
+                                    <div class="right">
+                                        <input name="email" type="email"
+                                               required
+                                               value="{{ user.email|default_if_none:"" }}">
+                                    </div>
+                                </div>
+
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'Date Of Birth' %}</label>
+                                    <div class="right">
+
+                                        <select value="{{ user.profile.birthdate|date:'m' }}"
+                                                name="data_month" required
+                                                class="text-center">
+                                            <option value="01"
+                                                    {% if user.profile.birthdate|date:'m' == '01' %}selected{% endif %}>
+                                                Jan
+                                            </option>
+                                            <option value="02"
+                                                    {% if user.profile.birthdate|date:'m' == '02' %}selected{% endif %}>
+                                                Feb
+                                            </option>
+                                            <option value="03"
+                                                    {% if user.profile.birthdate|date:'m' == '03' %}selected{% endif %}>
+                                                Mar
+                                            </option>
+                                            <option value="04"
+                                                    {% if user.profile.birthdate|date:'m' == '04' %}selected{% endif %}>
+                                                Apr
+                                            </option>
+                                            <option value="05"
+                                                    {% if user.profile.birthdate|date:'m' == '05' %}selected{% endif %}>
+                                                May
+                                            </option>
+                                            <option value="06"
+                                                    {% if user.profile.birthdate|date:'m' == '06' %}selected{% endif %}>
+                                                Jun
+                                            </option>
+                                            <option value="07"
+                                                    {% if user.profile.birthdate|date:'m' == '07' %}selected{% endif %}>
+                                                Jul
+                                            </option>
+                                            <option value="08"
+                                                    {% if user.profile.birthdate|date:'m' == '08' %}selected{% endif %}>
+                                                Aug
+                                            </option>
+                                            <option value="09"
+                                                    {% if user.profile.birthdate|date:'m' == '09' %}selected{% endif %}>
+                                                Sep
+                                            </option>
+                                            <option value="10"
+                                                    {% if user.profile.birthdate|date:'m' == '10' %}selected{% endif %}>
+                                                Oct
+                                            </option>
+                                            <option value="11"
+                                                    {% if user.profile.birthdate|date:'m' == '11' %}selected{% endif %}>
+                                                Nov
+                                            </option>
+                                            <option value="12"
+                                                    {% if user.profile.birthdate|date:'m' == '12' %}selected{% endif %}>
+                                                Dec
+                                            </option>
+                                        </select>
+
+                                        <select name="data_day" required
+                                                class="text-center">
+                                            {% for day in days %}
+                                                <option value="{{ day }}"
+                                                        {% if user.profile.birthdate|date:'d' == day %}selected{% endif %}>{{ day }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <select name="data_year" required
+                                                class="text-center"
+                                                id="">
+                                            {% for year in years %}
+                                                <option value="{{ year }}"
+                                                        {% if user.profile.birthdate|date:'Y' == year %}selected{% endif %}>{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'Nationality' %}</label>
+                                    <div class="right">
+                                        <select
+                                                name="country"
+                                                required>
+                                            <option value="" disabled 
+                                                    hidden>
+                                                {% translate 'Country' %}
+                                            </option>
+                                            <option value="NG" selected>Nigeria</option>
+                                            <option disabled>---------------</option>
+                                            {% for country in countries %}
+                                                {% if country.code != 'NG' %}
+                                                <option value="{{ country.code }}"
+                                                        {% if country.code == user.country %}selected{% endif %}>{{ country.name }}</option>
+                                                {% endif %}           
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'Gender' %}</label>
+                                    <div class="right">
+                                        <select name="gender" id="" required>
+                                            <option value="male"
+                                                    {% if user.profile.gender == 'male' %}selected{% endif %}>
+                                                {% translate 'Male' %}
+                                            </option>
+                                            <option value="female"
+                                                    {% if user.profile.gender == 'female' %}selected{% endif %}>
+                                                {% translate 'Female' %}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="input2 mb-3">
+                                    <label for="">{% translate 'State' %} <br/></label>
+                                    <div class="right">
+                                        <select name="residency" id="" required>
+                                            {% for state in states %}
+                                                <option value="{{ state }}"
+                                                        {% if user.profile.residency == state %}selected{% endif %}>{{ state }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {#                            <div class="input2 mb-3">#}
+                                {#                                <label for="">www.facebook.com/</label>#}
+                                {#                                <div class="right">#}
+                                {#                                    <input name="facebook_link" type="text"#}
+                                {#                                           value="engage">#}
+                                {#                                </div>#}
+                                {#                            </div>#}
+                                {##}
+                                {#                            <div class="input2">#}
+                                {#                                <label for="">www.instagram.com/</label>#}
+                                {#                                <div class="right">#}
+                                {#                                    <input name="instagram_link" type="text"#}
+                                {#                                           value="engage">#}
+                                {#                                </div>#}
+                                {#                            </div>#}
+
+                                <div class="alert alert-danger error-msg mt-3"
+                                     style="display: none;"></div>
+                                <div class="alert alert-success success-msg mt-3"
+                                     style="display: none;"></div>
+                                <div class="text-right">
+                                    <button type="submit" class="btn3">SAVE
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% block javascript %}
+{% if user.is_authenticated %}
+            
+            <script type="application/javascript"
+                src="{% static 'js/fcm.js' %}"></script>
+ {% endif %}        
+{% endblock %}
+
+</body>
+</html>

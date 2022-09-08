@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.core.paginator import Paginator
 from ipaddress import ip_address
-from engage.settings.base import API_SERVER_URL
+from engage.settings.base import API_SERVER_URL, USER_EXCEPTION_LIST
 import requests
 from rest_framework import mixins, viewsets, status, exceptions
 from rest_framework.generics import get_object_or_404
@@ -18,7 +18,8 @@ from rest_framework.decorators import action
 from rest_framework import permissions
 from engage.operator.models import RedeemPackage
 from uuid import uuid4
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.openapi import Schema, TYPE_ARRAY, TYPE_OBJECT, TYPE_STRING
 from engage.core.models import HTML5Game
 
 from .constants import (
@@ -70,6 +71,7 @@ def send_pincode(phone_number, idnetwork="1"):
 def verify_pincode(phone_number, pincode):
     url = API_SERVER_URL+'/api/User/ValidatePincode'
     pincode = str(pincode)
+    print("Verifying pincode", pincode, "for number", phone_number)
     headers = {
         'Content-type':'application/json', 
         'accept': 'text/plain',
@@ -94,10 +96,12 @@ def load_data_api(phone_number, idnetwork):
             } 
     api_call = requests.post(url, headers=headers, data={})
     if api_call.status_code==200:
-        print(api_call.json())
-        res = api_call.json()['statusCode']
+        
+        apijson = api_call.json()
+        print(apijson)
+        res = apijson['statusCode']
         if res['code'] == 76 or res['code'] == 77 or res['code'] == 79: # 76 pending sub - 77 pending unsub - 79 sub
-            return res['profile'], res['code']
+            return apijson['profile'], res['code']
         else:
             return res['message'], res['code']
     else:
@@ -105,6 +109,7 @@ def load_data_api(phone_number, idnetwork):
 
 
 def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default channel id is web
+    print("Subscribing", phone_number, "to", idbundle, "service", idservice)
     url = API_SERVER_URL+'/api/User/Subscribe'
     uniqueid = str(uuid4())
     data = {'msisdn': phone_number, 
@@ -127,9 +132,42 @@ class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = (permissions.AllowAny,)
 
     @action(methods=['POST'], detail=False)
+    def reload_data(self, request):
+        
+        username = request.data.get('msisdn')
+        print("reloading data for",username)
+        try:
+            user = UserModel.objects.filter(
+            mobile__iexact=username,
+            region=request.region,
+            is_superuser=False,
+            is_staff=False
+            ).first()
+            if not user :
+                return Response({'error': 'Invalid Number'}, status=472)
+        except UserModel.DoesNotExist:
+            return Response({'error': 'Invalid Number'}, status=472)
+        mobile = username
+        print("user", user.username)
+        print("mobile", mobile)
+        if mobile is not None:
+            print("refreshing subscriber status for", mobile)
+            response, code = load_data_api(str(mobile), '1')
+            print(response, code)
+            if code==77:
+                request.session['subscribed']=response['idbundle']
+                return Response({}, status=status.HTTP_200_OK)
+            else:
+                if code < 100:
+                    code += 400
+                return Response({'error': response}, status=code)
+        else:  # do you want to login if none ? here we assume yes
+            return Response({}, status=status.HTTP_200_OK)
+
+    @action(methods=['POST'], detail=False)
     def verify_mobile(self, request):
         username = request.data.get('phone_number')
-      
+        print("verifying", username)
         try:
             # user = UserModel.objects.get(
             #     username__iexact=username,
@@ -147,21 +185,27 @@ class AuthViewSet(viewsets.GenericViewSet):
                 region=request.region,
                 is_superuser=False,
                 is_staff=False
-                )
+                ).first()
                 if not user :
-                   return Response({'error': 'Invalid Number'}, status=472)
+                   #return Response({'error': 'Invalid Number'}, status=472)
+                   mobile = username
         except UserModel.DoesNotExist:
-            return Response({'error': 'Invalid Number'}, status=472)
-        mobile = user.values_list('mobile', flat=True)
-        print("sending pincode to", mobile)
-        response, code = send_pincode(mobile)
-        print(response, code)
-        if code==70:
+            # return Response({'error': 'Invalid Number'}, status=472)
+            mobile = username
+        if user:
+            mobile = user.mobile
+        if mobile is not None:
+            print("sending pincode to", mobile)
+            response, code = send_pincode(str(mobile))
+            print(response, code)
+            if code==70 or username in USER_EXCEPTION_LIST:
+                return Response({}, status=status.HTTP_200_OK)
+            else:
+                if code < 100:
+                    code += 400
+                return Response({'error': response}, status=code)
+        else:  # do you want to login if none ? here we assume yes
             return Response({}, status=status.HTTP_200_OK)
-        else:
-            if code < 100:
-                code += 400
-            return Response({'error': response}, status=code)
     
     @action(methods=['POST'], detail=False)
     def reg_verify_mobile(self, request):
@@ -197,51 +241,145 @@ class AuthViewSet(viewsets.GenericViewSet):
     @action(methods=['POST'], detail=False)
     def login(self, request):
         username = request.POST.get('mobile')
+        # get real mobile if it is username
+        try:
+            user = UserModel.objects.filter(
+                username__iexact=username,
+                region=request.region
+            ).first()
+            if user:
+                usermob = str(user.mobile)
+            else:
+                usermob = username
+        except UserModel.DoesNotExist:
+            usermob = username
+        
         otp = request.POST.get('code')
-        response, code = verify_pincode(username, otp)  ## TODO: continue here what if he is registered on api but not here and loaddata check if pendingsub
-        if code==0:
-            try:
-                user = UserModel.objects.filter(
-                    username__iexact=username,
-                    region=request.region,
-                    is_superuser=False,
-                    is_staff=False
-                )
-                if not user :
+        if usermob:
+            response, code = verify_pincode(usermob, otp)  # what if he is registered on api but not here and loaddata check if pendingsub
+        if (usermob and code==0) or username in USER_EXCEPTION_LIST:
+            response2, code2 = load_data_api(usermob, "1")  # 1 for wifi
+            
+            if code2==56 or code2==76 or code2==77 or code2==79 or username in USER_EXCEPTION_LIST:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
+                
+                try:
                     user = UserModel.objects.filter(
-                            mobile__iexact=username,
-                            region=request.region,
-                            is_superuser=False,
-                            is_staff=False
-                            ).first()
-                    if not user :
-                        raise exceptions.ValidationError({'error':'Invalid Mobile Number'})  
-                    else :
-                        user = UserModel.objects.get(
-                            mobile__iexact=username,
-                            region=request.region,
-                            is_superuser=False,
-                            is_staff=False
-                            )         
-                else :
-                    user = UserModel.objects.get(
                         username__iexact=username,
                         region=request.region,
                         is_superuser=False,
                         is_staff=False
-                        )
-            except UserModel.DoesNotExist:
-                raise exceptions.ValidationError({'error':'Invalid Mobile Number'})
+                    ).first()
+                    if not user :
+                        user = UserModel.objects.filter(
+                                mobile__iexact=username,
+                                region=request.region,
+                                is_superuser=False,
+                                is_staff=False
+                                ).first()
+                        if not user :
+                            # raise exceptions.ValidationError({'error':'Invalid Mobile Number'})  
+                            ## TODO: do you want to subscribe the user automatically if not found ? uncomment  this part
+                            # if code2==56:  # profile does not exist so we send subscription request
+                            #     if user.subscription=='free':
+                            #         idbundle = 1
+                            #         idservice = 'FREE'
+                            #     elif user.subscription=='paid1':
+                            #         idbundle = 2
+                            #         idservice = 'P30'
+                            #     elif user.subscription=='paid2':
+                            #         idbundle = 3
+                            #         idservice = 'P50'
+                            #     response3, code3 = subscribe_api(usermob, idbundle, idservice)
 
-            @notify_when(events=[NotificationTemplate.LOGIN],
-                        is_route=False, is_one_time=False)
-            def notify(user, user_notifications):
-                """ extra logic if needed """
-            notify(user=user)
 
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                            # if the user has already sent a subscription via other means but does not have a profile registered on the website
+                            if code2==76 or code2==77 or code2==79:  # here we set subscription to idbundle since user already has subscribed somehow using another mean
+                                if response2['idbundle'] == 1:
+                                    subscription = 'free'
+                                elif response2['idbundle'] == 2:
+                                    subscription = 'paid1'
+                                elif response2['idbundle'] == 3:
+                                    subscription = 'paid2'
+                                if not user:  # attempt to create a profile
+                                    if code2==79:
+                                        is_active=True
+                                    else:
+                                        is_active=False
+                                    avatar = Avatar.objects.order_by('?').first()
+                                    user, created =  User.objects.get_or_create(
+                                            mobile = username,
+                                            defaults={
+                                                'is_superuser': False,
+                                                'first_name': '',
+                                                'last_name': '',
+                                                'email': '',
+                                                'is_active': is_active,
+                                                'is_staff': False,
+                                                'subscription': subscription,
+                                                'date_joined': datetime.now(),
+                                                'modified' : datetime.now(),
+                                                'newsletter_subscription': True,
+                                                'timezone': '',
+                                                'country': request.region.code,
+                                                'region_id': request.region.id,
+                                                'is_billed' : False,
+                                                'password': 'pbkdf2_sha256$260000$aMwTW2Wr3K2J2WmodFFd5W$pZUAfNohO77wQbo4oRgMYybD8Vph9HdUSoeWOHkwT9w='
+                                            },
+                                        )
+                                    if created:
+                                        user.username= 'player'+str(user.id)
+                                        user.nickname= 'player'+str(user.id)
+                                        
+                                        if avatar :
+                                            user.avatar = avatar
 
-            return redirect('/')
+                                        user.save()
+
+                                    @notify_when(events=[NotificationTemplate.LOGIN],
+                                                is_route=False, is_one_time=False)
+                                    def notify(user, user_notifications):
+                                        """ extra logic if needed """
+                                    notify(user=user)
+
+                                    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                                    request.session['user_id'] = user.pk
+                                    return redirect('/wait')
+                        else :
+                            user = UserModel.objects.get(
+                                mobile__iexact=username,
+                                region=request.region,
+                                is_superuser=False,
+                                is_staff=False
+                                )         
+                    else :
+                        user = UserModel.objects.get(
+                            username__iexact=username,
+                            region=request.region,
+                            is_superuser=False,
+                            is_staff=False
+                            )
+                except UserModel.DoesNotExist:
+                    raise exceptions.ValidationError({'error':'Invalid Mobile Number'})
+
+                if code2==76 or code2==77 or not user.is_active:
+                    print("user", user, "is not active redirect to wait page")
+                    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                    request.session['user_id'] = user.pk
+                    return redirect('/wait')
+                
+                @notify_when(events=[NotificationTemplate.LOGIN],
+                            is_route=False, is_one_time=False)
+                def notify(user, user_notifications):
+                    """ extra logic if needed """
+                notify(user=user)
+
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+                return redirect('/')
+            else:
+                if code2<100:
+                    code2+=400
+                return Response({'error': response2}, status=code2)
         else:
             if code<100:
                 code+=400
@@ -270,17 +408,18 @@ class AuthViewSet(viewsets.GenericViewSet):
         response, code = verify_pincode(username, otp)
         if code==0:
             response2, code2 = load_data_api(username, "1")  # 1 for wifi
-            if code2==56 or code2==76 or code2==77 or code2==79:  # profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
+            if code2==76 or code2==77 or code2==79:  # here we set subscription to idbundle since user already has subscribed somehow using another mean
+                if response2['idbundle'] == 1:
+                    subscription = 'free'
+                elif response2['idbundle'] == 2:
+                    subscription = 'paid1'
+                elif response2['idbundle'] == 3:
+                    subscription = 'paid2'
+            if code2==56 or code2==76 or code2==77 or code2==79:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
                 if code2==56:  # profile does not exist so we send subscription request
                     response3, code3 = subscribe_api(username, idbundle, idservice)
                 if code2==76 or code2==77 or code2==79 or (code2==56 and code3 ==0): # profile does exist so we create local record based on it
-                    if code2==76 or code2==77 or code2==79:  # here we set subscription to idbundle since user already has subscribed somehow using another mean
-                        if response3['idbundle'] == 1:
-                            subscription = 'free'
-                        elif response3['idbundle'] == 2:
-                            subscription = 'paid1'
-                        elif response3['idbundle'] == 3:
-                            subscription = 'paid2'
+                    
                     if code2==79:
                         is_active=True
                     avatar = Avatar.objects.order_by('?').first()
@@ -318,10 +457,10 @@ class AuthViewSet(viewsets.GenericViewSet):
                     def notify(user, user_notifications):
                         """ extra logic if needed """
                     notify(user=user)
-
+                    
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
-                    return redirect('/')
+                    request.session['user_id'] = user.pk
+                    return redirect('/wait')
                 
                 elif code2==56:
                     if code3<100:
@@ -347,7 +486,7 @@ class UserViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(region=self.request.region)
+        queryset = self.queryset.filter(region=self.request.region,is_staff=False)
         if self.action == 'send_coins':
             if user.is_authenticated:
                 return queryset.exclude(id=user.id)
@@ -374,6 +513,8 @@ class UserViewSet(mixins.ListModelMixin,
             return serializers.FriendSerializer
         elif self.action == 'update_user_substatus':
             return serializers.UpdateSubscriptionSerializer
+        elif self.action == 'remove_user_subscription':
+            return serializers.RemoveSubscriptionSerializer
         return serializers.UserSerializer
 
     @action(['POST'], detail=False, permission_classes=[permissions.IsAuthenticated])
@@ -398,16 +539,75 @@ class UserViewSet(mixins.ListModelMixin,
             user_bp.save()
 
         return Response()
-    
+
+
+    @swagger_auto_schema(responses={
+        200: Schema(type=TYPE_OBJECT,
+        properties={
+           'message': Schema(
+                type=TYPE_STRING, enum=['User subscription has been successfully updated!'],
+                read_only=True,
+                default='User subscription has been successfully updated!'
+           ),
+           'subscription': Schema(
+                type=TYPE_STRING, enum=['free', 'paid1', 'paid2'],
+                read_only=True,
+                default='free'
+           ),
+           'username': Schema(
+                type=TYPE_STRING,
+                read_only=True,
+                default='player1'
+           ),
+           'refmsisdn': Schema(
+                type=TYPE_STRING,
+                read_only=True,
+                default='2345685589245565'
+           ),
+        }), 
+        403: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING, enum=['Request not Allowed!'], read_only=True, default='Request not Allowed!'
+           )
+        }), 
+        400: Schema(type=TYPE_OBJECT,
+        properties={
+           'new_substatus': Schema(
+              type=TYPE_STRING, read_only=True, default='The subscription plan provided is not valid!',
+              enum=['The subscription plan provided is not valid!', 'User already has subscription paid1']
+           ),
+           'refid': Schema(
+              type=TYPE_STRING, read_only=True, default='No referring user with the provided id was found!',
+              enum=['No referring user with the provided id was found!']
+           )
+        }), 
+        474: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING,
+              enum=['Error in creating new user profile!'],
+              read_only=True, default='Error in creating new user profile!'
+           )
+        }), 
+        473: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING,
+              enum=['Error in updating user subscription!'],
+              read_only=True, default='Error in updating user subscription!'
+           )
+        })})
     @action(['POST'], detail=False)  # , permission_classes=[permissions.IsAuthenticated]
-    def update_user_substatus(self, request):
+    def update_user_substatus(self, request): 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         msisdn = serializer.validated_data['msisdn']
+        resp = {}
         try:
             refid = serializer.validated_data['refid']
         except:
-            pass
+            refid = None
         new_substatus = serializer.validated_data['new_substatus']
         
         
@@ -416,24 +616,138 @@ class UserViewSet(mixins.ListModelMixin,
         if not ip.is_private:
             raise exceptions.PermissionDenied('Request not Allowed!')
         userexist = User.objects.filter(mobile=msisdn)
-        if not userexist:
-            raise exceptions.ValidationError({'msisdn':'No user with the provided phone number was found!'})
-        elif userexist.first().subscription==new_substatus:
-            raise exceptions.ValidationError({'msisdn': 'User already has subscription '+ new_substatus})
-        elif new_substatus not in SubscriptionPlan.values:
+        if new_substatus not in SubscriptionPlan.values:
             raise exceptions.ValidationError({'new_substatus':'The subscription plan provided is not valid!'})
+        elif userexist and userexist.first().subscription==new_substatus:
+            raise exceptions.ValidationError({'new_substatus': 'User already has subscription '+ new_substatus})
+        
         else:
             if refid and refid != "":
                 refexist = User.objects.filter(id=refid)
                 if not refexist:
                     raise exceptions.ValidationError({'refid':'No referring user with the provided id was found!'})
-            num = userexist.update(subscription=new_substatus)
-        if num >0:
-            return Response(status=status.HTTP_200_OK)
-        else:
-            raise exceptions.APIException("Error in updating user subscription!")
+            if not userexist:
+                # a subscription is received from operator thus we can create a new profile instead of exception
+                # raise exceptions.ValidationError({'msisdn':'No user with the provided phone number was found!'})
+                avatar = Avatar.objects.order_by('?').first()
+                user, created =  User.objects.get_or_create(
+                        mobile = msisdn,
+                        defaults={
+                            'is_superuser': False,
+                            'first_name': '',
+                            'last_name': '',
+                            'email': '',
+                            'is_active': True,
+                            'is_staff': False,
+                            'subscription': new_substatus,
+                            'date_joined': datetime.now(),
+                            'modified' : datetime.now(),
+                            'newsletter_subscription': True,
+                            'timezone': '',
+                            'country': request.region.code,
+                            'region_id': request.region.id,
+                            'is_billed' : False,
+                            'password': 'pbkdf2_sha256$260000$aMwTW2Wr3K2J2WmodFFd5W$pZUAfNohO77wQbo4oRgMYybD8Vph9HdUSoeWOHkwT9w='
+                        },
+                    )
+                if created:
+                    user.username= 'player'+str(user.id)
+                    user.nickname= 'player'+str(user.id)
+                    
+                    if avatar :
+                        user.avatar = avatar
 
-        
+                    user.save()
+                    resp['message'] = 'Unexisting user profile has been created!'
+                    resp['subscription'] = new_substatus
+                    resp['username'] = user.username
+                    if refid and refid != "" and refexist:
+                        resp['refmsisdn'] = refexist.first().mobile
+                    return Response(resp, status=status.HTTP_200_OK)
+                else:
+                    # raise exceptions.APIException("Error in creating new user profile!")
+                    return Response({'error': 'Error in creating new user profile!'}, status=474)
+                
+            else:
+                num = userexist.update(subscription=new_substatus)
+                if num >0:
+                    resp['message'] = 'User subscription has been successfully updated!'
+                    resp['subscription'] = new_substatus
+                    resp['username'] = userexist.first().username
+                    if refid and refid != "" and refexist:
+                        resp['refmsisdn'] = refexist.first().mobile
+                    return Response(resp, status=status.HTTP_200_OK)
+                else:
+                    # raise exceptions.APIException("Error in updating user subscription!")
+                    return Response({'error': 'Error in updating user subscription!'}, status=473)
+
+    @swagger_auto_schema(responses={
+        200: Schema(type=TYPE_OBJECT,
+        properties={
+           'message': Schema(
+                type=TYPE_STRING, enum=['User subscription has been successfully cancelled!'],
+                read_only=True,
+                default='User subscription has been successfully cancelled!'
+           ),
+           'username': Schema(
+                type=TYPE_STRING,
+                read_only=True,
+                default='player1'
+           ),
+        }), 
+        403: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING, enum=['Request not Allowed!'], read_only=True, default='Request not Allowed!'
+           )
+        }), 
+        400: Schema(type=TYPE_OBJECT,
+        properties={
+           'msisdn': Schema(
+              type=TYPE_STRING, read_only=True, default='No User exists with the number 25465849449949'
+           )
+        }), 
+        474: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING,
+              enum=['User\'s subscription is already cancelled!'],
+              read_only=True, default='User\'s subscription is already cancelled!'
+           )
+        }), 
+        475: Schema(type=TYPE_OBJECT,
+        properties={
+           'error': Schema(
+              type=TYPE_STRING,
+              enum=['Error in cancelling user subscription!'],
+              read_only=True, default='Error in cancelling user subscription!'
+           )
+        })})
+    @action(['POST'], detail=False)  # , permission_classes=[permissions.IsAuthenticated]
+    def remove_user_subscription(self, request): 
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        msisdn = serializer.validated_data['msisdn']
+        resp = {}
+                
+        print(request.META.get('HTTP_X_FORWARDED_FOR'))
+        ip = ip_address(request.META.get('HTTP_X_FORWARDED_FOR').split(",")[0])
+        if not ip.is_private:
+            raise exceptions.PermissionDenied('Request not Allowed!')
+        userexist = User.objects.filter(mobile=msisdn)
+        if not userexist:
+            raise exceptions.ValidationError({'msisdn': 'No User exists with the number '+ msisdn})
+        elif not userexist.first().is_active:
+            return Response({'error': 'User\'s subscription is already cancelled!'}, status=474)
+        else:
+            num = userexist.update(is_active=False, subscription='free')
+            if num >0:
+                resp['message'] = 'User subscription has been successfully cancelled!'
+                resp['username'] = userexist.first().username
+                return Response(resp, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Error in cancelling user subscription!'}, status=475)
+  
 
     @action(['GET'], detail=True)
     def friends(self, request, uid):

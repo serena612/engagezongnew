@@ -102,6 +102,7 @@ $(document).on("submit", ".login-form", function (e) {
         setBtnLoading(btn, false);
         form.hide();
         $(".login-otp-form").show();
+        $(".login-otp-form").find('.input1').focus();
     }).catch(e => {
         if(e.status==472) //406 ?
         response_msg.html('The number you have provided is invalid!').show();
@@ -160,10 +161,11 @@ $(document).on("submit", ".login-otp-form", function (e) {
     }  
     var response_msg = form.find(".response-msg");
     response_msg.hide();
-    if(form_data.data.code!='123456'){
-        response_msg.html('Please enter a valid pincode!').show();
-        return;
-    }
+    // Re-enable this to restore old functiionality
+    // if(form_data.data.code!='123456'){  
+    //     response_msg.html('Please enter a valid pincode!').show();
+    //     return;
+    // }
     response_msg.html('').hide();
     var btn = form.find("button[type=submit]");
     setBtnLoading(btn, true);

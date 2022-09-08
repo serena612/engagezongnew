@@ -2,8 +2,9 @@ from django.db.models import F, Q,Prefetch
 from django.http import HttpResponse, Http404,HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from engage.account.models import User
 from engage.tournament.models import Tournament,TournamentPrize
-
+from django.contrib.auth import login
 
 from engage.core.models import HTML5Game, Event, FeaturedGame, Game
 from engage.core.constants import NotificationTemplate
@@ -53,6 +54,37 @@ def register_view(request):
     else :
        print(request.headers)
        return render(request, 'register.html', {'wifi':True})
+
+def waiting_view(request):
+    # print('user_id' in request.session)
+    if not 'user_id' in request.session or (request.user and request.user.is_active):
+       return redirect('/')
+    else :
+        print(request.headers)
+        # print("user", request.user)
+        user = User.objects.get(pk=request.session['user_id'])
+        return render(request, 'wait.html', {'wifi':True, 'user':user})
+
+def clear_session_view(request):
+    if 'user_id' in request.session:
+        userid = request.session.pop('user_id', None)
+        
+        if 'subscribed' in request.session:
+            subscribed = request.session.pop('subscribed', None)
+            print("subscribed =", subscribed)
+            if subscribed==1:
+                subscription = 'free'
+            elif subscribed==2:
+                subscription = 'paid1'
+            elif subscribed==3:
+                subscription = 'paid2'
+            print('successfully subscribed!')
+            user = User.objects.get(pk=userid)
+            user.is_active=True
+            user.subscription=subscription
+            user.save()
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('/')
 
 def new_register_view(request):
     if request.user and request.user.is_authenticated :

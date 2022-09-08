@@ -1,0 +1,425 @@
+{% extends 'master.html' %}
+{% load i18n %}
+{% load static %}
+{% load humanize %}
+
+{% block javascript %}
+
+
+    <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+    <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/paginate.css' %}">
+    <script src="{% static 'js/paginate.js' %}"></script>
+    <script src="{% static 'js/selectize.min.js' %}" ></script>
+    <link rel="stylesheet" href="{% static 'css/selectize.bootstrap3.min.css' %}"  />
+
+    <script src="{% static 'js/pages/home.js' %}"></script>
+
+    <style>
+        @media (max-width:767px){
+            .sec-1{background-image:url('{{ operator.operatorwebsite.second_section_image.url }}')!important;}
+            .sec-4 img{content: url('{{ ad.ad_file_mobile.url }}');}
+        }
+        .home-btn-main{
+            font-weight: bold;
+            font-style: italic;
+            background: #a4156b;
+        }
+        
+        .title-home{
+            /* text-transform: capitalize;
+            margin-bottom: -10px;
+            color:#eb1ab6; */
+        }
+    </style>
+{% endblock %}
+
+{% block top_section %}
+    <section class="sec-1"
+             style="background-image: url('{{ operator.operatorwebsite.first_section_image.url }}')">
+        <div class="text-container max-page-width">
+            <div class="title-home">
+            {{ operator.operatorwebsite.first_section_description|safe }}
+</div>
+            <a class="btn1 home-btn-main"
+               href="{{ operator.operatorwebsite.first_section_url }}">
+                {{ operator.operatorwebsite.first_section_button_title }}
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <section class="sec-2">
+        <div class="slid-parent max-page-width">
+            {% for section in operator.operatorhomesection_set.all %}
+                <div>
+                    <div class="slid-item">
+                        {% if section.image_link %}
+                        <a href="{{ section.image_link }}"><img src="{{ section.image.url }}" alt=""></a>
+                        {% endif %}
+                        {% if section.title or section.summary %}
+                        <div  class="text-content">
+                            <a href="{{ section.image_link }}">
+                            <p class="t">{{ section.title }}</p>
+                            <p>{{ section.summary }}</p>
+                            {% if section.button_label%}
+                               <div class="small_btn">{{ section.button_label }}</div>
+                            {% endif %}
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% comment %} <a class="close-btn"><i class="fas fa-times"></i></a>
+                        <div class="hidden-content"
+                             style="background-image: url('{{ section.background_image.url }}');">
+                            <div class="bottom">
+                                <a href="{{ section.image_link }}">{% blocktranslate %}Prepare To
+                                    <span>Engage</span> And Truly connect{% endblocktranslate %}</a>
+                            </div>
+                        </div> {% endcomment %}
+                       
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="page-container featured-title"
+             style="text-align: center; margin-top:60px; padding-bottom: 50px">
+        <h1 class='h1_home'>{% translate 'PLAY, WIN AND EARN COINS' %}</h3>     
+        <h3 class='h3_home'>{% translate 'PLAY ANY OF THE FEATURED GAMES' %}</h3>
+        <div class="featured-games-parent"></div>
+        <div class="featured-games max-page-width" id="main-featured-games">
+            {% if user.is_authenticated %}
+                {% for game in featured_games %}
+                    <div class="featured-item">
+                        <a href=""
+                           data-id="{{ game.id }}"
+                           data-link-android="{{ game.android_link }}"
+                           data-link-ios="{{ game.ios_link }}"
+                           data-link-pc="{{ game.pc_link }}" target="_blank">
+                            <img src="{{ game.logo.url }}" alt="">
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for game in featured_games %}
+                    <div class="featured-item">
+                        <a class="featured-game" href="" data-toggle="modal" data-target="#login-modal">
+                            <img src="{{ game.logo.url }}" alt="">
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div> 
+
+
+        {% comment %} <div class="featured-games max-page-width swiper mySwiper" id="desktop-featured-games">
+            <div class="swiper-wrapper">
+                {% if user.is_authenticated %}
+                    {% for game in featured_games %}
+                        <div class="featured-item swiper-slide">
+                            <a href=""
+                            data-id="{{ game.id }}"
+                            data-link-android="{{ game.android_link }}"
+                            data-link-ios="{{ game.ios_link }}"
+                            data-link-pc="{{ game.pc_link }}" target="_blank">
+                                <img src="{{ game.logo.url }}" alt="">
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% for game in featured_games %}
+                        <div class="featured-item swiper-slide">
+                            <a class="featured-game" href="" data-toggle="modal" data-target="#login-modal">
+                                <img src="{{ game.logo.url }}" alt="">
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="swiper-scrollbar"></div>
+        </div> {% endcomment %}
+
+    </section>
+
+    <section class="sec-3" id="sec-3" style='padding-bottom: 9px;'>
+        <div class="page-container">
+            <div id="tournaments" class="row max-page-width">
+                    <div class="title-wrapper c2 with-tabs tabs-container">
+                        <a class="tab-link tour-btn"
+                           data-id="#latest">{% translate 'Tournaments' %}</a>
+                        <a class="tab-link games-btn"  data-id="#html5">{% translate 'Play Games' %}</a>
+                    </div>
+                    <ul class="nav nav-tabs firstTab">
+                        <li class="">
+                            <a onclick="return getTournaments('all', this)" style='padding: 6px;'
+                               class="button-small active all">{% translate 'ALL' %}</a>
+                        </li>
+                        <li class="">
+                            <a onclick="return getTournaments('upcoming', this)"
+                               class="button-small active upcoming">{% translate 'Upcoming' %}</a>
+                        </li>
+                        <li class="">
+                            <a onclick="return getTournaments('ongoing', this)" class="button-small ongoing">Ongoing</a>
+                        </li>
+                        <li style="margin-right: 48px;" class="">
+                            <a onclick="return getTournaments('past', this)"
+                               class="button-small previous">{% translate 'Previous' %}</a>
+                        </li>
+                        <li class='drp_select' onchange='fillTournaments()'>
+                            <select><option value="0">{% translate 'All Games Tournaments' %}</option>
+                                {% for game in games %}
+                                <option value="{{game.id}}">{{game.name}} </option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                        <li style='float:right;color: #fff;'>
+                            <div id="demoB"></div>
+                        </li>
+
+                    </ul>
+                    <ul class="nav nav-tabs secondTab">
+                        
+                        <li class="">
+                            <a onclick="return getHtml5games('premium', this)"
+                               class="button-small active">{% translate 'PREMIUM' %}</a>
+                        </li>
+                        <li class=""  style="border:0;">
+                            <a onclick="return getHtml5games('free', this)"
+                               class="button-small">{% translate 'FREE' %}</a>
+                        </li>
+                    </ul>
+                    <div  id="tournament_dv" style="max-height: 1116px;" class="col-lg-12">
+                        <div class='desktopversion'>
+                            <div class="block_tabs" id="latest"
+                                style="display: none; max-height: calc(100% - 55px);">
+                                <div class="wcontainer" style="max-height: 1080px;">
+                                    <div class="newsbv tournaments-list" id="tournaments-list"
+                                        style="max-height: 1131px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="block_tabs mobileversion" id="latest"
+                          style="display: none;">
+                            <div class="wcontainer">
+                                <div class="newsbv tournaments-list1" id="tournaments-list">
+                                     <div class='package'><div class='list'></div></div>
+                                     <div class='package'><div class='list'></div></div>
+                                     <div class='package'><div class='list'></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                    </div>
+                <div class='row tournament_game_content'>
+                    <div class="col-lg-8" id="games" style="max-height: 1130px;margin-top:12px;">
+                        <div class="block_tabs" id="html5"
+                            style="display: none; height: calc(100% - 70px);">
+                            
+                            <div style="height: 100%;">	
+                                <ul class="tournaments-games-grid" style="height: 100%;overflow-y: scroll;background: #fff;"
+                                    id="html5games-list">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 leaderboards" id='leaderboards'>
+                        <div class="widget-3 widget">
+                            
+
+                            {% comment %}<div class="title-wrapper">
+                                <h3 class="box-title">{% translate 'Winners' %}</h3>
+                                <ul class="min-tabs click-first-a" id="winners-games-list">
+                                    {% for game in games %}
+                                        <li>
+                                            <a href="#{{ game.slug }}"
+                                            onclick="return getWinners('{{ game.slug }}', this)"
+                                            title="{{ game.name }}">{{ game.name }}</a>
+                                            <div class="clear"></div>
+                                            {% if not forloop.last %}
+                                                </li>
+                                                <span style="color: #fff">| </span>
+                                            {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <div class="clear"></div>
+                            </div> <div class="wcontainer s-wcontainer no-padding">
+                                <table>
+                                    <tbody id="winners-list">
+                                    </tbody>
+                                </table>
+                            </div> {% endcomment %}
+
+                        </div>
+
+                        {% comment %} <div class="widget-3 widget">
+                            <div class="title-wrapper">
+
+                                <h3 class="box-title">{% translate 'ENGAGE SOCIAL' %}</h3>
+
+                                <ul class="min-tabs">
+                                    <li class="selected">
+                                        <a href="" title="All">
+                                            <span class="fab fa-twitter"></span>
+                                        </a>
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <a href="" title="All">
+                                            <span class="fab fa-facebook-f"></span>
+                                        </a>
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <a href="" title="All">
+                                            <span class="fab fa-instagram"></span>
+                                        </a>
+                                        <div class="clear"></div>
+                                    </li>
+                                </ul>
+                                <div class="clear"></div>
+                            </div>
+
+                            <div class="wcontainer s-wcontainer no-padding"
+                                style="background-color: white; padding-bottom: 2px">
+                                <ul class="social-list">
+                                    <li>
+                                        <img src="{% static 'img/2-817x320.jpg' %}"
+                                            alt="">
+                                        <div class="content">
+                                            <span class="name">TOPE MUTIAT</span>
+                                            <p>Lorem ipsum dolor sit amet,
+                                                consectetur umquam at nam
+                                                tempora.</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'img/2-817x320.jpg' %}"
+                                            alt="">
+                                        <div class="content">
+                                            <span class="name">OMOLARA OKONKWO</span>
+                                            <p>Lorem ipsum dolor sit amet,
+                                                consectetur umquam at nam
+                                                tempora.</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'img/2-817x320.jpg' %}"
+                                            alt="">
+                                        <div class="content">
+                                            <span class="name">EFE CHIDOZIE</span>
+                                            <p>Lorem ipsum dolor sit amet,
+                                                consectetur umquam at nam
+                                                tempora.</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'img/2-817x320.jpg' %}"
+                                            alt="">
+                                        <div class="content">
+                                            <span class="name">BUCHI AMAECHI</span>
+                                            <p>Lorem ipsum dolor sit amet,
+                                                consectetur umquam at nam
+                                                tempora.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+
+            <section class='sec-3-1'>
+                <div class='row'>
+                    <div class='col col-4 home-winners'> 
+                    <h2 class="winners-title">{% translate 'WINNERS' %}</h2>
+                    <div class="drp_select">
+                        <select class='drp_game'><option value="">{% translate 'Games Tournaments' %} </option>
+                        {% for game in games %}
+                             <option value="{{ game.slug }}">{{game.name}} </option>
+                        {% endfor %}
+                        </select>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+                      <select class='hiddenTournament_select' style='display:none;'>
+                        {% for tournament in previous_tournaments %}
+                        {% if tournament.current_participants > 0 %}
+                          <option value="{{tournament.id}}" date="{{ tournament.modified|date:"d M Y" }} {{tournament.modified|time:"h:i A"}}" label="{{tournament.label_next_time}}"  game="{{tournament.game.slug}}"  gname="{{tournament.name}}" participants="{{tournament.current_participants}}/{{tournament.max_participants}}"> {{tournament.name}} </font></option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <div class="drp_select"><select class='drp_tournament' placeholder="Search for a tournament here" >
+                        {% for tournament in previous_tournaments %}
+                            {% if tournament.current_participants > 0 %}
+                              <option value="{{tournament.id}}" date="{{ tournament.modified|date:"d M Y" }} {{tournament.modified|time:"h:i A"}}" label="{{tournament.label_next_time}}" game="{{tournament.game.slug}}"  gname="{{tournament.name}}" participants="{{tournament.current_participants}}/{{tournament.max_participants}}"> {{tournament.name}} </font></option>
+                            {% endif %}
+                        {% endfor %}</select>
+                        <i class='fas fa-angle-down'></i>
+                    </div>
+                    <div class='date winners-date'><div class='winners-date-updated'>{% translate 'Last Updated:' %} </div> <span></span></div>
+                    </div>
+                    <div class='col col-8 home-winners-results'>
+                        <h2 class='home-winners-results-title'></h2>
+                        <div class='container'>
+                            <div class='scroll_wrapper'>
+                                <div class='package'>
+                                    
+                                </div>
+                                <div class='package'>
+                                  
+                                </div>   
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+    </section>
+  
+    <section class="sec-4">
+        <div>
+            
+                {% if ad.ad_type == 'image' %}
+                    <img src="{{ ad.ad_file.url }}" alt="{{ ad.ad_file.name }}">
+                {% elif ad.ad_type == 'video' %}
+                    <video controls="controls">
+                        <source src="{{ ad.ad_file.url }}" type="video/mp4"/>
+                    </video>
+                {% else %}
+                    <span>{% translate 'Ad Image/Video Here' %}</span>
+                {% endif %}
+           
+        </div>
+    </section>
+
+    <section class="sec-5">
+        <div class="layer"></div>
+        <div class="rx_isotope_ui max-page-width">
+            <ul class="isotopeMenu">
+                <li class="active"><a href="*">{% translate 'ALL' %}</a><span></span></li>
+                <li><a href=".show">{% translate 'SHOWS' %}</a><span></span></li>
+                <li><a href=".affiliate">{% translate 'AFFILIATES' %}</a><span></span></li>
+                <li><a href=".event">{% translate 'EVENTS' %}</a></li>
+            </ul>
+            <div class="grid-gal">
+                <div class="grid-sizer"></div>
+                {% for event in events %}
+                    <div class="grid-item {{ event.event_type }}">
+                        <img class="isotopeThumb"
+                             src="{{ event.image.url }}"
+                             alt="{{ event.title }}"/>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

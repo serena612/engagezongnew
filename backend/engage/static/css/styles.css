@@ -5670,6 +5670,24 @@ font-size: 1.75rem;
     
   #tournaments-list .bar{display:none;}
   .sec-3-1  .win{position: relative;font-size: 1.1rem;} 
+  .sec-3-1  .win .name4{    
+    display: inline-block;
+    position: relative;
+    
+    height: 46px;
+    margin-bottom: 22px;
+    width: 71%;
+    margin-left: 21px;
+    text-transform: uppercase;} 
+  .sec-3-1  .win .position4{    
+    width: 36px;
+    display:inline-block;
+    position: relative;
+    
+    height: 47px;
+    margin-bottom: 22px;
+    font-size:14px;
+    line-height: 30px;}     
   .sec-3-1  .win .position{    
     width: 36px;display:inline-block;
     position: relative;

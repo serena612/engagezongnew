@@ -121,6 +121,16 @@ class UpdateSubscriptionSerializer(serializers.Serializer):
         return attrs
 
 
+class RemoveSubscriptionSerializer(serializers.Serializer):
+    msisdn = serializers.CharField()
+    # refid = serializers.CharField(required=False)
+    # new_substatus = serializers.ChoiceField(choices=SubscriptionPlan.choices)
+
+    def validate(self, attrs):
+        msisdn = attrs.get('msisdn')
+        return attrs
+
+
 class UserGamePlayedSerializer(serializers.ModelSerializer):
     game = HTML5GameSerializer()
 

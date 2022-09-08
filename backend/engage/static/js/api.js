@@ -1222,6 +1222,10 @@ function getWinners(game, tournament) {
                 if(counter==1 || counter == 5 || counter == 9 || counter == 13){
                     html +=`<div class='package'>`;
                 }
+                if(counter%4 ==0 ){
+                    html +=`<div class='win'><div class='position4'>${getNumberWithOrdinal(counter)} </div><div class='name4'>${item.winner_name}</div></div>`; 
+
+                }
                 html +=`<div class='win'><div class='position'>${getNumberWithOrdinal(counter)} </div><div class='name'>${item.winner_name}</div> </div>`;
                 if(counter%4 ==0 || counter==value.length){
                     html +=`</div>`;
