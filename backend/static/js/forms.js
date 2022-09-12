@@ -169,7 +169,7 @@ $(document).on("submit", ".login-otp-form", function (e) {
     setBtnLoading(btn, true);
 
     postLoginOTP(form_data.data).then(res => {
-        console.log(res);
+        //console.log(res);
         $('.login-form').trigger("reset");
         setBtnLoading(btn, false);
     }).catch(e => {

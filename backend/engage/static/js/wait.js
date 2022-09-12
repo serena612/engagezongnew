@@ -12,7 +12,6 @@ function CheckStatus(data) {
             data: {
                 msisdn: data.msisdn,
                 idnetwork: data.idnetwork
-                //csrfmiddlewaretoken: '{{ csrf_token }}' //data.csrfmiddlewaretoken
             },
             error: function (value) {
                 reject(value);
@@ -26,7 +25,7 @@ function CheckStatus(data) {
 
 function keepUpdated() {
     times += 1;
-    console.log("times = "+times);
+    // console.log("times = "+times);
     if (times>50)
         return;
     // console.log("Updating using token "+xtoken);
