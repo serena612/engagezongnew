@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='utf-8' ?>
+			
+	<root>
+
+		<questao>
+			<pergunta>Grand Central Terminal, Park Avenue, New York is the world's</pergunta>
+			<alternativa1>Largest railway station</alternativa1>
+			<alternativa2>Highest railway station</alternativa2>
+			<alternativa3>Longest railway station</alternativa3>
+			<alternativa4>None of the above</alternativa4>
+			<resposta>Largest railway station</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Entomology is the science that studies</pergunta>
+			<alternativa1>Behavior of human beings</alternativa1>
+			<alternativa2>Insects</alternativa2>
+			<alternativa3>The origin and history of technical and scientific terms</alternativa3>
+			<alternativa4>The formation of rocks</alternativa4>
+			<resposta>Insects</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Eritrea, which became the 182nd member of the UN in 1993, is in the continent of</pergunta>
+			<alternativa1>Asia</alternativa1>
+			<alternativa2>Africa</alternativa2>
+			<alternativa3>Europe</alternativa3>
+			<alternativa4>Australia</alternativa4>
+			<resposta>Africa</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Garampani sanctuary is located at</pergunta>
+			<alternativa1>Junagarh, Gujarat</alternativa1>
+			<alternativa2>Diphu, Assam</alternativa2>
+			<alternativa3>Kohima, Nagaland</alternativa3>
+			<alternativa4>Gangtok, Sikkim</alternativa4>
+			<resposta>Diphu, Assam</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>For which of the following disciplines is Nobel Prize awarded?</pergunta>
+			<alternativa1>Physics and Chemistry</alternativa1>
+			<alternativa2>Physiology or Medicine</alternativa2>
+			<alternativa3>Literature, Peace and Economics</alternativa3>
+			<alternativa4>All of the above</alternativa4>
+			<resposta>All of the above</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>Hitler party which came into power in 1933 is known as</pergunta>
+			<alternativa1>Labour Party</alternativa1>
+			<alternativa2>Nazi Party</alternativa2>
+			<alternativa3>Ku-Klux-Klan</alternativa3>
+			<alternativa4>Democratic Party</alternativa4>
+			<resposta>Nazi Party</resposta>
+		</questao>
+				
+		<questao>
+			<pergunta>Galileo was an Italian astronomer who</pergunta>
+			<alternativa1>Developed the telescope</alternativa1>
+			<alternativa2>Discovered four satellites of Jupiter</alternativa2>
+			<alternativa3>Discovered that the movement of pendulum produces a regular time measurement</alternativa3>
+			<alternativa4>All of the above</alternativa4>
+			<resposta>All of the above</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Federation Cup, World Cup, Allywyn International Trophy and Challenge Cup are awarded to winners of</pergunta>
+			<alternativa1>Tennis</alternativa1>
+			<alternativa2>Volleyball</alternativa2>
+			<alternativa3>Basketball</alternativa3>
+			<alternativa4>Cricket</alternativa4>
+			<resposta>Volleyball</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>Friction can be reduced by changing from</pergunta>
+			<alternativa1>Sliding to rolling</alternativa1>
+			<alternativa2>Rolling to sliding</alternativa2>
+			<alternativa3>Potential energy to kinetic energy</alternativa3>
+			<alternativa4>Dynamic to static</alternativa4>
+			<resposta>Sliding to rolling</resposta>
+		</questao>	
+
+		<questao>
+			<pergunta>Fire temple is the place of worship of which of the following religion?</pergunta>
+			<alternativa1>Taoism</alternativa1>
+			<alternativa2>Judaism</alternativa2>
+			<alternativa3>Zoroastrianism (Parsi Religion)</alternativa3>
+			<alternativa4>Shintoism</alternativa4>
+			<resposta>Zoroastrianism (Parsi Religion)</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>World Tourism Day is celebrated on</pergunta>
+			<alternativa1>September 12</alternativa1>
+			<alternativa2>September 25</alternativa2>
+			<alternativa3>September 27</alternativa3>
+			<alternativa4>September 29</alternativa4>
+			<resposta>September 27</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>What is the world's most populated country?</pergunta>
+			<alternativa1>Russia</alternativa1>
+			<alternativa2>Usa</alternativa2>
+			<alternativa3>India</alternativa3>
+			<alternativa4>China</alternativa4>
+			<resposta>China</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Which Italian city has a leaning tower?</pergunta>
+			<alternativa1>Milan</alternativa1>
+			<alternativa2>Pisa</alternativa2>
+			<alternativa3>Rome</alternativa3>
+			<alternativa4>Turin</alternativa4>
+			<resposta>Pisa</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>The Gateshead Millennium Bridge connects Gateshead to which English city?</pergunta>
+			<alternativa1>Middlesborough</alternativa1>
+			<alternativa2>Sunderland</alternativa2>
+			<alternativa3>Tyne</alternativa3>
+			<alternativa4>Thames</alternativa4>
+			<resposta>Tyne</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>How many edges does a cube have?</pergunta>
+			<alternativa1>6</alternativa1>
+			<alternativa2>8</alternativa2>
+			<alternativa3>10</alternativa3>
+			<alternativa4>12</alternativa4>
+			<resposta>12</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>Which two parts of your body never stop growing?</pergunta>
+			<alternativa1>Ears and nose</alternativa1>
+			<alternativa2>Ears and chin</alternativa2>
+			<alternativa3>Fingers and toes</alternativa3>
+			<alternativa4>Knees and nose</alternativa4>
+			<resposta>Ears and nose</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>Who invented the television?</pergunta>
+			<alternativa1>Masaru Ibuka</alternativa1>
+			<alternativa2>John Logie Baird</alternativa2>
+			<alternativa3>Nate Flicks</alternativa3>
+			<alternativa4>Albert Einstein</alternativa4>
+			<resposta>John Logie Baird</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Which country gave The Statue of Liberty to the United States as a gift?</pergunta>
+			<alternativa1>Canada</alternativa1>
+			<alternativa2>England</alternativa2>
+			<alternativa3>France</alternativa3>
+			<alternativa4>Brazil</alternativa4>
+			<resposta>France</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Which metal makes the strongest magnets?</pergunta>
+			<alternativa1>Iron</alternativa1>
+			<alternativa2>Brass</alternativa2>
+			<alternativa3>Copper</alternativa3>
+			<alternativa4>Stainless Steel</alternativa4>
+			<resposta>Iron</resposta>
+		</questao>
+				
+		<questao>
+			<pergunta>Which of the following is probably the most widely used English word throughout the world?</pergunta>
+			<alternativa1>Movie</alternativa1>
+			<alternativa2>Dollar</alternativa2>
+			<alternativa3>Internet</alternativa3>
+			<alternativa4>Okay</alternativa4>
+			<resposta>Okay</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>What is the birth name of Michael Keaton?</pergunta>
+			<alternativa1>Michael Douglas</alternativa1>
+			<alternativa2>Michael Fox</alternativa2>
+			<alternativa3>Michael Richards</alternativa3>
+			<alternativa4>Michael Kane</alternativa4>
+			<resposta>Michael Douglas</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>In 1453, which important city fell?</pergunta>
+			<alternativa1>Constantinople</alternativa1>
+			<alternativa2>Rome</alternativa2>
+			<alternativa3>Hamburg</alternativa3>
+			<alternativa4>Athens</alternativa4>
+			<resposta>Constantinople</resposta>
+		</questao>
+		
+		<questao>
+			<pergunta>Who is Batman?</pergunta>
+			<alternativa1>Tony Stark</alternativa1>
+			<alternativa2>Barry Allen</alternativa2>
+			<alternativa3>Clark Kent</alternativa3>
+			<alternativa4>Bruce Wayne</alternativa4>
+			<resposta>Bruce Wayne</resposta>
+		</questao>
+				
+		<questao>
+			<pergunta>How many planets are in our Solar System?</pergunta>
+			<alternativa1>Eight</alternativa1>
+			<alternativa2>Nine</alternativa2>
+			<alternativa3>Seven</alternativa3>
+			<alternativa4>Ten</alternativa4>
+			<resposta>Eight</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Jaguar Cars was previously owned by which car manfacturer?</pergunta>
+			<alternativa1>Fiat</alternativa1>
+			<alternativa2>General Motors</alternativa2>
+			<alternativa3>Ford</alternativa3>
+			<alternativa4>Chrysler</alternativa4>
+			<resposta>Ford</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Lanky, Funky, and Chunky are all characters featured in which series owned by Nintendo?</pergunta>
+			<alternativa1>Mario</alternativa1>
+			<alternativa2>Kirby</alternativa2>
+			<alternativa3>Donkey Kong</alternativa3>
+			<alternativa4>Zelda</alternativa4>
+			<resposta>Donkey Kong</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Which is NOT a book in the Harry Potter Series?</pergunta>
+			<alternativa1>The Chamber of Secrets</alternativa1>
+			<alternativa2>The House Elf</alternativa2>
+			<alternativa3>The Prisoner of Azkaban</alternativa3>
+			<alternativa4>The Deathly Hallows</alternativa4>
+			<resposta>The House Elf</resposta>
+		</questao>
+
+		<questao>
+			<pergunta>Dry ice is the solid form of what substance?</pergunta>
+			<alternativa1>Oxygen</alternativa1>
+			<alternativa2>Ammonia</alternativa2>
+			<alternativa3>Carbon dioxide</alternativa3>
+			<alternativa4>Nitrogen</alternativa4>
+			<resposta>Carbon dioxide</resposta>
+		</questao>	
+			
+		<questao>
+			<pergunta>Area 51 is located in which US state?</pergunta>
+			<alternativa1>Arizona</alternativa1>
+			<alternativa2>Nevada</alternativa2>
+			<alternativa3>New Mexico</alternativa3>
+			<alternativa4>Utah</alternativa4>
+			<resposta>Nevada</resposta>
+		</questao>	
+
+		<questao>
+			<pergunta>Which of these colours is NOT featured in the logo for Google?</pergunta>
+			<alternativa1>Pink</alternativa1>
+			<alternativa2>Yellow</alternativa2>
+			<alternativa3>Blue</alternativa3>
+			<alternativa4>Green</alternativa4>
+			<resposta>Pink</resposta>
+		</questao>
+
+	</root>
+

@@ -1,0 +1,1010 @@
+{
+    "c2array": true,
+    "size": [
+        50,
+        6,
+        1
+    ],
+    "data": [
+        [
+            [
+                "World Tourism Day is celebrated on"
+            ],
+            [
+                "September 12"
+            ],
+            [
+                "September 25"
+            ],
+            [
+                "September 27"
+            ],
+            [
+                "September 29"
+            ],
+            [
+                "September 27"
+            ]
+        ],
+        [
+            [
+                "What is the world's most populated country?"
+            ],
+            [
+                "Russia"
+            ],
+            [
+                "Usa"
+            ],
+            [
+                "India"
+            ],
+            [
+                "China"
+            ],
+            [
+                "China"
+            ]
+        ],
+        [
+            [
+                "Which Italian city has a leaning tower?"
+            ],
+            [
+                "Milan"
+            ],
+            [
+                "Pisa"
+            ],
+            [
+                "Rome"
+            ],
+            [
+                "Turin"
+            ],
+            [
+                "Pisa"
+            ]
+        ],
+        [
+            [
+                "The Gateshead Millennium Bridge connects Gateshead to which English city?"
+            ],
+            [
+                "Middlesborough"
+            ],
+            [
+                "Sunderland"
+            ],
+            [
+                "Tyne"
+            ],
+            [
+                "Thames"
+            ],
+            [
+                "Tyne"
+            ]
+        ],
+        [
+            [
+                "How many edges does a cube have?"
+            ],
+            [
+                6
+            ],
+            [
+                8
+            ],
+            [
+                10
+            ],
+            [
+                12
+            ],
+            [
+                12
+            ]
+        ],
+        [
+            [
+                "What colour is a Himalayan poppy?"
+            ],
+            [
+                "Red"
+            ],
+            [
+                "Blue"
+            ],
+            [
+                "Yellow"
+            ],
+            [
+                "White"
+            ],
+            [
+                "Blue"
+            ]
+        ],
+        [
+            [
+                "Which two parts of your body never stop growing?"
+            ],
+            [
+                "Ears and nose"
+            ],
+            [
+                "Ears and chin"
+            ],
+            [
+                "Fingers and toes"
+            ],
+            [
+                "Knees and nose"
+            ],
+            [
+                "Ears and nose"
+            ]
+        ],
+        [
+            [
+                "Who invented the television?"
+            ],
+            [
+                "Masaru Ibuka"
+            ],
+            [
+                "John Logie Baird"
+            ],
+            [
+                "Nate Flicks"
+            ],
+            [
+                "Albert Einstein"
+            ],
+            [
+                "John Logie Baird"
+            ]
+        ],
+        [
+            [
+                "Which country gave The Statue of Liberty to the United States as a gift?"
+            ],
+            [
+                "Canada"
+            ],
+            [
+                "England"
+            ],
+            [
+                "France"
+            ],
+            [
+                "Brazil"
+            ],
+            [
+                "France"
+            ]
+        ],
+        [
+            [
+                "Which metal makes the strongest magnets?"
+            ],
+            [
+                "Iron"
+            ],
+            [
+                "Brass"
+            ],
+            [
+                "Copper"
+            ],
+            [
+                "Stainless Steel"
+            ],
+            [
+                "Iron"
+            ]
+        ],
+        [
+            [
+                "Which of the following is probably the most widely used English word throughout the world?"
+            ],
+            [
+                "Movie"
+            ],
+            [
+                "Dollar"
+            ],
+            [
+                "Internet"
+            ],
+            [
+                "Okay"
+            ],
+            [
+                "Okay"
+            ]
+        ],
+        [
+            [
+                "What is the birth name of Michael Keaton?"
+            ],
+            [
+                "Michael Douglas"
+            ],
+            [
+                "Michael Fox"
+            ],
+            [
+                "Michael Richards"
+            ],
+            [
+                "Michael Kane"
+            ],
+            [
+                "Michael Douglas"
+            ]
+        ],
+        [
+            [
+                "In 1453, which important city fell?"
+            ],
+            [
+                "Constantinople"
+            ],
+            [
+                "Rome"
+            ],
+            [
+                "Hamburg"
+            ],
+            [
+                "Athens"
+            ],
+            [
+                "Constantinople"
+            ]
+        ],
+        [
+            [
+                "Who is Batman?"
+            ],
+            [
+                "Tony Stark"
+            ],
+            [
+                "Barry Allen"
+            ],
+            [
+                "Clark Kent"
+            ],
+            [
+                "Bruce Wayne"
+            ],
+            [
+                "Bruce Wayne"
+            ]
+        ],
+        [
+            [
+                "Which popular First Person Shooter (FPS) franchise, got a Real Time Strategy (RTS) game developed based on its universe?"
+            ],
+            [
+                "Halo"
+            ],
+            [
+                "Battlefield"
+            ],
+            [
+                "Call of Duty"
+            ],
+            [
+                "Borderlands"
+            ],
+            [
+                "Halo"
+            ]
+        ],
+        [
+            [
+                "In past times, what would a gentleman keep in his fob pocket?"
+            ],
+            [
+                "Watch"
+            ],
+            [
+                "Money"
+            ],
+            [
+                "Keys"
+            ],
+            [
+                "Notebook"
+            ],
+            [
+                "Watch"
+            ]
+        ],
+        [
+            [
+                "Who is the lead singer of Pearl Jam?"
+            ],
+            [
+                "Eddie Vedder"
+            ],
+            [
+                "Ozzy Osbourne"
+            ],
+            [
+                "Stone Gossard"
+            ],
+            [
+                "Kurt Cobain"
+            ],
+            [
+                "Eddie Vedder"
+            ]
+        ],
+        [
+            [
+                "How many planets are in our Solar System?"
+            ],
+            [
+                "Eight"
+            ],
+            [
+                "Nine"
+            ],
+            [
+                "Seven"
+            ],
+            [
+                "Ten"
+            ],
+            [
+                "Eight"
+            ]
+        ],
+        [
+            [
+                "Jaguar Cars was previously owned by which car manfacturer?"
+            ],
+            [
+                "Fiat"
+            ],
+            [
+                "General Motors"
+            ],
+            [
+                "Ford"
+            ],
+            [
+                "Chrysler"
+            ],
+            [
+                "Ford"
+            ]
+        ],
+        [
+            [
+                "Who was the King of Gods in Ancient Greek mythology?"
+            ],
+            [
+                "Zeus"
+            ],
+            [
+                "Apollo"
+            ],
+            [
+                "Hermes"
+            ],
+            [
+                "Poseidon"
+            ],
+            [
+                "Zeus"
+            ]
+        ],
+        [
+            [
+                "Who plays Alice in the Resident Evil movies?"
+            ],
+            [
+                "Milla Jovovich"
+            ],
+            [
+                "Madison Derpe"
+            ],
+            [
+                "Milla Johnson"
+            ],
+            [
+                "Kim Demp"
+            ],
+            [
+                "Milla Jovovich"
+            ]
+        ],
+        [
+            [
+                "Which Nirvana album had a naked baby on the cover?"
+            ],
+            [
+                "Incesticide"
+            ],
+            [
+                "Bleach"
+            ],
+            [
+                "In Utero"
+            ],
+            [
+                "Nevermind"
+            ],
+            [
+                "Nevermind"
+            ]
+        ],
+        [
+            [
+                "Who was the first prime minister of Canada?"
+            ],
+            [
+                "John Macdonald"
+            ],
+            [
+                "John Abbott"
+            ],
+            [
+                "Alexander Mackenzie"
+            ],
+            [
+                "Robert Borden"
+            ],
+            [
+                "John Macdonald"
+            ]
+        ],
+        [
+            [
+                "Which Teenage Mutant Ninja Turtle traditionally wears an orange bandana?"
+            ],
+            [
+                "Leonardo"
+            ],
+            [
+                "Michelangelo"
+            ],
+            [
+                "Raphael"
+            ],
+            [
+                "Donatello"
+            ],
+            [
+                "Michelangelo"
+            ]
+        ],
+        [
+            [
+                "How many sides does a heptagon have?"
+            ],
+            [
+                17
+            ],
+            [
+                5
+            ],
+            [
+                7
+            ],
+            [
+                10
+            ],
+            [
+                7
+            ]
+        ],
+        [
+            [
+                "Lanky, Funky, and Chunky are all characters featured in which series owned by Nintendo?"
+            ],
+            [
+                "Mario"
+            ],
+            [
+                "Kirby"
+            ],
+            [
+                "Donkey Kong"
+            ],
+            [
+                "Zelda"
+            ],
+            [
+                "Donkey Kong"
+            ]
+        ],
+        [
+            [
+                "Which is NOT a book in the Harry Potter Series?"
+            ],
+            [
+                "The Chamber of Secrets"
+            ],
+            [
+                "The House Elf"
+            ],
+            [
+                "The Prisoner of Azkaban"
+            ],
+            [
+                "The Deathly Hallows"
+            ],
+            [
+                "The House Elf"
+            ]
+        ],
+        [
+            [
+                "What is the speed of light in a vacuum?"
+            ],
+            [
+                "299,792,458 m/s"
+            ],
+            [
+                "50,461 m/s"
+            ],
+            [
+                "308,215,043 m/s"
+            ],
+            [
+                "751,665,014,151 m/s"
+            ],
+            [
+                "299,792,458 m/s"
+            ]
+        ],
+        [
+            [
+                "The Canadian $1 coin is colloquially known as a what?"
+            ],
+            [
+                "Moodie"
+            ],
+            [
+                "Foolie"
+            ],
+            [
+                "Boolie"
+            ],
+            [
+                "Loonie"
+            ],
+            [
+                "Loonie"
+            ]
+        ],
+        [
+            [
+                "Dry ice is the solid form of what substance?"
+            ],
+            [
+                "Oxygen"
+            ],
+            [
+                "Ammonia"
+            ],
+            [
+                "Carbon dioxide"
+            ],
+            [
+                "Nitrogen"
+            ],
+            [
+                "Carbon dioxide"
+            ]
+        ],
+        [
+            [
+                "Which best selling toy of 1983 caused hysteria, resulting in riots breaking out in stores?"
+            ],
+            [
+                "Rubik Cube"
+            ],
+            [
+                "Care Bears"
+            ],
+            [
+                "Cabbage Patch Kids"
+            ],
+            [
+                "Transformers"
+            ],
+            [
+                "Cabbage Patch Kids"
+            ]
+        ],
+        [
+            [
+                "Area 51 is located in which US state?"
+            ],
+            [
+                "Arizona"
+            ],
+            [
+                "Nevada"
+            ],
+            [
+                "New Mexico"
+            ],
+            [
+                "Utah"
+            ],
+            [
+                "Nevada"
+            ]
+        ],
+        [
+            [
+                "Red Vines is a brand of what type of candy?"
+            ],
+            [
+                "Licorice"
+            ],
+            [
+                "Lollipop"
+            ],
+            [
+                "Chocolate"
+            ],
+            [
+                "Bubblegum"
+            ],
+            [
+                "Licorice"
+            ]
+        ],
+        [
+            [
+                "Which of these colours is NOT featured in the logo for Google?"
+            ],
+            [
+                "Pink"
+            ],
+            [
+                "Yellow"
+            ],
+            [
+                "Blue"
+            ],
+            [
+                "Green"
+            ],
+            [
+                "Pink"
+            ]
+        ],
+        [
+            [
+                "Who is depicted on the US hundred dollar bill?"
+            ],
+            [
+                "George Washington"
+            ],
+            [
+                "Abraham Lincoln"
+            ],
+            [
+                "Benjamin Franklin"
+            ],
+            [
+                "Thomas Jefferson"
+            ],
+            [
+                "Benjamin Franklin"
+            ]
+        ],
+        [
+            [
+                "Which one of these is not a typical European sword design?"
+            ],
+            [
+                "Flamberge"
+            ],
+            [
+                "Ulfberht"
+            ],
+            [
+                "Scimitar"
+            ],
+            [
+                "Falchion"
+            ],
+            [
+                "Scimitar"
+            ]
+        ],
+        [
+            [
+                "Which of the following card games revolves around numbers and basic math?"
+            ],
+            [
+                "Munchkin"
+            ],
+            [
+                "Uno"
+            ],
+            [
+                "Twister"
+            ],
+            [
+                "Go Fish"
+            ],
+            [
+                "Uno"
+            ]
+        ],
+        [
+            [
+                "What does a milliner make and sell?"
+            ],
+            [
+                "Belts"
+            ],
+            [
+                "Shirts"
+            ],
+            [
+                "Hats"
+            ],
+            [
+                "Shoes"
+            ],
+            [
+                "Hats"
+            ]
+        ],
+        [
+            [
+                "In the Morse code, which letter is indicated by 3 dots?"
+            ],
+            [
+                "O"
+            ],
+            [
+                "S"
+            ],
+            [
+                "A"
+            ],
+            [
+                "C"
+            ],
+            [
+                "S"
+            ]
+        ],
+        [
+            [
+                "Which of the following countries is within the Eurozone but outside of the Schengen Area?"
+            ],
+            [
+                "Portugal"
+            ],
+            [
+                "Greece"
+            ],
+            [
+                "Malta"
+            ],
+            [
+                "Cyprus"
+            ],
+            [
+                "Cyprus"
+            ]
+        ],
+        [
+            [
+                "The land of Gotland is located in which European country?"
+            ],
+            [
+                "Sweden"
+            ],
+            [
+                "Denmark"
+            ],
+            [
+                "Norway"
+            ],
+            [
+                "Germany"
+            ],
+            [
+                "Sweden"
+            ]
+        ],
+        [
+            [
+                "Enzo Ferrari was originally an auto racer for what manufacturer before founding his own car company?"
+            ],
+            [
+                "Mercedes Benz"
+            ],
+            [
+                "Auto Union"
+            ],
+            [
+                "Alfa Romeo"
+            ],
+            [
+                "Bentley"
+            ],
+            [
+                "Alfa Romeo"
+            ]
+        ],
+        [
+            [
+                "The collapse of the Soviet Union took place in which year?"
+            ],
+            [
+                1956
+            ],
+            [
+                1980
+            ],
+            [
+                1991
+            ],
+            [
+                1992
+            ],
+            [
+                1991
+            ]
+        ],
+        [
+            [
+                "In DuckTales, what is the name of the city where all the main characters live?"
+            ],
+            [
+                "Wingford"
+            ],
+            [
+                "Tailspin"
+            ],
+            [
+                "Duckburg"
+            ],
+            [
+                "Duckwing"
+            ],
+            [
+                "Duckburg"
+            ]
+        ],
+        [
+            [
+                "What is the name of the process that sends one qubit of information using two bits of classical information?"
+            ],
+            [
+                "Quantum Programming"
+            ],
+            [
+                "Quantum Entanglement"
+            ],
+            [
+                "Super Dense Coding"
+            ],
+            [
+                "Quantum Teleportation"
+            ],
+            [
+                "Quantum Teleportation"
+            ]
+        ],
+        [
+            [
+                "When was Left 4 Dead 2 released?"
+            ],
+            [
+                "November 17, 2009"
+            ],
+            [
+                "June 30, 2010"
+            ],
+            [
+                "November 30, 2009"
+            ],
+            [
+                "May 3, 2008"
+            ],
+            [
+                "November 17, 2009"
+            ]
+        ],
+        [
+            [
+                "What year was the RoboSapien toy robot released?"
+            ],
+            [
+                1999
+            ],
+            [
+                2000
+            ],
+            [
+                2003
+            ],
+            [
+                2004
+            ],
+            [
+                2004
+            ]
+        ],
+        [
+            [
+                "Broome is a town in which state of Australia?"
+            ],
+            [
+                "Western Australia"
+            ],
+            [
+                "Northern Territory"
+            ],
+            [
+                "Tasmania"
+            ],
+            [
+                "South Australia"
+            ],
+            [
+                "Western Australia"
+            ]
+        ],
+        [
+            [
+                "What was the code name for the German invasion of the Soviet Union in WW2?"
+            ],
+            [
+                "Operation Molotov"
+            ],
+            [
+                "Operation Unthinkable"
+            ],
+            [
+                "Operation Barbarossa"
+            ],
+            [
+                "Operation Kaiserschlact"
+            ],
+            [
+                "Operation Barbarossa"
+            ]
+        ],
+        [
+            [
+                "What mainly favored rifle is used by the Terrorists in Counter Strike: Global Offensive?"
+            ],
+            [
+                "M4A4"
+            ],
+            [
+                "AK-47"
+            ],
+            [
+                "AK-74"
+            ],
+            [
+                "CZ-75 AUTO"
+            ],
+            [
+                "AK-47"
+            ]
+        ]
+    ]
+}

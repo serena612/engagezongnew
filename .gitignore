@@ -1,0 +1,6 @@
+redis-data
+psql-data
+metabase-data
+.idea
+.env
+.DS_Store

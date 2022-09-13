@@ -1,0 +1,312 @@
+{% extends 'admin/base.html' %}
+{% load i18n static jet_tags %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        #branding-pin, #branding-menu, .bookmarks-list,
+        .breadcrumbs > span:nth-child(2), .breadcrumbs > a:nth-child(3),
+        .sidebar-section.last, .sidebar-section.last.sidebar-title,
+        .dashboard-item-header-buttons {
+            display: none;
+        }
+       #backend-notifications{
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;}
+        .modal-dialog {
+            max-width: 500px;
+            margin: 91px auto;
+        }
+        .modal-content {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid rgba(0,0,0,.2);
+            border-radius: 0.3rem;
+            outline: 0;
+        }
+        .modal-header {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: start;
+            align-items: flex-start;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            padding: 1rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+            border-top-left-radius: calc(0.3rem - 1px);
+            border-top-right-radius: calc(0.3rem - 1px);
+        }
+        .modal-body {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 1rem;
+        }
+        .modal-title {
+            margin-bottom: 0;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+        .inline-related > h3 > .inline_label, .inline-related > h3 > b {
+            display: none !important;
+        }
+
+        #add-dashboard-module-form {
+            visibility: hidden;
+        }
+
+        .reset-dashboard-link {
+            visibility: visible;
+        }
+
+        .data-icon {
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .section-martor > .segment.active {
+            padding: 0;
+        }
+
+        .status .panel-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 72px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 45px;
+            padding-top: 20px;
+            letter-spacing: -0.8px;
+        }
+
+        .table-widget {
+            overflow-x: hidden;
+            min-height: 200px;
+        }
+
+        .table-widget > [class*="col-"]:nth-child(n + 2):after {
+            content: "";
+            background-color: black;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+
+        .table-widget .error-icon {
+            padding: 8px 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+            border: 1px solid;
+            font-weight: bold;
+            font-size: 20px
+        }
+    </style>
+
+    <link rel="stylesheet"
+          href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+         
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-messaging.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    <!-- <script type="application/javascript"
+    src="{% static 'libs/bs4/bootstrap.min.js' %}"></script> -->
+   
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script> -->
+    <script type="application/javascript"
+    src="{% static 'libs/bs4/bootstrap.bundle-4.5.2.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.file-upload a').on('click', function (e) {
+                e.preventDefault();
+                var image = $(this).attr('href');
+                $('#imagepreview').attr('src', image);
+                $('#imagemodal').dialog({
+                    modal: true,
+                    width: "auto",
+                    height: "auto",
+                    open: function (event, ui) {
+                        $('.ui-widget-overlay').bind('click', function () {
+                            $("#imagemodal").dialog('close');
+                        });
+                    }
+                });
+            });
+            if($('#id_video').length!=0)
+            document.getElementById("id_video").accept = "video/*";
+
+           $('.submit-row').find('input[name="_save"],input[name="_addanother"],input[name="_continue"]').click(function(){
+               $(this).css('pointer-events','none');
+               setTimeout(function(){$(this).css('pointer-events','auto');},4000)
+           })
+        
+
+           $(".a_start").click(function (e) {
+                var target = $(this).attr('data-link');
+                $.ajax({
+                    url: target,
+                    async: false,
+                    type: "get",
+                    data: {},
+                    error: function (value) {
+                        var {
+                            responseText,
+                            status
+                        } = value;
+                        if (status === 406) {
+                            $("#backend-notifications #backend-title").text("Warning");
+                            $("#backend-notifications #backend-body").text(value.responseJSON.detail);
+                        }
+                    
+                        $("#backend-notifications").modal({
+                            show: true,
+                            keyboard: true,
+                            backdrop: true,
+                        });
+                    
+                    },
+                    success: function (value) {
+                        location.reload();
+                    },
+                    });
+                });
+            
+
+            $(".a_close").click(function (e) {
+                var target = $(this).attr('data-link');
+                $.ajax({
+                    url: target,
+                    async: false,
+                    type: "get",
+                    data: {},
+                    error: function (value) {
+                        var {
+                            responseText,
+                            status
+                        } = value;
+                        if (status === 406) {
+                            $("#backend-notifications #backend-title").text("Warning");
+                            $("#backend-notifications #backend-body").text(value.responseJSON.detail);
+                        }
+                    
+                        $("#backend-notifications").modal({
+                            show: true,
+                            keyboard: true,
+                            backdrop: true,
+                        });
+                    
+                    },
+                    success: function (value) {
+                       location.reload();
+                    },
+                    });
+                });    
+        });
+    </script>
+{% endblock %}
+
+
+{% block blockbots %}
+    {{ block.super }}
+
+    <div id="imagemodal" title="Image Preview">
+        <img src="" id="imagepreview" style="width: 100%;" alt=""/>
+    </div>
+
+    {% comment %} <script src="{% static 'admin/js/vendor/jquery/jquery.js' as url %}{{ url|jet_append_version }}" type="text/javascript"></script>
+    <script src="{% static 'admin/js/jquery.init.js' as url %}{{ url|jet_append_version }}"></script> {% endcomment %}
+    <script src="
+    {% static 'admin/js/vendor/jquery/jquery.js' as url %}{{ url|jet_append_version }}"
+    type="text/javascript"></script>
+    
+    <script src="{% static 'admin/js/script.js' as url %}{{ url|jet_append_version }}" type="text/javascript"></script>
+    <script src="
+    {% static 'admin/js/jquery.init.js' as url %}{{ url|jet_append_version }}"></script>
+    <script>
+        django.gettext = window.gettext
+        $("body").on("submit", "form", function () {
+            $(this).submit(function () {
+                return false;
+            });
+            return true;
+        });
+    </script>
+
+    <div class="modal fade" id="backend-notifications" tabindex="-1" role="dialog" aria-labelledby="backend-notifications" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="backend-title"></h5>
+                </div>
+                <div class="modal-body">
+                    <p id="backend-body"></p>
+                </div>
+                <button data-dismiss="modal" class="btn2 big" style="
+                background: #47bac1;
+                color: #fff;
+                border-radius: 3px;cursor:pointer;
+                border: 0;
+                height: 31px;
+                width: 50px;
+                margin: 0 auto 10px;">
+                    {% translate 'OK' %}
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block userlinks %}
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_salon %}
+            <a href="{% url 'admin:change_schedule' request.user.salon.id %}">Change
+                Schedule</a> /
+        {% elif request.user.is_admin %}
+            <a href="{% url 'admin:core_configuration_change' %}">{% trans 'Settings' %}</a>
+            /
+        {% endif %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{# Setup favicon #}
+{% block extrahead %}
+    <link rel="shortcut icon" type="image/png"
+          href="{% static 'images/favicon-32x32.png' %}"/>
+{% endblock %}
+
+{# Setup browser tab label #}
+{% block title %}{{ title }} |  {% trans "Engage" %}{% endblock %}
+
+
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">
+            <img src="{% static 'images/logo-icon.png' %}" alt="engage"
+                 height="50%" width="50%">
+            <br><br>
+            <span> {% trans "Engage" %} </span>
+        </a>
+    </h1>
+
+   
+{% endblock %}
+
+

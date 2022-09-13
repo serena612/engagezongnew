@@ -1,0 +1,102 @@
+version: '3.6'
+
+services:
+    nginx:
+        container_name: nginx
+        build:
+            context: ./nginx
+            network: host
+            args:
+                - CERTBOT_EMAIL=info@engageplaywin.com
+                - DOMAIN_LIST=dev.engageplaywin.com
+        restart: always
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./backend/engage/static:/var/www/html/static
+            - ./backend/engage/games:/var/www/html/games
+            - ./backend/engage/media:/var/www/html/media
+        ports:
+            #- "80:80"
+            #- "443:443"
+            - "3200:3200"
+    redis:
+        restart: always
+        image: redis:alpine
+        volumes:
+            - ./redis-data:/data
+    postgres:
+        restart: always
+        image: postgres:alpine
+        expose:
+            - 5432
+        ports:
+            - 5433:5432
+        environment:
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_USER=${DATABASE_USER}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        volumes:
+            - ./psql-data:/var/lib/postgresql/data
+    backend:
+        restart: always
+        image: lams007/engage-backend-lo
+        env_file:
+            - ./.env
+        build:
+            context: .
+            dockerfile: ./backend/Dockerfile
+        volumes:
+            - ./backend:/backend
+            - ./scripts:/scripts
+        links:
+            - postgres 
+            - redis
+        environment:
+            - DATABASE_NAME=${DATABASE_NAME}
+            - DATABASE_USER=${DATABASE_USER}
+            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+            - DATABASE_HOST=${DATABASE_HOST}
+            - DATABASE_PORT=${DATABASE_PORT}
+        command: >
+            sh -c "/scripts/wait-for-it.sh postgres:5432 --
+                   python manage.py runserver 0.0.0.0:8000"
+        ports:
+            - 8000:8000
+    celery-worker:
+        restart: always
+        image: lams007/engage-backend-lo
+        env_file:
+            - .env
+        volumes:
+            - ./backend:/backend
+            - ./scripts:/scripts
+        links:
+            - postgres
+            - redis
+        environment:
+            - DATABASE_NAME=${DATABASE_NAME}
+            - DATABASE_USER=${DATABASE_USER}
+            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+            - DATABASE_HOST=${DATABASE_HOST}
+            - DATABASE_PORT=${DATABASE_PORT}
+        command: >
+            sh -c "/scripts/wait-for-it.sh postgres:5432 --
+                   celery -A engage worker --beat -l info -S django"
+    metabase:
+        image: metabase/metabase
+        restart: always
+        expose:
+            - 3000
+        volumes:
+            - ./metabase-data:/metabase-data
+        environment:
+            - MB_DB_FILE=/metabase-data/metabase.db
+            - MB_REDIRECT_ALL_REQUESTS_TO_HTTPS=true
+        depends_on:
+            - postgres
+        links:
+            - postgres
+volumes:
+    pgdata:
+       external: true
+
