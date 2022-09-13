@@ -57,8 +57,11 @@ def register_view(request):
 
 def waiting_view(request):
     # print('user_id' in request.session)
-    if not 'user_id' in request.session or (request.user and request.user.is_active):
-       return redirect('/')
+    if not 'user_id' in request.session:
+        return redirect('/')
+    elif (request.user and request.user.is_active):
+        userid = request.session.pop('user_id', None)
+        return redirect('/')
     else :
         print(request.headers)
         # print("user", request.user)

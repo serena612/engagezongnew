@@ -27,10 +27,14 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="application/javascript"
                 src="{% static 'js/wait.js' %}"></script>
 </head>
-<a href="/clear">Logout</a>
-<br>
 {% block content %}
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+      
+       <div class="col-12">
+<a href="/clear">Logout</a>
 
+<br>
 Subscription status is being updated please wait...
 <br>
 User: <p class="user_id">{{user.id}}</p>
@@ -41,5 +45,7 @@ Active: <p class="user_active">{{user.is_active}}</p>
 <br>
 <span class="sub_status"></span>
 {% endblock %}
-
+</div>
+</div>  
+</div>
 </html>
