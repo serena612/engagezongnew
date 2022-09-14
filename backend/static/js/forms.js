@@ -102,6 +102,7 @@ $(document).on("submit", ".login-form", function (e) {
         setBtnLoading(btn, false);
         form.hide();
         $(".login-otp-form").show();
+        $(".login-otp-form").find('.input1').focus();
     }).catch(e => {
         if(e.status==472) //406 ?
         response_msg.html('The number you have provided is invalid!').show();
@@ -160,16 +161,17 @@ $(document).on("submit", ".login-otp-form", function (e) {
     }  
     var response_msg = form.find(".response-msg");
     response_msg.hide();
-    if(form_data.data.code!='123456'){
-        response_msg.html('Please enter a valid pincode!').show();
-        return;
-    }
+    // Re-enable this to restore old functiionality
+    // if(form_data.data.code!='123456'){  
+    //     response_msg.html('Please enter a valid pincode!').show();
+    //     return;
+    // }
     response_msg.html('').hide();
     var btn = form.find("button[type=submit]");
     setBtnLoading(btn, true);
 
     postLoginOTP(form_data.data).then(res => {
-        //console.log(res);
+        console.log(res);
         $('.login-form').trigger("reset");
         setBtnLoading(btn, false);
     }).catch(e => {
@@ -181,6 +183,8 @@ $(document).on("submit", ".login-otp-form", function (e) {
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
         else if(e.status==514){
+            $('#login-modal').modal("hide");
+            // $('.login-form').trigger("reset");
             $('#wait-modal').modal("show");
             get_wait_modal();}
         else
@@ -196,6 +200,20 @@ function in_array(value, array){
 	}else{
 		return index;
 	}
+}
+function get_wait_modal() {
+    $.ajax({
+        url:"/wait", //the page containing python script
+        type: "GET", //request type,
+        data: {},
+        async:true,
+        beforeSend: function(){
+                $('#waitmodalcontent').html("<img class='loading-img' src='/static/img/loading1.gif' />Loading...");
+              },
+        success:function(result){
+            $('#waitmodalcontent').html(result);
+        }
+    });
 }
 function checkValidMtnNumber(number){
     var valid=true;
@@ -507,7 +525,7 @@ $(document).on("submit", ".register-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
-        else if(e.status==512){
+        else if(e.status==514){
             $('#wait-modal').modal("show");
             get_wait_modal();}
         else

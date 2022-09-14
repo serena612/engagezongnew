@@ -508,7 +508,7 @@ class AuthViewSet(viewsets.GenericViewSet):
 
                                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                                     request.session['user_id'] = user.pk
-                                    # return redirect('/wait')
+                                    # return redirect('/')
                                     return Response({'message': response2}, status=514)
                         else :
                             user = UserModel.objects.get(
@@ -627,8 +627,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                     
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     request.session['user_id'] = user.pk
-                    # return redirect('/wait')
-                    return Response({'message': response2}, status=514)
+                    return redirect('/')
+                    # return Response({'message': response2}, status=514)
                 
                 elif code2==56:
                     if code3<100:

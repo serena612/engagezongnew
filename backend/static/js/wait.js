@@ -1,4 +1,5 @@
 var times = 0;
+
 function CheckStatus(data) {
 
     return new Promise((resolve, reject) => {
@@ -30,7 +31,7 @@ function keepUpdated() {
         return;
     // console.log("Updating using token "+xtoken);
     data = {}
-    data.msisdn = $(".user_mobile").text();
+    data.msisdn = usermobile; // $(".user_mobile").text();
     // important must add header check here
     data.idnetwork = '1';
     response_msg = $('.sub_status');
@@ -43,11 +44,11 @@ function keepUpdated() {
         if(e.status==472) //406 ?
         response_msg.html('The number you have provided is invalid!').show();
         else if(e.status==475)
-        response_msg.html('Subscription Request pending...').show();
+        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Subscription Request pending...").show();
         else if(e.status==476)
-        response_msg.html('Unsubscription Request pending...').show();
+        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Unsubscription Request pending...").show();
         else if(e.status==456)
-        response_msg.html('Profile Creation pending...').show();
+        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Profile Creation pending...").show();
         else
         response_msg.html('Unkown error! Please contact the site administrator. '+e.status).show();
         //setBtnLoading(btn, false); 

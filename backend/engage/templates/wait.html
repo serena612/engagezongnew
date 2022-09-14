@@ -6,7 +6,7 @@
 <html lang="en">
 
 <head>
-<link rel="stylesheet" href="{% static 'libs/bs4/bootstrap.min.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'libs/bs4/bootstrap.min.css' %}">
     <link rel=" stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
             integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -20,9 +20,10 @@ src="{% static 'libs/slick/slick.min.js' %}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
 integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
-crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 <script>
-    var xtoken = $.cookie("csrftoken");
+    var usermobile = '{{user.mobile}}';
+    // var xtoken = $.cookie("csrftoken");
 </script>
 <script type="application/javascript"
                 src="{% static 'js/wait.js' %}"></script>
@@ -32,20 +33,35 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <div class="row h-100 justify-content-center align-items-center">
       
        <div class="col-12">
-<a href="/clear">Logout</a>
 
-<br>
+
+
 Subscription status is being updated please wait...
 <br>
-User: <p class="user_id">{{user.id}}</p>
 <br>
-Phone Number: <p class="user_mobile">{{user.mobile}}</p>
-<br>
+User: <p class="user_id">{{user.username}} </p> 
+
+Phone Number:
+<div class="d-flex justify-content-between">
+    <div>
+        <p class="user_mobile">{{user.mobile}}</p>
+    </div>
+    <div>
+        <a href="/clear">Change Number / Logout</a>
+    </div>
+    <div></div><div></div>
+</div>
+
+<!-- <p class="user_mobile">{{user.mobile}} <a href="/clear">Change Number</a> </p> -->
+
 Active: <p class="user_active">{{user.is_active}}</p>
-<br>
-<span class="sub_status">
-    <li class='loading-item'><img class='loading-img' src='/static/img/loading1.gif' /></li>
+
+<div style="text-align: center;">
+<span class="sub_status text-center">
+    <img class='loading-img' src='/static/img/loading1.gif' />
+    <br>Please wait while we process your request...
 </span>
+</div>
 {% endblock %}
 </div>
 </div>  

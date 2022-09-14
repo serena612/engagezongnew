@@ -208,7 +208,7 @@ function get_wait_modal() {
         data: {},
         async:true,
         beforeSend: function(){
-                $('#waitmodalcontent').html('Loading...');
+                $('#waitmodalcontent').html("<img class='loading-img' src='/static/img/loading1.gif' /><br><div style='text-align: center;'>Loading...</div>");
               },
         success:function(result){
             $('#waitmodalcontent').html(result);
