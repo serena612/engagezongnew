@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from datetime import datetime
+from socket import timeout
 
 from django.contrib.auth import get_user_model, login
 from django.db import transaction
@@ -9,7 +10,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.core.paginator import Paginator
 from ipaddress import ip_address
-from engage.settings.base import API_SERVER_URL, USER_EXCEPTION_LIST
+from engage.settings.base import API_SERVER_URL, USER_EXCEPTION_LIST, VAULT_SERVER_URL, ENABLE_VAULT
 import requests
 from rest_framework import mixins, viewsets, status, exceptions
 from rest_framework.generics import get_object_or_404
@@ -21,6 +22,7 @@ from uuid import uuid4
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Schema, TYPE_ARRAY, TYPE_OBJECT, TYPE_STRING
 from engage.core.models import HTML5Game
+import sys, base64, hvac, json
 
 from .constants import (
     FriendStatus,
@@ -53,16 +55,144 @@ from ..tournament.serializers import TournamentSerializer
 
 UserModel = get_user_model()
 
+class EncryptedMessageSender:
+    def __init__(self, server=API_SERVER_URL, vault_url=VAULT_SERVER_URL,
+     keys=['b533da693758f52b5a44042405770597ac750a000bb429847dd83911a58ad8fe1c',
+      'ab60773e5e855baae8b7d23ae92855bfa78863ff4b086b19c55c140610a437eafd',
+       '6ac6401cb7879f86777bfb4e79ca6da98cabf83c9fdbbde98c23204921775bf85f'], username='mighty', password='P@mpl0P@ssw!RD') -> None:
+        # self.command = command
+        self.server = server
+        # self.request_url = request_url
+        # self.headers = headers
+        # self.data = data
+        self.client = hvac.Client(url=vault_url, timeout=1)
+        self.keys = keys
+        self.username = username
+        self.password = password
+        print("Client Initiated !")
 
-def send_pincode(phone_number, idnetwork="1"):
-    url = API_SERVER_URL+'/api/User/SendPincode'
+    def is_initialized(self):
+        return self.client.sys.is_initialized()
+
+    def is_sealed(self):
+        return self.client.sys.is_sealed()
+
+    def is_authenticated(self):
+        return self.client.is_authenticated()
+
+    def base64ify(bytes_or_str):
+        if sys.version_info[0] >= 3 and isinstance(bytes_or_str, str):
+            input_bytes = bytes_or_str.encode('utf8')
+        else:
+            input_bytes = bytes_or_str
+
+        output_bytes = base64.urlsafe_b64encode(input_bytes)
+        if sys.version_info[0] >= 3:
+            return output_bytes.decode('ascii')
+        else:
+            return output_bytes
+
+    def base64decode(base64str):
+        output_bytes=base64.urlsafe_b64decode(base64str)
+        if sys.version_info[0] >= 3:
+            return output_bytes.decode('ascii')
+        else:
+            return output_bytes
+
+    def unseal_vault(self):
+        try:
+            unseal_response = self.client.sys.submit_unseal_keys(self.keys)
+            print(unseal_response)
+            return self.is_sealed()
+        except:
+            return False
+
+    def authenticate(self):
+        try:
+            login_response = self.client.auth.userpass.login(
+                username=self.username,
+                password=self.password  
+            )
+            print(login_response)
+            return self.is_authenticated()
+        except:
+            return False
+
+    def decrypt(self, ciphetext):
+        ciphertext = ciphetext['message']
+        decrypt_data_response = self.client.secrets.transit.decrypt_data(
+            name='hvac-key',
+            ciphertext=ciphertext,
+        )
+        return self.base64decode(decrypt_data_response['data']['plaintext'])
+
+
+    def send(self, command, headers={}, data={}):
+        url = self.server+command
+        if not self.is_initialized():
+            return 'Vault not initialized!', 567
+        if self.is_sealed():
+            if not self.unseal_vault():
+                return 'Vault could not be unsealed!', 568
+        if not self.is_authenticated():
+            if not self.authenticate():
+                return 'Could not authenticate to Vault!', 569
+
+        if headers:
+            headers = json.dumps(headers)
+            print(headers)
+            print(headers.encode())
+            encrypt_data_response = self.client.secrets.transit.encrypt_data(
+            name='hvac-key',
+            plaintext=self.base64ify(headers.encode()),
+        )
+            enc_headers = encrypt_data_response['data']['ciphertext']
+        else:
+            enc_headers = headers
+        if data:
+            data = json.dumps(data)
+            encrypt_data_response = self.client.secrets.transit.encrypt_data(
+            name='hvac-key',
+            plaintext=self.base64ify(data.encode()),
+        )
+            enc_data = encrypt_data_response['data']['ciphertext']
+        else:
+            enc_data = data
+        
+        try:
+            api_call = requests.post(url, headers={'message': enc_headers}, json={'message': enc_data}, timeout=1)
+        except requests.exceptions.RequestException as e:
+            print(e)
+            return 'Server error', 555
+        if api_call.status_code==200:
+            res = api_call.json()
+            try:
+                response = self.decrypt(res)
+            except Exception as e:
+                print(e)
+                return 'Error decrypting reply!', 596
+            
+            res = response['statusCode']
+            if 'LoadData' in self.command and(res['code'] == 76 or res['code'] == 77 or res['code'] == 79): # 76 pending sub - 77 pending unsub - 79 sub
+                    return response['profile'], res['code']
+            else:
+                return res['message'], res['code']
+        else:
+            return api_call.content, api_call.status_code
+
+
+def send_pincode(phone_number, idnetwork="1", vault=None):
     headers = {'msisdn': phone_number,
                 'idnetwork': idnetwork} # post data
+    command = '/api/User/SendPincode'
     print(phone_number)
+    if vault:
+        return vault.send(command=command, headers=headers)
+    url = API_SERVER_URL+command
+    
     try:
         api_call = requests.post(url, headers=headers, data={}, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
+    except requests.exceptions.RequestException as e:
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -73,8 +203,8 @@ def send_pincode(phone_number, idnetwork="1"):
         return api_call.content, api_call.status_code
 
 
-def verify_pincode(phone_number, pincode):
-    url = API_SERVER_URL+'/api/User/ValidatePincode'
+def verify_pincode(phone_number, pincode, vault=None):
+    command = '/api/User/ValidatePincode'
     pincode = str(pincode)
     print("Verifying pincode", pincode, "for number", phone_number)
     headers = {
@@ -85,10 +215,13 @@ def verify_pincode(phone_number, pincode):
     data = {
             'pincode': pincode,
             } 
+    if vault:
+        return vault.send(command=command, headers=headers, data=data)       
+    url = API_SERVER_URL+command
+    
     try:
         api_call = requests.post(url, headers=headers, json=data, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
+    except requests.exceptions.RequestException as e:  
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -99,15 +232,18 @@ def verify_pincode(phone_number, pincode):
         return api_call.content, api_call.status_code
 
 
-def load_data_api(phone_number, idnetwork):  
-    url = API_SERVER_URL+'/api/User/LoadData'
+def load_data_api(phone_number, idnetwork, vault=None):  
+    command = '/api/User/LoadData'
     headers = {'msisdn': phone_number, 
             'idnetwork': idnetwork
             } 
+    
+    url = API_SERVER_URL+command
+    if vault:
+        return vault.send(command=command, headers=headers)
     try:
         api_call = requests.post(url, headers=headers, data={}, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
+    except requests.exceptions.RequestException as e:  
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -123,9 +259,9 @@ def load_data_api(phone_number, idnetwork):
         return api_call.content, api_call.status_code
 
 
-def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default channel id is web
+def subscribe_api(phone_number, idbundle, idservice, idchannel=2, vault=None):  # default channel id is web
     print("Subscribing", phone_number, "to", idbundle, "service", idservice)
-    url = API_SERVER_URL+'/api/User/Subscribe'
+    command = '/api/User/Subscribe'
     uniqueid = str(uuid4())
     data = {'msisdn': phone_number, 
             'idChannel': idchannel,
@@ -133,8 +269,11 @@ def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default ch
             'idService':idservice,
             'transactionId':uniqueid,
             }
+    if vault:
+        return vault.send(command=command, data=data)       
+    url = API_SERVER_URL+command
     try: 
-        api_call = requests.post(url, headers={}, json=data, timeout=1)
+        api_call = requests.post(url, headers={}, json=data, timeout=3)
     except requests.exceptions.RequestException as e:  # This is the correct syntax
         # raise SystemExit(e)
         print(e)
@@ -150,6 +289,12 @@ def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default ch
 class AuthViewSet(viewsets.GenericViewSet):
     serializer_class = None
     permission_classes = (permissions.AllowAny,)
+    def __init__(self, **kwargs):
+        super(AuthViewSet, self).__init__(**kwargs)
+        if ENABLE_VAULT:
+            self.client = EncryptedMessageSender()
+        else:
+            self.client = None
 
     @action(methods=['POST'], detail=False)
     def reload_data(self, request):
@@ -172,7 +317,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         print("mobile", mobile)
         if mobile is not None:
             print("refreshing subscriber status for", mobile)
-            response, code = load_data_api(str(mobile), '1')
+            response, code = load_data_api(str(mobile), '1', self.client)
             print(response, code)
             if code==77:
                 request.session['subscribed']=response['idbundle']
@@ -216,7 +361,7 @@ class AuthViewSet(viewsets.GenericViewSet):
             mobile = user.mobile
         if mobile is not None:
             print("sending pincode to", mobile)
-            response, code = send_pincode(str(mobile))
+            response, code = send_pincode(str(mobile), vault=self.client)
             print(response, code)
             if code==70 or username in USER_EXCEPTION_LIST:
                 return Response({}, status=status.HTTP_200_OK)
@@ -248,7 +393,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                 return Response({}, status=status.HTTP_306_RESERVED)
         except UserModel.DoesNotExist:
             return Response({}, status=status.HTTP_200_OK)
-        response, code = send_pincode(username)
+        response, code = send_pincode(username, vault=self.client)
         print(response, code)
         if code==70:
             return Response({}, status=status.HTTP_200_OK)
@@ -276,9 +421,9 @@ class AuthViewSet(viewsets.GenericViewSet):
         
         otp = request.POST.get('code')
         if usermob:
-            response, code = verify_pincode(usermob, otp)  # what if he is registered on api but not here and loaddata check if pendingsub
+            response, code = verify_pincode(usermob, otp, vault=self.client)  # what if he is registered on api but not here and loaddata check if pendingsub
         if (usermob and code==0) or username in USER_EXCEPTION_LIST:
-            response2, code2 = load_data_api(usermob, "1")  # 1 for wifi
+            response2, code2 = load_data_api(usermob, "1", self.client)  # 1 for wifi
             
             if code2==56 or code2==76 or code2==77 or code2==79 or username in USER_EXCEPTION_LIST:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
                 
@@ -309,7 +454,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                             #     elif user.subscription=='paid2':
                             #         idbundle = 3
                             #         idservice = 'P50'
-                            #     response3, code3 = subscribe_api(usermob, idbundle, idservice)
+                            #     response3, code3 = subscribe_api(usermob, idbundle, idservice, vault=self.client)
 
 
                             # if the user has already sent a subscription via other means but does not have a profile registered on the website
@@ -363,7 +508,8 @@ class AuthViewSet(viewsets.GenericViewSet):
 
                                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                                     request.session['user_id'] = user.pk
-                                    return redirect('/wait')
+                                    # return redirect('/wait')
+                                    return Response({'message': response2}, status=514)
                         else :
                             user = UserModel.objects.get(
                                 mobile__iexact=username,
@@ -385,7 +531,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                     print("user", user, "is not active redirect to wait page")
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     request.session['user_id'] = user.pk
-                    return redirect('/wait')
+                    # return redirect('/wait')
+                    return Response({'message': response2}, status=514)
                 
                 @notify_when(events=[NotificationTemplate.LOGIN],
                             is_route=False, is_one_time=False)
@@ -425,9 +572,9 @@ class AuthViewSet(viewsets.GenericViewSet):
 
         print("subscription request", subscription)
         otp = request.POST.get('code')
-        response, code = verify_pincode(username, otp)
-        if code==0:
-            response2, code2 = load_data_api(username, "1")  # 1 for wifi
+        response, code = verify_pincode(username, otp, vault=self.client)
+        if code==0 or username in USER_EXCEPTION_LIST:
+            response2, code2 = load_data_api(username, "1", self.client)  # 1 for wifi
             if code2==76 or code2==77 or code2==79:  # here we set subscription to idbundle since user already has subscribed somehow using another mean
                 if response2['idbundle'] == 1:
                     subscription = 'free'
@@ -435,9 +582,9 @@ class AuthViewSet(viewsets.GenericViewSet):
                     subscription = 'paid1'
                 elif response2['idbundle'] == 3:
                     subscription = 'paid2'
-            if code2==56 or code2==76 or code2==77 or code2==79:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
+            if code2==56 or code2==76 or code2==77 or code2==79:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub - 75 under process
                 if code2==56:  # profile does not exist so we send subscription request
-                    response3, code3 = subscribe_api(username, idbundle, idservice)
+                    response3, code3 = subscribe_api(username, idbundle, idservice, vault=self.client)
                 if code2==76 or code2==77 or code2==79 or (code2==56 and code3 ==0): # profile does exist so we create local record based on it
                     
                     if code2==79:
@@ -480,7 +627,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                     
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     request.session['user_id'] = user.pk
-                    return redirect('/wait')
+                    # return redirect('/wait')
+                    return Response({'message': response2}, status=514)
                 
                 elif code2==56:
                     if code3<100:

@@ -36,11 +36,16 @@ def home_view(request):
             queryset=TournamentPrize.objects.order_by('position')
         )
     ).filter(regions__in=[request.region],end_date__lt=now).order_by('name')
+    if 'user_id' in request.session:
+        user_id = True
+    else:
+        user_id = False
     return render(request, 'index.html', {'featured_games': featured_games,
                                           'games': games,
                                           'ad': ad,
                                           'events': events,
-                                          'previous_tournaments':previous_tournaments})
+                                          'previous_tournaments':previous_tournaments,
+                                          'user_id': user_id})
 
 
 def about_view(request):

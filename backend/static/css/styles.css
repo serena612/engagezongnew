@@ -2356,7 +2356,7 @@ footer .bottom .right .social a {
 
 .accordion .card .card-header button[aria-expanded] {
   color: #fff;
-  background-color: #c52194 !important;
+  background-color: #472b93 !important;
 }
 
 .infopage {
@@ -2376,7 +2376,7 @@ footer .bottom .right .social a {
 
 .page-box .text-container {
   background: #fff;
-  padding: 15px;
+  padding: 27px;
   text-align: justify;
 }
 
@@ -3915,6 +3915,8 @@ table.table-1 .font-weight-normal {
   color: #472b93;
   text-transform: uppercase;
   font-weight: bold;
+  line-height: 16px;
+    margin-top: 8px;
 }
 
 @media (min-width: 576px) {
@@ -5470,14 +5472,16 @@ font-size: 1.75rem;
   #tournaments-list .newsbv-item .newsb-title, #tournaments-list .newsbv-item .newsb-date, #leaderboards .newsbv-item .newsb-title, #leaderboards .newsbv-item .newsb-date{
     background: #fff;
     margin-bottom: 0;
-    padding: 14px 14px 0;
+    padding: 5px 14px 0;
     color:#100544;
 }
 #tournaments-list .newsbv-item .newsb-date,#leaderboards .newsbv-item .newsb-date{
   font-size: 16px;
   margin-top: 0;
   padding-top: 0;
-  padding-bottom: 14px;}
+  padding-bottom: 5px;
+  text-transform: uppercase;
+}
 .newsbv-item  .label{
   color: white !important;
   padding: 0px 18px;    text-transform: uppercase;
@@ -5530,11 +5534,11 @@ font-size: 1.75rem;
   .middle-text i{
     font-size: 28px;
     top: 4px;position: relative;
-    width: 17%;}
+    width: 15%;}
 
   .middle-text .image2 i{
     font-size: 21px;
-    width: 33%;}
+    width: 20%;}
 
   .sponsored_by {
     position: relative;
@@ -5654,7 +5658,7 @@ font-size: 1.75rem;
   }
   .sec-3-1 .date{
     position: relative;
-    margin-top: 88px;}
+    margin-top: 82px;}
 
   .sec-3-1 .col-8{
     padding: 37px 2% 23px;
@@ -5666,6 +5670,24 @@ font-size: 1.75rem;
     
   #tournaments-list .bar{display:none;}
   .sec-3-1  .win{position: relative;font-size: 1.1rem;} 
+  .sec-3-1  .win .name4{    
+    display: inline-block;
+    position: relative;
+    
+    height: 46px;
+    margin-bottom: 22px;
+    width: 71%;
+    margin-left: 21px;
+    text-transform: uppercase;} 
+  .sec-3-1  .win .position4{    
+    width: 36px;
+    display:inline-block;
+    position: relative;
+    
+    height: 47px;
+    margin-bottom: 22px;
+    font-size:14px;
+    line-height: 30px;}     
   .sec-3-1  .win .position{    
     width: 36px;display:inline-block;
     position: relative;
@@ -5673,6 +5695,7 @@ font-size: 1.75rem;
     height: 47px;
     margin-bottom: 22px;
     font-size:14px;
+    line-height: 30px;
   }
   .sec-3-1  .win .name{    
     display: inline-block;
@@ -5809,7 +5832,9 @@ footer .bottom {
     overflow: hidden;
     white-space: nowrap;text-overflow: ellipsis; 
     width: 90%;
-    display: block;}
+    display: block;
+    text-transform: uppercase;
+  }
 
   #leaderboards .newsbv-item .newsb-text{
    height:auto!important;
@@ -6128,7 +6153,7 @@ background:#fff;
   overflow-y: auto;
   overflow-x: hidden;
   width:100%;
-  padding: 0 10px!important;
+  padding: 0 35px 0 10px!important;
 }
 #privacy-modal .page-box,#disclaimer-modal .page-box,#terms-modal .page-box{padding:0!important;}
 #about-modal p, #faq-modal p,#terms-modal p,#disclaimer-modal p,#privacy-modal p{  font-size: 1.1rem;}
@@ -6454,5 +6479,17 @@ color: white !important;
 }
 .home-winners-results-title{
   text-transform: uppercase;
-  font-weight: 16px;
+}
+.winners-title{
+  font-size: 25px !important;
+}
+.winners-date{
+  font-size: 15px;
+}
+.winners-date-updated{
+  color: rgb(246, 35, 111);
+}
+/*  */
+.newsb-date{
+  font-weight: 600 !important;
 }

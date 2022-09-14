@@ -566,6 +566,32 @@
                 </div>
             </div>
         </div>
+
+        <div id="wait-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <!-- <div class="close-box">
+                        <a data-dismiss="modal" href=""><i
+                                class="fas fa-times"></i></a>
+                    </div> -->
+                    <div class="modal-header">
+                        <h3>{% translate 'Please wait for confirmation' %}</h3>
+                    </div>
+                    <div class="modal-body" id="waitmodalcontent">
+                        
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if user_id %}
+        <script>
+            $('#wait-modal').modal("show");
+            get_wait_modal();
+        </script>
+        {% endif %}
     {% endif %}
 
     <div id="contact-modal" class="modal fade">

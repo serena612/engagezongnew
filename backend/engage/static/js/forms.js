@@ -182,6 +182,11 @@ $(document).on("submit", ".login-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+        else if(e.status==514){
+            $('#login-modal').modal("hide");
+            // $('.login-form').trigger("reset");
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);
@@ -195,6 +200,20 @@ function in_array(value, array){
 	}else{
 		return index;
 	}
+}
+function get_wait_modal() {
+    $.ajax({
+        url:"/wait", //the page containing python script
+        type: "GET", //request type,
+        data: {},
+        async:true,
+        beforeSend: function(){
+                $('#waitmodalcontent').html('Loading...');
+              },
+        success:function(result){
+            $('#waitmodalcontent').html(result);
+        }
+    });
 }
 function checkValidMtnNumber(number){
     var valid=true;
@@ -506,6 +525,9 @@ $(document).on("submit", ".register-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+        else if(e.status==514){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);

@@ -180,6 +180,9 @@ $(document).on("submit", ".login-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+        else if(e.status==514){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);
@@ -504,6 +507,9 @@ $(document).on("submit", ".register-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+        else if(e.status==512){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);
