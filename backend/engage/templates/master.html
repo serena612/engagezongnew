@@ -73,7 +73,7 @@
             var set_game_account = "{% url 'set-game-account' %}";
             var tournament_join = "{% url 'tournament-join' '$1' %}";
             var sections_log = '/api/users/sections_log/sections_log/';
-//gagagagggaga
+
             
             function openModal(index,param0,param1,param2){
                 
@@ -228,7 +228,10 @@
 </head>
 
 <body>
-<nav>
+   
+    
+<nav class="hih">
+  
     <div class="top-nav">
         <div class="row">
             {% block header %}
@@ -354,7 +357,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/prizes" id="a-prize">{% translate 'PRIZES' %}
+                    <a href="/prizes#tournament-prizes" id="a-prize">{% translate 'PRIZES' %}
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -368,7 +371,7 @@
                     </a>
                 </li>
                 <li>
-                    <a id='li_winners' href='/#winners'>{% translate 'WINNERS' %}
+                    <a id='li_winners' href="/#winners">{% translate 'WINNERS' %}
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
