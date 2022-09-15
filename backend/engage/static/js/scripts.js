@@ -355,9 +355,9 @@ function hashchanged() {
    // // console.log("dddddd");
     switch (hash) {
         case "#home-tournaments":
-            console.log("heyyy");
+            //console.log("heyyy");
             var c=$("#sec-3").offset().top;
-            console.log(c);
+            //console.log(c);
     
             $([document.documentElement, document.body]).animate({
                     scrollTop: $("#sec-3").offset().top-200,
