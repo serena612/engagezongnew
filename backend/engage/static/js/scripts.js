@@ -7,6 +7,9 @@ $(function () {
     }
 })
 
+
+
+
 if(window.location.href=='https://cms.engage.devapp.co/' || window.location.href=='https://cms.engage.devapp.co')
 {
     window.location.href='https://cms.engage.devapp.co/admin/'
@@ -349,12 +352,17 @@ function hashchanged() {
     
     setTimeout(function(){
     var hash = window.location.hash;
+   // // console.log("dddddd");
     switch (hash) {
         case "#home-tournaments":
+            console.log("heyyy");
+            var c=$("#sec-3").offset().top;
+            console.log(c);
+    
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#sec-3").offset().top,
+                    scrollTop: $("#sec-3").offset().top-200,
                 },
-                500
+                2500
             );
             $("#sec-3 a.tour-btn").click();
             resetStar($('#hometournaments'));
@@ -362,34 +370,46 @@ function hashchanged() {
 
         case "#home-games":
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#sec-3").offset().top,
+                    scrollTop: $("#sec-3").offset().top-200,
                 },
-                500
+                2500
             );
             $("#sec-3 a.games-btn").click();
             resetStar($('#homegames'));
             break;
 
          case "#winners":
+            var w=$(".sec-3-1").offset().top;
                 $([document.documentElement, document.body]).animate({
-                        scrollTop: $(".sec-3-1").offset().top,
+                        scrollTop: $(".sec-3-1").offset().top-100,
                     },
-                    500
+                    w/0.65
                 );
                 resetStar($('#li_winners'));
                 
                 break;
     
         case "#redeem-coins":
+            var t=$("#prizes_page").offset().top;
             $("#prizes_page #coins").click();
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#prizes_page").offset().top,
+                    scrollTop: $("#prizes_page").offset().top-100,
                 },
-                500
+                t/0.65
             );
             resetStar($('#a-redeem'));
             break;
-
+        
+         case"#tournament-prizes":
+                var t=$("#prizes_page").offset().top;
+                $("#prizes_page #tournaments").click();
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#prizes_page").offset().top-100,
+                    },
+                    t/0.65
+                );
+                resetStar($('#a-prize'));
+                break;
         default:
             if (hash.length > 1) {
                 $("a[href='" + hash + "']").click();
