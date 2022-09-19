@@ -29,13 +29,8 @@ class AccountExpiry:
 
 
     def __call__(self, request):
-<<<<<<< HEAD
-        if 'user_id' in request.session and '/wait' not in request.path and '/clear' not in request.path and '/api/auth/reload_data/' not in request.path:
-            return redirect('/wait')
-=======
         # if 'user_id' in request.session and '/wait' not in request.path and '/clear' not in request.path and '/api/auth/reload_data/' not in request.path:
         #     return redirect('/wait')
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         current_user = request.user
         response = self.get_response(request)
         if current_user.is_staff:

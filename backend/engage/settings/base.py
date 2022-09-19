@@ -442,10 +442,6 @@ AXES_ENABLE_ADMIN = False
 # CORS_ORIGIN_WHITELIST=('example.net')
 API_SERVER_URL='http://192.168.153.62:8099'
 
-<<<<<<< HEAD
-USER_EXCEPTION_LIST = ['admin', 'player483']
-=======
 USER_EXCEPTION_LIST = ['admin', 'player483', 'player488']
 ENABLE_VAULT = False
 VAULT_SERVER_URL = 'https://engage.devapp.co/'
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a

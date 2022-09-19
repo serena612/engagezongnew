@@ -1,10 +1,7 @@
 # coding: utf-8
 
 from datetime import datetime
-<<<<<<< HEAD
-=======
 from socket import timeout
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 
 from django.contrib.auth import get_user_model, login
 from django.db import transaction
@@ -13,11 +10,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.core.paginator import Paginator
 from ipaddress import ip_address
-<<<<<<< HEAD
-from engage.settings.base import API_SERVER_URL, USER_EXCEPTION_LIST
-=======
 from engage.settings.base import API_SERVER_URL, USER_EXCEPTION_LIST, VAULT_SERVER_URL, ENABLE_VAULT
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 import requests
 from rest_framework import mixins, viewsets, status, exceptions
 from rest_framework.generics import get_object_or_404
@@ -29,10 +22,7 @@ from uuid import uuid4
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Schema, TYPE_ARRAY, TYPE_OBJECT, TYPE_STRING
 from engage.core.models import HTML5Game
-<<<<<<< HEAD
-=======
-import sys, base64, hvac, json
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
+import sys, base64,json
 
 from .constants import (
     FriendStatus,
@@ -65,18 +55,6 @@ from ..tournament.serializers import TournamentSerializer
 
 UserModel = get_user_model()
 
-<<<<<<< HEAD
-
-def send_pincode(phone_number, idnetwork="1"):
-    url = API_SERVER_URL+'/api/User/SendPincode'
-    headers = {'msisdn': phone_number,
-                'idnetwork': idnetwork} # post data
-    print(phone_number)
-    try:
-        api_call = requests.post(url, headers=headers, data={}, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
-=======
 class EncryptedMessageSender:
     def __init__(self, server=API_SERVER_URL, vault_url=VAULT_SERVER_URL,
      keys=['b533da693758f52b5a44042405770597ac750a000bb429847dd83911a58ad8fe1c',
@@ -215,7 +193,6 @@ def send_pincode(phone_number, idnetwork="1", vault=None):
     try:
         api_call = requests.post(url, headers=headers, data={}, timeout=1)
     except requests.exceptions.RequestException as e:
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -226,13 +203,8 @@ def send_pincode(phone_number, idnetwork="1", vault=None):
         return api_call.content, api_call.status_code
 
 
-<<<<<<< HEAD
-def verify_pincode(phone_number, pincode):
-    url = API_SERVER_URL+'/api/User/ValidatePincode'
-=======
 def verify_pincode(phone_number, pincode, vault=None):
     command = '/api/User/ValidatePincode'
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     pincode = str(pincode)
     print("Verifying pincode", pincode, "for number", phone_number)
     headers = {
@@ -243,12 +215,6 @@ def verify_pincode(phone_number, pincode, vault=None):
     data = {
             'pincode': pincode,
             } 
-<<<<<<< HEAD
-    try:
-        api_call = requests.post(url, headers=headers, json=data, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
-=======
     if vault:
         return vault.send(command=command, headers=headers, data=data)       
     url = API_SERVER_URL+command
@@ -256,7 +222,6 @@ def verify_pincode(phone_number, pincode, vault=None):
     try:
         api_call = requests.post(url, headers=headers, json=data, timeout=1)
     except requests.exceptions.RequestException as e:  
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -267,17 +232,6 @@ def verify_pincode(phone_number, pincode, vault=None):
         return api_call.content, api_call.status_code
 
 
-<<<<<<< HEAD
-def load_data_api(phone_number, idnetwork):  
-    url = API_SERVER_URL+'/api/User/LoadData'
-    headers = {'msisdn': phone_number, 
-            'idnetwork': idnetwork
-            } 
-    try:
-        api_call = requests.post(url, headers=headers, data={}, timeout=1)
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
-        # raise SystemExit(e)
-=======
 def load_data_api(phone_number, idnetwork, vault=None):  
     command = '/api/User/LoadData'
     headers = {'msisdn': phone_number, 
@@ -290,7 +244,6 @@ def load_data_api(phone_number, idnetwork, vault=None):
     try:
         api_call = requests.post(url, headers=headers, data={}, timeout=1)
     except requests.exceptions.RequestException as e:  
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         print(e)
         return 'Server error', 555
     if api_call.status_code==200:
@@ -306,15 +259,9 @@ def load_data_api(phone_number, idnetwork, vault=None):
         return api_call.content, api_call.status_code
 
 
-<<<<<<< HEAD
-def subscribe_api(phone_number, idbundle, idservice, idchannel=2):  # default channel id is web
-    print("Subscribing", phone_number, "to", idbundle, "service", idservice)
-    url = API_SERVER_URL+'/api/User/Subscribe'
-=======
 def subscribe_api(phone_number, idbundle, idservice, idchannel=2, vault=None):  # default channel id is web
     print("Subscribing", phone_number, "to", idbundle, "service", idservice)
     command = '/api/User/Subscribe'
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     uniqueid = str(uuid4())
     data = {'msisdn': phone_number, 
             'idChannel': idchannel,
@@ -322,16 +269,11 @@ def subscribe_api(phone_number, idbundle, idservice, idchannel=2, vault=None):  
             'idService':idservice,
             'transactionId':uniqueid,
             }
-<<<<<<< HEAD
-    try: 
-        api_call = requests.post(url, headers={}, json=data, timeout=1)
-=======
     if vault:
         return vault.send(command=command, data=data)       
     url = API_SERVER_URL+command
     try: 
         api_call = requests.post(url, headers={}, json=data, timeout=3)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     except requests.exceptions.RequestException as e:  # This is the correct syntax
         # raise SystemExit(e)
         print(e)
@@ -347,15 +289,12 @@ def subscribe_api(phone_number, idbundle, idservice, idchannel=2, vault=None):  
 class AuthViewSet(viewsets.GenericViewSet):
     serializer_class = None
     permission_classes = (permissions.AllowAny,)
-<<<<<<< HEAD
-=======
     def __init__(self, **kwargs):
         super(AuthViewSet, self).__init__(**kwargs)
         if ENABLE_VAULT:
             self.client = EncryptedMessageSender()
         else:
             self.client = None
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 
     @action(methods=['POST'], detail=False)
     def reload_data(self, request):
@@ -378,11 +317,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         print("mobile", mobile)
         if mobile is not None:
             print("refreshing subscriber status for", mobile)
-<<<<<<< HEAD
-            response, code = load_data_api(str(mobile), '1')
-=======
             response, code = load_data_api(str(mobile), '1', self.client)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             print(response, code)
             if code==77:
                 request.session['subscribed']=response['idbundle']
@@ -426,11 +361,7 @@ class AuthViewSet(viewsets.GenericViewSet):
             mobile = user.mobile
         if mobile is not None:
             print("sending pincode to", mobile)
-<<<<<<< HEAD
-            response, code = send_pincode(str(mobile))
-=======
             response, code = send_pincode(str(mobile), vault=self.client)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             print(response, code)
             if code==70 or username in USER_EXCEPTION_LIST:
                 return Response({}, status=status.HTTP_200_OK)
@@ -462,11 +393,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                 return Response({}, status=status.HTTP_306_RESERVED)
         except UserModel.DoesNotExist:
             return Response({}, status=status.HTTP_200_OK)
-<<<<<<< HEAD
-        response, code = send_pincode(username)
-=======
         response, code = send_pincode(username, vault=self.client)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         print(response, code)
         if code==70:
             return Response({}, status=status.HTTP_200_OK)
@@ -494,15 +421,9 @@ class AuthViewSet(viewsets.GenericViewSet):
         
         otp = request.POST.get('code')
         if usermob:
-<<<<<<< HEAD
-            response, code = verify_pincode(usermob, otp)  # what if he is registered on api but not here and loaddata check if pendingsub
-        if (usermob and code==0) or username in USER_EXCEPTION_LIST:
-            response2, code2 = load_data_api(usermob, "1")  # 1 for wifi
-=======
             response, code = verify_pincode(usermob, otp, vault=self.client)  # what if he is registered on api but not here and loaddata check if pendingsub
         if (usermob and code==0) or username in USER_EXCEPTION_LIST:
             response2, code2 = load_data_api(usermob, "1", self.client)  # 1 for wifi
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             
             if code2==56 or code2==76 or code2==77 or code2==79 or username in USER_EXCEPTION_LIST:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
                 
@@ -533,11 +454,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                             #     elif user.subscription=='paid2':
                             #         idbundle = 3
                             #         idservice = 'P50'
-<<<<<<< HEAD
-                            #     response3, code3 = subscribe_api(usermob, idbundle, idservice)
-=======
                             #     response3, code3 = subscribe_api(usermob, idbundle, idservice, vault=self.client)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 
 
                             # if the user has already sent a subscription via other means but does not have a profile registered on the website
@@ -591,12 +508,8 @@ class AuthViewSet(viewsets.GenericViewSet):
 
                                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                                     request.session['user_id'] = user.pk
-<<<<<<< HEAD
-                                    return redirect('/wait')
-=======
                                     # return redirect('/')
                                     return Response({'message': response2}, status=514)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                         else :
                             user = UserModel.objects.get(
                                 mobile__iexact=username,
@@ -618,12 +531,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                     print("user", user, "is not active redirect to wait page")
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     request.session['user_id'] = user.pk
-<<<<<<< HEAD
-                    return redirect('/wait')
-=======
                     # return redirect('/wait')
                     return Response({'message': response2}, status=514)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 
                 @notify_when(events=[NotificationTemplate.LOGIN],
                             is_route=False, is_one_time=False)
@@ -663,15 +572,9 @@ class AuthViewSet(viewsets.GenericViewSet):
 
         print("subscription request", subscription)
         otp = request.POST.get('code')
-<<<<<<< HEAD
-        response, code = verify_pincode(username, otp)
-        if code==0:
-            response2, code2 = load_data_api(username, "1")  # 1 for wifi
-=======
         response, code = verify_pincode(username, otp, vault=self.client)
         if code==0 or username in USER_EXCEPTION_LIST:
             response2, code2 = load_data_api(username, "1", self.client)  # 1 for wifi
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             if code2==76 or code2==77 or code2==79:  # here we set subscription to idbundle since user already has subscribed somehow using another mean
                 if response2['idbundle'] == 1:
                     subscription = 'free'
@@ -679,15 +582,9 @@ class AuthViewSet(viewsets.GenericViewSet):
                     subscription = 'paid1'
                 elif response2['idbundle'] == 3:
                     subscription = 'paid2'
-<<<<<<< HEAD
-            if code2==56 or code2==76 or code2==77 or code2==79:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub
-                if code2==56:  # profile does not exist so we send subscription request
-                    response3, code3 = subscribe_api(username, idbundle, idservice)
-=======
             if code2==56 or code2==76 or code2==77 or code2==79:  # 56 profile does not exist - 76 pending sub - 77 pending unsub - 79 sub - 75 under process
                 if code2==56:  # profile does not exist so we send subscription request
                     response3, code3 = subscribe_api(username, idbundle, idservice, vault=self.client)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 if code2==76 or code2==77 or code2==79 or (code2==56 and code3 ==0): # profile does exist so we create local record based on it
                     
                     if code2==79:
@@ -730,12 +627,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                     
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     request.session['user_id'] = user.pk
-<<<<<<< HEAD
-                    return redirect('/wait')
-=======
                     return redirect('/')
                     # return Response({'message': response2}, status=514)
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 
                 elif code2==56:
                     if code3<100:
