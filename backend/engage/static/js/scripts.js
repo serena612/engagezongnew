@@ -423,8 +423,7 @@ function hashchanged() {
     }
    },500);
     $(window).trigger("resize");
-    
-  
+   
 }
 
 function hashchangeddd() {
