@@ -355,24 +355,14 @@ function hashchanged() {
    // // console.log("dddddd");
     switch (hash) {
         case "#home-tournaments":
-<<<<<<< HEAD
-            //console.log("heyyy");
-            var c=$("#sec-3").offset().top;
-            //console.log(c);
-=======
             console.log("heyyy");
             var c=$("#sec-3").offset().top;
             console.log(c);
->>>>>>> salibzzengage
     
             $([document.documentElement, document.body]).animate({
                     scrollTop: $("#sec-3").offset().top-200,
                 },
-<<<<<<< HEAD
-                2500
-=======
                 c/0.65
->>>>>>> salibzzengage
             );
             $("#sec-3 a.tour-btn").click();
             resetStar($('#hometournaments'));
@@ -383,11 +373,7 @@ function hashchanged() {
             $([document.documentElement, document.body]).animate({
                     scrollTop: $("#sec-3").offset().top-200,
                 },
-<<<<<<< HEAD
-                2500
-=======
                 i/0.65
->>>>>>> salibzzengage
             );
             $("#sec-3 a.games-btn").click();
             resetStar($('#homegames'));
@@ -395,11 +381,8 @@ function hashchanged() {
 
          case "#winners":
             var w=$(".sec-3-1").offset().top;
-<<<<<<< HEAD
-=======
             console.log(w);
             
->>>>>>> salibzzengage
                 $([document.documentElement, document.body]).animate({
                         scrollTop: $(".sec-3-1").offset().top-100,
                     },
@@ -432,8 +415,6 @@ function hashchanged() {
                 );
                 resetStar($('#a-prize'));
                 break;
-<<<<<<< HEAD
-=======
         default:
             if (hash.length > 1) {
                 $("a[href='" + hash + "']").click();
@@ -466,7 +447,6 @@ function hashchangeddd() {
                 
                 break;
 
->>>>>>> salibzzengage
         default:
             if (hash.length > 1) {
                 $("a[href='" + hash + "']").click();
