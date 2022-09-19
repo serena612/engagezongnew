@@ -2,7 +2,7 @@ var tournaments_has_next = true;
 var tournaments_page = 1;
 var state='all'
 var game = '0';
-
+// hello worlddd 
 // login phone
 function postLogin(data) {
 
