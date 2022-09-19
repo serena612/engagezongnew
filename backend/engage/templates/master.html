@@ -347,7 +347,7 @@
             
             <ul>
                 <li>
-                    <a id="hometournaments" href="#home-tournaments">{% translate 'TOURNAMENTS' %}
+                    <a id="hometournaments" href="/#home-tournaments">{% translate 'TOURNAMENTS' %}
                         {% if user.is_authenticated%}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -361,7 +361,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/prizes" id="a-prize">{% translate 'PRIZES' %}
+                    <a href="/prizes#tournament-prizes" id="a-prize">{% translate 'PRIZES' %}
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -375,7 +375,7 @@
                     </a>
                 </li>
                 <li>
-                    <a id='li_winners' href='/#winners'>{% translate 'WINNERS' %}
+                    <a id='li_winners' href="/#winners">{% translate 'WINNERS' %}
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -1782,28 +1782,8 @@ src="{% static 'js/api.js' %}?v=6"></script>
                 src="{% static 'js/fcm.js' %}"></script>
  {% endif %}        
 {% endblock %}
-<script>
-   /* $('.hih a').on('click', function (e) {
 
-    if (this.hash !== '') {
-    e.preventDefault();
 
-    const qw = this.hash;
-    console.log(qw);
-    console.log("bati2");
-    //var c= ;
-    //console.log(c);
-    $('html, body')
 
-        .animate({
-          scrollTop: $(qw).offset().top
-           },3600);
-     } 
-
-    }); 
-
-*/
-
-  </script>
 </body>
 </html>

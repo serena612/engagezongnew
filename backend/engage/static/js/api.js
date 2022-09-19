@@ -604,11 +604,13 @@ function get_tournament(game, str) {
                     changeWidth();
                     ppp = ppp + 1;
                     rebeh();
+                   
                    // bati2();
                     var f = 1;
                     box.html("");
                     box.removeClass("is-loading");
                     box.find('.loading-item').remove();
+                    hashchangeddd();
 
 
                     var new_upcomings = [];

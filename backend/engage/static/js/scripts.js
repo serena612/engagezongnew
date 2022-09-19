@@ -98,10 +98,10 @@ $(document).on("click", "#login-otp-btn", function () {
     var code = $("#login-otp-input").val();
     
 });
-
+/*
 $(window).on("hashchange", function (e) {
      hashchanged();
-});
+});*/
 
 $(document).ready(function(){
     if($('.profile-parent-page').length!=0){
@@ -352,46 +352,100 @@ function hashchanged() {
     
     setTimeout(function(){
     var hash = window.location.hash;
+  
     switch (hash) {
         case "#home-tournaments":
+            
+            var c=$("#sec-3").offset().top;
+            console.log(c);
+    
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#sec-3").offset().top,
+                    scrollTop: $("#sec-3").offset().top-200,
                 },
-                500
+                c/0.65
             );
             $("#sec-3 a.tour-btn").click();
             resetStar($('#hometournaments'));
             break;
 
         case "#home-games":
+            var i=$("#sec-3").offset().top;
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#sec-3").offset().top,
+                    scrollTop: $("#sec-3").offset().top-200,
                 },
-                500
+                i/0.65
             );
             $("#sec-3 a.games-btn").click();
             resetStar($('#homegames'));
             break;
 
          case "#winners":
+            var w=$(".sec-3-1").offset().top;
+            console.log(w);
+            
                 $([document.documentElement, document.body]).animate({
-                        scrollTop: $(".sec-3-1").offset().top,
+                        scrollTop: $(".sec-3-1").offset().top-100,
                     },
-                    500
+                    w/0.65
                 );
                 resetStar($('#li_winners'));
                 
                 break;
+
+        
     
         case "#redeem-coins":
+            var t=$("#prizes_page").offset().top;
             $("#prizes_page #coins").click();
             $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#prizes_page").offset().top,
+                    scrollTop: $("#prizes_page").offset().top-100,
                 },
-                500
+                t/0.65
             );
             resetStar($('#a-redeem'));
             break;
+        
+         case"#tournament-prizes":
+                var t=$("#prizes_page").offset().top;
+                $("#prizes_page #tournaments").click();
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#prizes_page").offset().top-100,
+                    },
+                    t/0.65
+                );
+                resetStar($('#a-prize'));
+                break;
+        default:
+            if (hash.length > 1) {
+                $("a[href='" + hash + "']").click();
+            }
+            break;
+    }
+   },500);
+    $(window).trigger("resize");
+    
+  
+}
+
+function hashchangeddd() {
+    
+    setTimeout(function(){
+    var hash = window.location.hash;
+   
+    switch (hash) {
+       
+         case "#winners":
+            var w=$(".sec-3-1").offset().top;
+            console.log(w);
+           
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $(".sec-3-1").offset().top-100,
+                    },
+                   1000
+                );
+                resetStar($('#li_winners'));
+                
+                break;
 
         default:
             if (hash.length > 1) {
@@ -399,10 +453,12 @@ function hashchanged() {
             }
             break;
     }
-    
-    },500);
+   },500);
     $(window).trigger("resize");
+ 
 }
+
+
 
 $(function () {
     $(window).trigger("resize");
