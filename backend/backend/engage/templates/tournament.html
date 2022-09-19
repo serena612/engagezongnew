@@ -1,0 +1,489 @@
+{% extends 'master.html' %}
+{% load i18n %}
+{% load static %}
+{% load humanize %}
+{% load big_number %}
+{% load call_method %}
+{% block javascript %}
+    <script>
+        var tournament_slug = '{{ tournament.slug }}'
+        var pay_fee_url = "{% url 'orders-pay-fee' %}";
+    </script>
+    <script src="{% static 'js/pages/tournament.js' %}"></script>
+{% endblock %}
+
+{% block top_section %}
+    <section class="p-head tournament-header"
+             style="background-image: url('{% static "img/assets/profile-header.jpg" %}')">
+        <div class="tournament-details-header">
+            <div class="content">
+                <div class="left">
+                    <img src="{{ tournament.top_image.url }}"
+                         alt="tournament-image" class="t-img">
+                </div>
+                
+                <div class="right">
+                    <h2 class="name">{{ tournament.name }}</h2>
+                    <h2 class="game">{{ tournament.game.name }}</h2>
+                    <h2 class="date">
+                        {% if tournament.state == 'upcoming' %}
+                            {% translate 'Tournament Starts in' %}
+                            <span>{{ starts_in_full }}</span> 
+                        {% else %}
+                            {% translate 'Tournament Started' %} <span></span>  
+                        {% endif %}
+                        / {{ tournament_started|date:"M d, Y" }} / {{ tournament_started|time:"h:i A" }}
+                        {% if tournament.label_next_time %}
+                          {{tournament.label_next_time }}
+                        {% endif %}
+                        </h2>
+                    <ul class="tabs-box tabs-container">
+                        <li><a href="#summary" data-id="#summary-box"
+                               class="is-with-side-friends active">{% translate 'Summary' %}</a>
+                        </li>
+                        <li>
+                            {% if user.is_authenticated %}
+                                <a href="#participants" data-id="#participants-box"><b>{% translate 'Participants' %}</b>
+                                    <span class="badge badge-pill">{{ tournament.current_participants }}</span>
+                                </a>
+                            {% else %} 
+                                <a data-toggle="modal"
+                                data-target="#login-modal"><b>{% translate 'Participants' %}</b>
+                                    <span class="badge badge-pill">{{ tournament.current_participants }}</span>
+                                </a>
+                            {% endif %}    
+                        </li>
+                        <li><a
+                                id="practice"
+                                href=""
+                                data-link-android="{{ tournament.game.android_link }}"
+                                data-link-ios="{{ tournament.game.ios_link }}"
+                                data-link-pc="{{ tournament.game.pc_link }}"
+                                target="_blank"
+                        >{% translate 'Practice' %}</a>
+                        </li>
+                        <li id="joinStatus">
+                        {% if participant %}
+                            {% if participant.is_waiting_list %}
+                                <a style="cursor: default" class="disabled">{% translate 'Waiting List' %}</a>
+                            {% else %}
+                               
+                                {% if  tournament.end_date < currentDate or tournament.closed_on%}
+                                    <a class="disabled" style="pointer-events:none">{% translate 'Expired' %} </a>
+                                
+                                {% else %} 
+                                    <a style="cursor: default">{% translate 'joined' %} <img
+                                        src="/static/img/check.svg"
+                                        class="joined-in" alt=""></a>
+                                {% endif %}
+
+                        {% endif %}
+                        {% else %}
+                            {% if tournament.state == 'past' %}
+                                <a class="disabled" style="pointer-events:none"> {% translate 'Expired' %} </a>
+                            {% elif tournament.closed_on %}
+                                <a data-toggle="modal"
+                                data-target="#user-game-modal"> {% translate 'Closed' %} </a>    
+                            {% else %}
+                                {% if user.is_authenticated %}
+                                    {% if tournament.end_date < currentDate or tournament.closed_on %}
+                                        <a class="disabled" style="pointer-events:none">{% translate 'Expired' %}</a>  
+                                    {% elif tournament.started_on  and  tournament.end_date > currentDate  and not tournament.closed_on %}
+                                        <a data-toggle="modal"
+                                        data-target="#user-game-modal">{% translate 'In progress' %}
+                                        <img src="/static/img/check.svg" class="joined-in" alt=""></a>    
+                                    {% elif tournament.close_date < currentDate %}
+                                        <a data-toggle="modal"
+                                        data-target="#user-game-modal"> {% translate 'Closed' %}</a>      
+                                    
+                                    {% else %} 
+                                        <a data-toggle="modal"
+                                         data-target="#user-game-modal">{% translate 'Join Now' %}</a>
+                                    {% endif %}
+
+                                {% else %}
+                                    {% if tournament.end_date < currentDate or  tournament.closed_on %}
+                                        <a class="disabled" style="pointer-events:none">{% translate 'Expired' %}</a>   
+                                    {% elif tournament.started_on and tournament.end_date > currentDate and not tournament.closed_on%}
+                                        <a class="join-now"
+                                       data-toggle="modal"
+                                       data-target="#login-modal">{% translate 'IN PROGRESS' %}<img src="/static/img/check.svg" class="joined-in" alt=""></a>
+                                    {% elif tournament.close_date <= currentDate %}
+                                         <a data-toggle="modal"
+                                         data-target="#user-game-modal">{% translate 'Closed' %}</a>  
+                                    
+                                    {% else %}    
+                                        <a class="join-now"
+                                        data-toggle="modal"
+                                        data-target="#login-modal">{% translate 'JOIN NOW' %}</a> 
+                                    {% endif %}    
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <div class="parent-page profile-parent-page profile-contain-friends tournament-page-content">
+        <section class="tab-section page-tab-content p-content"
+                 id="summary-box">
+            <div class="profile-contain">
+                <div class="left">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="tour-details-box">
+                                <div class="left2">
+                                </div>
+                                <div class="right2">
+                                    <div>
+                                        {{ tournament.description|safe }}
+                                        <div class="widget-3 widget">
+                                            <div class="title-wrapper type-2">
+                                                <h3 class="box-title">
+                                                    {% translate 'Tournament Details' %} </h3>
+                                                <div class="clear"></div>
+                                            </div>
+
+                                            <div class="wcontainer p-container">
+                                                <table class="table-1">
+                                                    <tr>
+                                                        <td width="300">{% translate 'Game' %}
+                                                        </td>
+                                                        <td class="font-weight-normal">
+                                                            {{ tournament.game.name }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="300">
+                                                            {% translate 'Platform' %}
+                                                        </td>
+                                                        <td class="font-weight-normal">
+                                                            {{tournament.game.platform}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        
+                                                        <td width="300">
+                                                            {% translate 'Time' %}
+                                                        </td>
+                                                        <td class="font-weight-normal">
+                                                            {{tournament_started|time:'h:i A'}}
+                                                            {% if tournament.label_next_time %}
+                                                             {{tournament.label_next_time}}
+                                                             {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% comment %} <tr>
+                                                        <td width="300">
+                                                            {% translate 'Participant Type' %}
+                                                        </td>
+                                                        <td class="font-weight-normal">
+                                                            Single
+                                                        </td>
+                                                    </tr> {% endcomment %}
+                                                     <tr>
+                                                        <td width="300">
+                                                            Format
+                                                        </td>
+                                                        <td class="font-weight-normal">
+                                                            {{ tournament.game.get_game_model_display}}
+                                                            {% comment %} {{ tournament.get_format_display }} {% endcomment %}
+                                                        </td>
+                                                    </tr> 
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <br>
+                                        <div class="widget-3 widget">
+                                            <div class="title-wrapper type-2">
+                                                <h3 class="box-title">
+                                                    {% translate 'Tournament Prizes' %}</h3>
+                                                <div class="clear"></div>
+                                            </div>
+
+                                            <div class="wcontainer p-text">
+                                                {% for prize in tournament.tournamentprize_set.all %}
+                                                    <div class="prize-item">
+                                                        <div class="tt">
+                                                            <span>{{ prize.position|ordinal }}</span>
+                                                            <b>{% translate 'Place' %}</b>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="bb">{{ prize.title }}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <br>
+                                        <div class="widget-3 widget">
+                                            <div class="title-wrapper type-2">
+                                                <h3 class="box-title">
+                                                    {% translate 'Tournament Rules' %}</h3>
+                                                <div class="clear"></div>
+                                            </div>
+
+                                            <div class="wcontainer p-text">
+                                                {{ tournament.rules|safe }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-section page-tab-content p-content"
+                 id="participants-box"
+                 style="display: none;">
+            <div class="profile-contain profile-contain-friends"
+                 style="flex-direction: column;">
+                <ul class="friends-list grid type-2" id="participant_list">
+                </ul>
+            </div>
+        </section>
+
+        {% comment %} <section class="side-friends">
+            
+            {% if user.is_authenticated %}
+                <div class="x-header">
+                    <a href="{% url 'profile' %}#friends">
+                        {% translate 'View All' %}
+                    </a>
+                </div>
+                <ul class="friends-list">
+                    {% if user.friends.count > 0 %}
+                        {% for friend in user.friends %}
+                            {% call_method friend 'other' user as other %}
+                            <li>
+                                <a href="/profile/{{ other.uid }}"
+                                class="left">
+                                    <img src="{{ other.profile_image }}"
+                                        class="pro-img" alt="">
+                                    <div class="img">
+                                        <span class="rank">{{ other.level|big_number }}</span>
+                                        {% if other.avatar %}
+                                            <img src="{{ other.avatar.image.url }}"
+                                                alt="">
+                                        {% else %}
+                                            <img src="{% static 'img/profile.png' %}"
+                                                alt="">
+                                        {% endif %}
+                                    </div>
+                                    <div class="content">
+                                        <span class="name">{{ other.nickname }}</span>
+                                        <div class="location">
+                                            {% with 'flags/'|add:other.country.code|add:'.png' as flag_static %}
+                                                <img src="{% static flag_static %}"
+                                                    alt="country"
+                                                    style="width: 25px">
+                                            {% endwith %}
+                                            <span>{{ other.country.name }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li>{% translate 'No friends found' %}</li>
+                    {% endif %}    
+                </ul>
+            {% endif %}
+        </section> {% endcomment %}
+    </div>
+{% endblock %}
+
+{% block modals %}
+    {{ block.super }}
+    <div id="user-game-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="close-box">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+                </div>
+               
+                   
+                {% if not participant and  tournament.started_on %}
+                    <div class="modal-header">
+                        <h3 class="box-title">{% translate 'Cannot join!' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="margin: auto">
+                            <p>{% translate 'You cannot join this tournament since it has already started. Register to other tournaments now and win multiple prizes' %}</p>
+                        </div>
+                    </div>
+                       
+                {% elif  participant and  tournament.started_on %}
+                    <div class="modal-header">
+                        <h3 class="box-title">{% translate 'Good Luck!' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="margin: auto">
+                            <p>{% translate 'This tournament is ongoing, enjoy the game. Good Luck!!' %}</p>
+                        </div>
+                    </div>    
+                    {% elif  not participant and  tournament.close_date < currentDate  %}
+                    <div class="modal-header">
+                        <h3 class="box-title">{% translate 'Cannot join!' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="margin: auto">
+                            <p>{% translate "You cannot join this tournament since it's closed. Register to other tournaments now and win multiple prizes" %}</p>
+                        </div>
+                    </div>  
+                    {% elif not user.is_subscriber and not tournament.allow_free_users %}
+                    <div class="modal-header">
+                        <h3 class="box-title">{% translate 'Subscribers Only!' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="margin: auto">
+                            <p>{% translate 'Subscribe now to be able to join any upcoming tournament.' %}</p>
+                        </div>
+                    </div>
+                {% elif not can_join %}
+                    <div class="modal-header">
+                        <h3 class="box-title">{% translate 'Upgrade Subscription' %}</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row text-center" style="margin: auto">
+                            {% comment %} <p>{% translate 'You are allowed to join one tournament per day. Please upgrade your package to join multiple tournaments per day or click on Pay N 30 fee' %}</p> {% endcomment %}
+                            <p>{% translate 'You are allowed to join one tournament per day. Please upgrade your package to join multiple tournaments per day' %}</p>
+                            <div class="col-md-12"
+                                 style="text-align: center">
+                                <button type="button" data-dismiss="modal" class="btn2 big" id="upgrade-btn">
+                                    {% translate 'Upgrade' %}
+                                </button>
+                                {% comment %} <button type="button" data-dismiss="modal" class="btn2 big" id="pay-btn">
+                                    {% translate 'Pay N 30 fee' %}
+                                </button> {% endcomment %}
+                                <button type="button" data-dismiss="modal" class="btn2 big">
+                                    {% translate 'Cancel' %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% elif tournament.minimum_profile_level and user.level < tournament.minimum_profile_level and tournament.free_open_date > currentDate %}
+                    <div class="modal-header">
+                        <h3 class="box-title">Your profile level is {{ user.level }}!</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row text-center" style="margin: auto">
+                            <p>The minimum profile level required to join this tournament is {{ tournament.minimum_profile_level }}.</p>
+                        </div>
+                    </div>
+                  
+                {% else %}
+                    <div class="modal-header">
+                        <h3 class="box-title">Confirm your
+                            "{{ tournament.game.name }}" account</h3>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form id="set-game-account" style="width: 100%">
+                                {% csrf_token %}
+                                <div class="col-md-12 mb-3">
+                                    <input hidden type="text" name="game"
+                                           value="{{ tournament.game.id }}"/>
+                                    <input hidden type="text" name="tournament"
+                                           value="{{ tournament.id }}"/>       
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    {% if game_account %}
+                                        <input type="text" class="input1"
+                                               name="account"
+                                               placeholder="{% translate 'Enter your game account' %}" required
+                                               value="{{ game_account.account }}"
+                                        />
+                                    {% else %}
+                                        <input type="text" class="input1"
+                                               name="account"
+                                               placeholder="{% translate 'Enter your game account' %}" required
+                                        />
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12"
+                                     style="text-align: right">
+                                    <button type="submit" class="btn2 big">
+                                        {% translate 'Submit' %}
+                                    </button>
+                                    <div class="error_msg" style="text-align: left;color: red;font-size: 13px;position: absolute; bottom: 7px;left: 16px;"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div id="user-game-new-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="close-box">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+                </div>
+                
+                <div class="modal-header">
+                    <h3 class="box-title">Confirm your
+                        "{{ tournament.game.name }}" account</h3>
+                    <div class="clear"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="set-game-new-account" style="width: 100%">
+                            {% csrf_token %}
+                            <div class="col-md-12 mb-3">
+                                <input hidden type="text" name="game"
+                                        value="{{ tournament.game.id }}"/>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {% if game_account %}
+                                    <input type="text" class="input1"
+                                            name="account"
+                                            placeholder="{% translate 'Enter your game account' %}"
+                                            value="{{ game_account.account }}"
+                                    />
+                                {% else %}
+                                    <input type="text" class="input1"
+                                            name="account"
+                                            placeholder="{% translate 'Enter your game account' %}"
+                                    />
+                                {% endif %}
+                            </div>
+                            <div class="col-md-12"
+                                    style="text-align: right">
+                                <button type="submit" class="btn2 big"  >
+                                    {% translate 'Submit' %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}

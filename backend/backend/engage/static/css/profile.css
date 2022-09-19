@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap");
+.profile-header {
+  background-size: cover;
+  background-position: bottom;
+  background-image: url("../img/bg2.jpg");
+  padding: 0 7%;
+  padding-top: 350px;
+  position: relative;
+}
+
+.profile-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.67)), color-stop(75%, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.67) 0%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+}
+
+.profile-header .text-container {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #fff;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+}
+
+.profile-header .text-container .img {
+  position: relative;
+  height: 140px;
+  width: 140px;
+  background: #fff;
+}
+
+.profile-header .text-container .img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.profile-header .text-container .right {
+  padding: 0 15px;
+}
+
+.profile-header .text-container .name {
+  font-size: 2rem;
+  margin: 0;
+  line-height: 2rem;
+  font-weight: bold;
+}
+
+.profile-header .text-container .location {
+  border-radius: 1px;
+  padding: 10px 0;
+}
+
+.profile-header .text-container .location img {
+  height: 30px;
+  margin-right: 8px;
+}
+
+.profile-header .text-container .location span {
+  font-size: 15px;
+}
+
+.profile-header .text-container .location i {
+  height: 30px;
+  margin-right: 8px;
+}
+
+.profile-header .text-container .tabs {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-header .text-container .tabs li {
+  background: #0c112f;
+  margin-right: 10px;
+}
+
+.profile-header .text-container .tabs li a {
+  display: block;
+  color: inherit;
+  padding: 15px 12px;
+  min-width: 130px;
+  text-align: center;
+}
+
+.profile-header .text-container .tabs li.active {
+  background: linear-gradient(135deg, #a525a9 0%, #c52194 100%);
+}
