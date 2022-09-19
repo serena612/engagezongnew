@@ -182,6 +182,14 @@ $(document).on("submit", ".login-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+<<<<<<< HEAD
+=======
+        else if(e.status==514){
+            $('#login-modal').modal("hide");
+            // $('.login-form').trigger("reset");
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);
@@ -196,6 +204,23 @@ function in_array(value, array){
 		return index;
 	}
 }
+<<<<<<< HEAD
+=======
+function get_wait_modal() {
+    $.ajax({
+        url:"/wait", //the page containing python script
+        type: "GET", //request type,
+        data: {},
+        async:true,
+        beforeSend: function(){
+                $('#waitmodalcontent').html("<img class='loading-img' src='/static/img/loading1.gif' /><br><div style='text-align: center;'>Loading...</div>");
+              },
+        success:function(result){
+            $('#waitmodalcontent').html(result);
+        }
+    });
+}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 function checkValidMtnNumber(number){
     var valid=true;
     var telcoPrefixes = [803, 806,703, 706, 813, 816, 810,  814, 903];
@@ -506,6 +531,12 @@ $(document).on("submit", ".register-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+<<<<<<< HEAD
+=======
+        else if(e.status==514){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         else
         response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
         setBtnLoading(btn, false);

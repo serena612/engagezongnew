@@ -228,7 +228,14 @@
 </head>
 
 <body>
+<<<<<<< HEAD
 <nav>
+=======
+   
+    
+<nav class="hih">
+  
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     <div class="top-nav">
         <div class="row">
             {% block header %}
@@ -354,7 +361,11 @@
                     </a>
                 </li>
                 <li>
+<<<<<<< HEAD
                     <a href="/prizes" id="a-prize">{% translate 'PRIZES' %}
+=======
+                    <a href="/prizes#tournament-prizes" id="a-prize">{% translate 'PRIZES' %}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -368,7 +379,11 @@
                     </a>
                 </li>
                 <li>
+<<<<<<< HEAD
                     <a id='li_winners' href='/#winners'>{% translate 'WINNERS' %}
+=======
+                    <a id='li_winners' href="/#winners">{% translate 'WINNERS' %}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                         {% if user.is_authenticated %}
                         <i>{% translate 'new' %}</i>
                         {% endif%}
@@ -566,6 +581,35 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
+=======
+
+        <div id="wait-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <!-- <div class="close-box">
+                        <a data-dismiss="modal" href=""><i
+                                class="fas fa-times"></i></a>
+                    </div> -->
+                    <div class="modal-header">
+                        <h3>{% translate 'Please wait for confirmation' %}</h3>
+                    </div>
+                    <div class="modal-body" id="waitmodalcontent">
+                        
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if user_id %}
+        <script>
+            $('#wait-modal').modal("show");
+            get_wait_modal();
+        </script>
+        {% endif %}
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     {% endif %}
 
     <div id="contact-modal" class="modal fade">

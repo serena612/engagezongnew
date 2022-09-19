@@ -1210,18 +1210,33 @@ function getWinners(game, tournament) {
             if(value.length == 0){
                 var loading = box.find(".loading-tr");
                 loading.html("<span class='no-data'>No Data Found</span>");
+<<<<<<< HEAD
                 var html =` <h2>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+` <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  0 winners</font></h2> <div class='container'><div class='scroll_wrapper'>`;
+=======
+                var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+` <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  0 winners</font></h2> <div class='container'><div class='scroll_wrapper'>`;
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 box.append(html);
                 $('.sec-3-1 .scroll_wrapper,.sec-3-1 .col-8,.sec-3-1 .container').css('height','auto');
                 return;
             }
             
             var counter = 1;
+<<<<<<< HEAD
             var html =` <h2>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+" <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  "+ value.length+` winners </font></h2> <div class='container'><div class='scroll_wrapper'>`;
+=======
+            var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+" <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  "+ value.length+` winners </font></h2> <div class='container'><div class='scroll_wrapper'>`;
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             value.forEach((item) => {
                 if(counter==1 || counter == 5 || counter == 9 || counter == 13){
                     html +=`<div class='package'>`;
                 }
+<<<<<<< HEAD
+=======
+                if(counter%4 ==0 ){
+                    html +=`<div class='win'><div class='position4'>${getNumberWithOrdinal(counter)} </div><div class='name4'>${item.winner_name}</div></div>`; 
+
+                }
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 html +=`<div class='win'><div class='position'>${getNumberWithOrdinal(counter)} </div><div class='name'>${item.winner_name}</div> </div>`;
                 if(counter%4 ==0 || counter==value.length){
                     html +=`</div>`;

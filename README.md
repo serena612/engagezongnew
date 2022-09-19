@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 **Technologies used:**
 - Python/Django + Celery
 - PostgreSQL
@@ -58,3 +59,7 @@ You need to install the dot converter, on mac os you can `brew install dot`.
 - add db indexes
 - check queries joins for excess unneeded queries
 - Refactor some of the queries, make use of Django's model manager
+=======
+# Engage
+Engage Source Code
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a

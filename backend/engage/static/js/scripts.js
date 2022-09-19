@@ -7,6 +7,12 @@ $(function () {
     }
 })
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
 if(window.location.href=='https://cms.engage.devapp.co/' || window.location.href=='https://cms.engage.devapp.co')
 {
     window.location.href='https://cms.engage.devapp.co/admin/'
@@ -349,12 +355,26 @@ function hashchanged() {
     
     setTimeout(function(){
     var hash = window.location.hash;
+<<<<<<< HEAD
     switch (hash) {
         case "#home-tournaments":
             $([document.documentElement, document.body]).animate({
                     scrollTop: $("#sec-3").offset().top,
                 },
                 500
+=======
+   // // console.log("dddddd");
+    switch (hash) {
+        case "#home-tournaments":
+            //console.log("heyyy");
+            var c=$("#sec-3").offset().top;
+            //console.log(c);
+    
+            $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#sec-3").offset().top-200,
+                },
+                2500
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             );
             $("#sec-3 a.tour-btn").click();
             resetStar($('#hometournaments'));
@@ -362,25 +382,40 @@ function hashchanged() {
 
         case "#home-games":
             $([document.documentElement, document.body]).animate({
+<<<<<<< HEAD
                     scrollTop: $("#sec-3").offset().top,
                 },
                 500
+=======
+                    scrollTop: $("#sec-3").offset().top-200,
+                },
+                2500
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
             );
             $("#sec-3 a.games-btn").click();
             resetStar($('#homegames'));
             break;
 
          case "#winners":
+<<<<<<< HEAD
                 $([document.documentElement, document.body]).animate({
                         scrollTop: $(".sec-3-1").offset().top,
                     },
                     500
+=======
+            var w=$(".sec-3-1").offset().top;
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $(".sec-3-1").offset().top-100,
+                    },
+                    w/0.65
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
                 );
                 resetStar($('#li_winners'));
                 
                 break;
     
         case "#redeem-coins":
+<<<<<<< HEAD
             $("#prizes_page #coins").click();
             $([document.documentElement, document.body]).animate({
                     scrollTop: $("#prizes_page").offset().top,
@@ -390,6 +425,28 @@ function hashchanged() {
             resetStar($('#a-redeem'));
             break;
 
+=======
+            var t=$("#prizes_page").offset().top;
+            $("#prizes_page #coins").click();
+            $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#prizes_page").offset().top-100,
+                },
+                t/0.65
+            );
+            resetStar($('#a-redeem'));
+            break;
+        
+         case"#tournament-prizes":
+                var t=$("#prizes_page").offset().top;
+                $("#prizes_page #tournaments").click();
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#prizes_page").offset().top-100,
+                    },
+                    t/0.65
+                );
+                resetStar($('#a-prize'));
+                break;
+>>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         default:
             if (hash.length > 1) {
                 $("a[href='" + hash + "']").click();
