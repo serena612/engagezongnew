@@ -572,7 +572,7 @@ function get_tournament(game,str) {
                 box.html("");
                 box.removeClass("is-loading");
                 box.find('.loading-item').remove();
-
+                hashchangeddd();
                
                 var new_upcomings = [];
                

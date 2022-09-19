@@ -42,6 +42,8 @@
         <script type="application/javascript"
                 src="{% static 'libs/jquery-3.6.0.min.js' %}"></script>
         <script type="application/javascript"
+                src="{% static 'js/api.js' %}?v=6"></script>
+        <script type="application/javascript"
                 src="{% static 'libs/bs4/bootstrap.min.js' %}"></script>
         <script type="application/javascript"
                 src="{% static 'libs/slick/slick.min.js' %}"></script>
@@ -55,6 +57,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
                 integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@15.0.0/dist/smooth-scroll.polyfills.min.js"></script>
 
         <script>
             var serverTime = Math.floor(Date.parse("{% now 'c' %}") / 1000);
@@ -229,13 +232,19 @@
 
 <body>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <nav>
 =======
+=======
+>>>>>>> salibzzengage
    
     
 <nav class="hih">
   
+<<<<<<< HEAD
 >>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
+=======
+>>>>>>> salibzzengage
     <div class="top-nav">
         <div class="row">
             {% block header %}
@@ -345,6 +354,7 @@
             </div>
         </div>
         <div class="bottom-nav">
+            
             <ul>
                 <li>
                     <a id="hometournaments" href="/#home-tournaments">{% translate 'TOURNAMENTS' %}
@@ -382,9 +392,18 @@
                     </a>
                 </li>
             </ul>
+         
         </div>
-    {% endblock %}
+    {% endblock %} 
+   
+   
+           
+
+       
 </nav>
+<script type="application/javascript"
+src="{% static 'js/api.js' %}?v=6"></script>
+
 
 <aside class="sidebar" id="sidebar">
     <div class="close">
@@ -414,6 +433,7 @@
             </li>
         </ul>
     </div>
+   
 </aside>
 
 {% block top_section %}
@@ -574,6 +594,7 @@
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
         <div id="wait-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
@@ -602,6 +623,8 @@
         </script>
         {% endif %}
 >>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
+=======
+>>>>>>> salibzzengage
     {% endif %}
 
     <div id="contact-modal" class="modal fade">
@@ -1292,7 +1315,7 @@
 </div>
 
 <div class="modal fade" id="game-fullscreen-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
         <div class="modal-content" style="background:#000;"> 
             <div class="close-box" onclick="$('#game-fullscreen-modal').find('iframe').remove();$('#game-fullscreen-modal').removeClass('show');$('#game-fullscreen-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
@@ -1356,7 +1379,7 @@
     </div>
 </div>  
 <div class="modal fade" id="faq-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
         <div class="modal-content"> 
             <div class="close-box" onclick="$('#faq-modal').find('iframe').remove();$('#faq-modal').removeClass('show');$('#faq-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
@@ -1412,7 +1435,7 @@
     </div>
 </div>
 <div class="modal fade" id="privacy-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
         <div class="modal-content"> 
             <div class="close-box" onclick="$('#privacy-modal').find('iframe').remove();$('#privacy-modal').removeClass('show');$('#privacy-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
@@ -1495,7 +1518,7 @@
 </div>
 
 <div class="modal fade" id="disclaimer-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
         <div class="modal-content"> 
             <div class="close-box" onclick="$('#disclaimer-modal').find('iframe').remove();$('#disclaimer-modal').removeClass('show');$('#disclaimer-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
@@ -1523,12 +1546,11 @@
 </div>
 
 <div class="modal fade" id="terms-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
         <div class="modal-content"> 
             <div class="close-box" onclick="$('#terms-modal').find('iframe').remove();$('#terms-modal').removeClass('show');$('#terms-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
-                                         height="40" alt="" style="position:absolute;top:0;left:0;margin-left: 27px;
-                                         margin-top: 5px;">
+                                         height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
             </div>
@@ -1547,7 +1569,7 @@
 </div>
 
 <div class="modal fade" id="about-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important;"> 
         <div class="modal-content"> 
             <div class="close-box" onclick="$('#about-modal').find('iframe').remove();$('#about-modal').removeClass('show');$('#about-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
                 <img src="{% static 'img/bgclose.png' %}"
@@ -1801,6 +1823,8 @@
                 src="{% static 'js/fcm.js' %}"></script>
  {% endif %}        
 {% endblock %}
+
+
 
 </body>
 </html>
