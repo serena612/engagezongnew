@@ -1,0 +1,124 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}">
+{{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+{% if form.errors and not form.non_field_errors %}
+<p class="errornote">
+{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+</p>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<p class="errornote">
+    {{ error }}
+</p>
+{% endfor %}
+{% endif %}
+
+<div id="content-main">
+
+{% if user.is_authenticated %}
+<p class="errornote">
+{% blocktrans trimmed %}
+    You are authenticated as {{ username }}, but are not authorized to
+    access this page. Would you like to login to a different account?
+{% endblocktrans %}
+</p>
+{% endif %}
+<script>
+   function onSubmit(token) {
+     //alert("Pressed with token"+token);
+     //e.preventDefault();
+        grecaptcha.ready(function() {
+          grecaptcha.execute('6LfgQHkgAAAAALOSa2gHJKxSLSINgKWNKrEF2d7O', {action: 'submit'}).then(function(token) {
+            //alert("New token obtained\n"+token)
+            window.document.getElementById('id_captcha').value = token;
+            document.getElementById("login-form").submit();
+          });
+        });
+
+     //document.getElementById("login-form").submit();
+   }
+</script>
+<script>
+  var $_GET = {};
+  
+   if(document.location.toString().indexOf('?') !== -1) {
+       var query = document.location
+                     .toString()
+                     // get the query string
+                     .replace(/^.*?\?/, '')
+                     // and remove any existing hash string (thanks, @vrijdenker)
+                     .replace(/#.*$/, '')
+                     .split('&');
+
+       for(var i=0, l=query.length; i<l; i++) {
+         var aux = decodeURIComponent(query[i]).split('=');
+         $_GET[aux[0]] = aux[1];
+         if(aux[0]=='lockout'){
+           var p = document.createElement('p');
+           p.innerHTML = '{% blocktrans %} You have been locked out for '+aux[1]+ ' minute(s).<br>Please <a href="./">try again</a> later.{% endblocktrans %}';
+           p.classList.add("errornote");
+           document.getElementById('content-main').appendChild(p);
+           //setInterval(function(){document.getElementById("subbutton").setAttribute("disabled","disabled");},500)
+           //document.getElementById("subbutton").setAttribute("disabled","disabled");
+           //$("#subbutton.g-recaptcha").attr("disabled", true);            
+         }
+       }
+}
+
+
+  
+  //get the 'index' query parameter
+//alert($_GET['index']);
+</script>  
+
+
+<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+  <div class="form-row">
+    {{ form.username.errors }}
+    {{ form.username.label_tag }} {{ form.username }}
+  </div>
+  <div class="form-row">
+    {{ form.password.errors }}
+    {{ form.password.label_tag }} {{ form.password }}
+    <input type="hidden" name="next" value="{{ next }}">
+  </div>
+  <div class="form-row">
+    {{ form.captcha.errors }}
+    {{ form.captcha }}
+  </div>
+  {% url 'admin_password_reset' as password_reset_url %}
+  {% if password_reset_url %}
+  <div class="password-reset-link">
+    <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+  </div>
+  {% endif %}
+  <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"
+        id="subbutton"
+        class="g-recaptcha" 
+        data-sitekey="6LfgQHkgAAAAALOSa2gHJKxSLSINgKWNKrEF2d7O" 
+        data-callback='onSubmit' 
+        data-action='submit'>
+  </div>
+</form>
+
+</div>
+
+{% endblock %}
