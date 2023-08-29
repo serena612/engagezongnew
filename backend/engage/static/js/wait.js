@@ -23,56 +23,123 @@ function CheckStatus(data) {
     });
 }
 
+var tt=0;
+function showloader(){
+$("#wait-modal .msg").removeClass("d-none");  
+        $(".please_wait").addClass("d-none");
+         $(".waitText").addClass("d-none");
+         $(".errico").addClass("d-none");
+         $(".preload").removeClass("d-none");
+         $("#subscribeRetry").addClass("d-none");
+}
+function hideloader(){
+$("#wait-modal .msg").removeClass("d-none");  
+        $(".please_wait").addClass("d-none");
+         $(".waitText").removeClass("d-none");
+         $(".errico").removeClass("d-none");
+         $(".preload").addClass("d-none");
+         $(".is_updated").addClass("d-none");
+         $("#subscribeRetry").removeClass("d-none");
+         
+}
 function keepUpdated() {
     times += 1;
     // console.log("times = "+times);
-<<<<<<< HEAD
-    if (times>50)
-        return;
-    // console.log("Updating using token "+xtoken);
-    data = {}
-    data.msisdn = $(".user_mobile").text();
-=======
     if (times>50){
-        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Your request is under process. Please check back later. <a href='/'>Refresh</a>").show();
+        // response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Your request is under process. Please check back later. <a href='/'>Refresh</a>").show();
+       /////// clearInterval(tt);
+        response_msg.html("Your request is under process. Please check back later.").show();  //  <a href='/'>Refresh</a>
+        showloader();
+        $("#subscribeRetry").removeClass("d-none");
         return;}
     // console.log("Updating using token "+xtoken);
     data = {}
     data.msisdn = usermobile; // $(".user_mobile").text();
     // console.log(usermobile);
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
     // important must add header check here
     data.idnetwork = '1';
     response_msg = $('.sub_status');
     CheckStatus(data).then(res => {
         //setBtnLoading(btn, false);
-        //$(".login-otp-form").show();
+        //$(".login-otp-form").show(); //invisible
         response_msg.html("Subscription Success !").show();
+        hideloader();
+        $("#wait-modal").find(".success-bd").removeClass("d-none");
         window.location.href = '/clear'
     }).catch(e => {
-        if(e.status==472) //406 ?
+        if(e.status==472){ //invisible
         response_msg.html('The number you have provided is invalid!').show();
-        else if(e.status==475)
-<<<<<<< HEAD
-        response_msg.html('Subscription Request pending...').show();
-        else if(e.status==476)
-        response_msg.html('Unsubscription Request pending...').show();
-        else if(e.status==456)
-        response_msg.html('Profile Creation pending...').show();
-=======
-        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Subscription Request pending...").show();
-        else if(e.status==476)
-        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Unsubscription Request pending...").show();
-        else if(e.status==456)
-        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Profile Creation pending...").show();
-        else if(e.status==0)
-        response_msg.html("<img class='loading-img' src='/static/img/loading1.gif' /><br>Request interrupted. Refreshing page...").show();
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
-        else
-        response_msg.html('Unkown error! Please contact the site administrator. '+e.status).show();
+        hideloader();
+        $("#wait-modal").find(".error-bd").removeClass("d-none"); }
+        else if(e.status==475){
+        response_msg.html("We are subscribing you to Engage. You will receive a message on your number to confirm. Please wait...").show();
+        showloader();}
+        else if(e.status==476){
+        response_msg.html("Unsubscription Request pending...").show();
+        showloader();}
+        else if(e.status==456){
+        if (times<5){
+        response_msg.html("Your subscription is under process...").show();
+        showloader();}
+        else{//invisible
+        response_msg.html("Subscription Failed. Please <a href=\"#\" id=\"Re-Reg\">try again</a>.").show(); //$('.frmregister3').submit();
+        hideloader();
+        $("#wait-modal").find(".error-bd").removeClass("d-none"); 
+        $("#subSubscribe").html('Try Again');
+        $("#subscribeRetry").on('click', firstClick);
+        $("#Re-Reg").on('click', firstClick);
+
+        function firstClick() {
+            // document.getElementById('frmregister3').submit();
+            secondForm();
+        }
+        return
+        }}
+        else if(e.status==480){//invisible
+        response_msg.html("Your subscription has ended. Please renew your subscription <a href='/register'>here</a>.").show();
+        hideloader();
+        $("#wait-modal").find(".error-bd").removeClass("d-none"); 
+        return
+        }
+        else if(e.status==0){
+        response_msg.html("Request interrupted. Refreshing page...").show();
+        showloader();}
+        else{
+        response_msg.html('Something went wrong. Please try again later.').show();  // + +e.status  //invisible
+        hideloader();
+        $("#wait-modal").find(".error-bd").removeClass("d-none"); 
+        return;}
         //setBtnLoading(btn, false); 
+
+//         $("#wait-modal .preload").addClass("d-none");
+
+//    ////////////////////// tt = setInterval(() => {
+         
+//         var statusW = $(".sub_status").html();
+//         if(statusW != "" && statusW == "Subscription Success !")
+//         {
+//             $("#wait-modal .msg").removeClass("d-none");  
+//             $("#wait-modal").find(".error-bd").addClass("d-none");  
+//             $("#wait-modal").find(".success-bd").removeClass("d-none");          
+//             $(".please_wait").addClass("d-none");
+//            //////////////////// clearInterval(t);
+//         } 
+//         else if(statusW != "" && statusW != "Subscription Success !")
+//         {
+//             $("#wait-modal .msg").removeClass("d-none");  
+//             $("#wait-modal").find(".error-bd").removeClass("d-none");  
+//             $("#wait-modal").find(".success-bd").addClass("d-none");          
+//             $(".please_wait").addClass("d-none");
+//             ////////////clearInterval(t);
+//         } 
+         
+    /////////////////////}, 50);
+
         setTimeout(keepUpdated, 5000);
     });
     //setTimeout(keepUpdated(), 5000);
+   
+
+    
 }
 setTimeout(keepUpdated, 5000);

@@ -6,10 +6,81 @@
 {% load call_method %}
 {% block javascript %}
     <script>
+      
         var tournament_slug = '{{ tournament.slug }}'
         var pay_fee_url = "{% url 'orders-pay-fee' %}";
     </script>
     <script src="{% static 'js/pages/tournament.js' %}"></script>
+    <script>
+        const timeZone = 'Africa/Lagos' //Intl.DateTimeFormat().resolvedOptions().timeZone;  // replace with the time zone you want to check
+         //var tournamentDate = '{{ tournament_started|date:"M d, Y" }} {{ tournament_started|time:"h:i:s" }}';
+         var tournamentDate = '{{ tournament_closed|date:"M d, Y" }} {{ tournament_closed|time:"H:i:s" }}';
+         var countDownDate = new Date(tournamentDate).getTime();
+         // Run myfunc every second
+    var myfunc = setInterval(function() {
+
+       //var now = new Date();
+       //var timezoneOffset = now.getTimezoneOffset();
+       //var userDatetime = new Date(now.getTime() + (timezoneOffset * 60 * 1000));
+        
+        const now = new Date();
+        const targetDate = now.toLocaleString('en-US', { timeZone });
+        //console.log('targetDate',targetDate)
+        const timeInMs = new Date(targetDate).getTime();
+        var timeleft = countDownDate - timeInMs;
+    
+// Calculating the days, hours, minutes and seconds left
+var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+//console.log("days",days)
+var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+//console.log("hours",hours)
+var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+//console.log("minutes",minutes)
+var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+//console.log("seconds",seconds)
+    
+// Result is output to the specific element
+document.getElementById("ctdays").innerHTML = days ==1 ? days + " day " : days + " days "
+document.getElementById("cthours").innerHTML = hours ==1 ? hours + " hour" : hours + " hours" 
+document.getElementById("ctmins").innerHTML = minutes ==1 ? minutes + " minute" : minutes + " minutes" 
+document.getElementById("ctsecs").innerHTML = seconds ==1 ? seconds + " second" : seconds + " seconds" 
+
+
+
+// Display the message when countdown is over
+if (timeleft < 0) {
+    clearInterval(myfunc);
+    myfunc=0;
+    document.getElementById("ctdays").innerHTML = "";
+    document.getElementById("cthours").innerHTML = "" ;
+    document.getElementById("ctmins").innerHTML = "";
+    document.getElementById("ctsecs").innerHTML = "";
+
+    //document.getElementById("is_started").innerHTML =  "{% translate 'Tournament Started' %}";  
+    //document.getElementById("is_started").innerHTML ="";
+    document.getElementById("is_closed").innerHTML =  "{% translate 'Registration Closed' %}";  
+    document.getElementById("ct_down").style.display = "none";
+    //document.getElementById("end").innerHTML = "TIME UP!!";
+    //////location.reload();
+}
+}, 1000);
+ 
+    </script>
+    <style>
+        #ctdays, #cthours, #ctmins, #ctsecs{
+            float: left;
+            margin-right: 6px;
+        }
+        .pull-left{
+            float: left!important;font-size: 0.9rem;margin-right:10px;    font-weight: bold;
+        }
+        .countdown
+        {
+            margin-left: 6px;
+            color: #9627b4;
+            font-weight: bold;
+        }
+    </style>
 {% endblock %}
 
 {% block top_section %}
@@ -25,18 +96,51 @@
                 <div class="right">
                     <h2 class="name">{{ tournament.name }}</h2>
                     <h2 class="game">{{ tournament.game.name }}</h2>
-                    <h2 class="date">
+                    <div class="date">
                         {% if tournament.state == 'upcoming' %}
-                            {% translate 'Tournament Starts in' %}
-                            <span>{{ starts_in_full }}</span> 
+                            <div class="pull-left" id="is_started">{% translate 'Tournament Starts on' %} </div> 
+                            <!-- <span>{{ starts_in_full }}</span> -->
+                            <span>{{tournament_started}}</span>
+                            {% if tournament.label_next_time %}
+                            <span> - {{tournament.label_next_time }}</span>
+                          {% endif %}
+                            <!-- <span class="countdown pull-left" id="ct_down">
+                                <p id="ctdays" ></p> <p id="cthours"></p> <p id="ctmins"></p> <p id="ctsecs"></p> <div style="clear:both"></div>
+                                </span> -->
+                          
+                            <h2 id="end"></h2>
+                              <div class="pull-left" id="is_closed"><b>{% translate 'REGISTRATION CLOSES IN' %} </b></div> 
+                              <span class="countdown pull-left" id="ct_down">
+                                  <p id="ctdays" ></p> <p id="cthours"></p> <p id="ctmins"></p> <p id="ctsecs"></p> <div style="clear:both"></div>
+                                </span>
+                            
+                           
+                            
+  
+
+
+
+
+                            
                         {% else %}
-                            {% translate 'Tournament Started' %} <span></span>  
+                            {% translate 'Tournament Started' %} / {{ tournament_started|date:"M d, Y" }} / {{ tournament_started|time:"h:i A" }} <span></span>  
                         {% endif %}
-                        / {{ tournament_started|date:"M d, Y" }} / {{ tournament_started|time:"h:i A" }}
+
+                        {% if tournament.state == 'upcoming' %}
+                       
+                        <div class="pull-left exceptcss">/ {{ tournament_closed|date:"M d, Y" }} / {{ tournament_closed|time:"h:i A" }} 
+
+
                         {% if tournament.label_next_time %}
-                          {{tournament.label_next_time }}
-                        {% endif %}
-                        </h2>
+                          <b> - {{tournament.label_next_time }}</b>
+                          {% endif %}
+                          </div>
+                          {% endif %}
+
+
+                        
+                        <div style="clear: both;"></div>
+                        </div>
                     <ul class="tabs-box tabs-container">
                         <li><a href="#summary" data-id="#summary-box"
                                class="is-with-side-friends active">{% translate 'Summary' %}</a>
@@ -97,8 +201,9 @@
                                         data-target="#user-game-modal"> {% translate 'Closed' %}</a>      
                                     
                                     {% else %} 
-                                        <a data-toggle="modal"
-                                         data-target="#user-game-modal">{% translate 'Join Now' %}</a>
+                                       <!-- <a data-toggle="modal"
+                                         data-target="#user-game-modal" class="register_btn">{% translate 'Register' %}</a> -->
+                                         <a  class="register_btn">{% translate 'Register' %}</a>
                                     {% endif %}
 
                                 {% else %}
@@ -307,11 +412,16 @@
     {{ block.super }}
     <div id="user-game-modal" class="modal fade">
         <div class="modal-dialog modal-md">
-            <div class="modal-content">
+            {% if not user.is_subscriber and not tournament.allow_free_users and user.subscription == 'free' %}
+            <div class="modal-content" style="background-color:transparent">
+            {% else %}
+            <div class="modal-content"> 
+            {%endif%}
+                {% if user.is_subscriber or tournament.allow_free_users or user.subscription != 'free' %}
                 <div class="close-box">
                     <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
                 </div>
-               
+               {%endif%}
                    
                 {% if not participant and  tournament.started_on %}
                     <div class="modal-header">
@@ -345,16 +455,30 @@
                         </div>
                     </div>  
                     {% elif not user.is_subscriber and not tournament.allow_free_users %}
+
+                    {% if user.subscription == 'free' %}
+                    <div class="modal-content" style="text-align: center; background-color: #1D0F26; border-radius: 10px;"> 
+                    <div class="modal-body" style="padding-top: 47px; width: 84%; margin: 0px auto 6px;">                    
+                        <div style="color:#FF0090">{% translate 'SUBSCRIBERS ONLY!' %}</div>
+                        <div style="margin-bottom: 20px;color: #FFF;font-size: 0.8rem;">{% translate 'PLEASE UPGRADE FROM THE PACKAGE TO N50 PACKAGE TO BE ABLE TO JOIN TOURNAMENTS. TO UPGRADE PLEASE CLICK ON THE BUTTON BELOW.' %}</div>                    
+                        <div class="btn_upgrade" style="cursor: pointer; background-color: #FF0090; height: 44px; padding-top: 10px; font-weight: 800; border-radius: 4px; color: #181022; text-align: center; max-width: 100%; margin: 0px auto 20px;">{% translate 'UPGRADE PACKAGE' %}</div>                   
+                    </div>
+                </div>
+
+                    {% else %}
+
                     <div class="modal-header">
                         <h3 class="box-title">{% translate 'Subscribers Only!' %}</h3>
                         <div class="clear"></div>
                     </div>
                     <div class="modal-body">
-                        <div class="row" style="margin: auto">
-                            <p>{% translate 'Subscribe now to be able to join any upcoming tournament.' %}</p>
+                        <div class="row" style="margin: auto">                             
+                            <p>{% translate 'Subscribe now to be able to join any upcoming tournament.' %}</p>                             
                         </div>
                     </div>
-                {% elif not can_join %}
+                    {% endif %}  
+
+                  {% elif not can_join %}
                     <div class="modal-header">
                         <h3 class="box-title">{% translate 'Upgrade Subscription' %}</h3>
                         <div class="clear"></div>
@@ -379,12 +503,12 @@
                     </div>
                 {% elif tournament.minimum_profile_level and user.level < tournament.minimum_profile_level and tournament.free_open_date > currentDate %}
                     <div class="modal-header">
-                        <h3 class="box-title">Your profile level is {{ user.level }}!</h3>
+                        <h3 class="box-title">{% translate 'Your profile level is {{ user.level }}!' %}</h3>
                         <div class="clear"></div>
                     </div>
                     <div class="modal-body">
                         <div class="row text-center" style="margin: auto">
-                            <p>The minimum profile level required to join this tournament is {{ tournament.minimum_profile_level }}.</p>
+                            <p>{% translate 'The minimum profile level required to join this tournament is {{ tournament.minimum_profile_level }}' %}.</p>
                         </div>
                     </div>
                   
@@ -406,23 +530,66 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     {% if game_account %}
+                                    {% if not tournament_joined_today%}
+                                        <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
                                         <input type="text" class="input1"
-                                               name="account"
-                                               placeholder="{% translate 'Enter your game account' %}" required
+                                               name="account" id="gacc1"
+                                               placeholder="{% translate 'Enter your game account' %}" required 
+                                                maxLength="32"
                                                value="{{ game_account.account }}"
                                         />
-                                    {% else %}
+                                    {% elif tournament_joined_today and not tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Dear Customer, you are allowed to join one tournament per day. Please come back tomorrow to join other tournaments.' %}</label>
+                                    {% elif tournament_joined_today and tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
                                         <input type="text" class="input1"
-                                               name="account"
+                                               name="account" id="gacc1"
+                                               placeholder="{% translate 'Enter your game account' %}" required 
+                                               maxLength="32"
+                                               value="{{ game_account.account }}"
+                                        />
+                                    {% endif %}
+
+                                        
+                                    {% else %}
+                                        {% if not tournament_joined_today%}
+                                        <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
+                                        <input type="text" class="input1"
+                                               name="account" id="gacc1"
+                                                maxLength="32"
                                                placeholder="{% translate 'Enter your game account' %}" required
                                         />
+                                        {% elif tournament_joined_today and not tournament.allow_free_users%} 
+                                        <label for="gacc1">{% translate 'Dear Customer, you are allowed to join one tournament per day. Please come back tomorrow to join other tournaments.' %}</label>
+                                        {% elif tournament_joined_today and tournament.allow_free_users%} 
+                                        <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
+                                            <input type="text" class="input1"
+                                                name="account" id="gacc1"
+                                                 maxLength="32"
+                                                placeholder="{% translate 'Enter your game account' %}" required
+                                                value="{{ game_account.account }}"
+                                            />
+                                        {% endif %}
+
                                     {% endif %}
                                 </div>
                                 <div class="col-md-12"
                                      style="text-align: right">
+                                    {% if not tournament_joined_today%}
                                     <button type="submit" class="btn2 big">
                                         {% translate 'Submit' %}
                                     </button>
+                                    {% elif tournament_joined_today and not tournament.allow_free_users%}
+                                    <div class="info-box"></div>
+                                    <div class="text-center">
+                                        <button data-dismiss="modal" class="btn3 mt-2">Ok</button>
+                                        </div>
+                                    </div>
+                                    {% elif tournament_joined_today and tournament.allow_free_users%} 
+                                    <button type="submit" class="btn2 big">
+                                        {% translate 'Submit' %}
+                                    </button>
+                                    {% endif %}
                                     <div class="error_msg" style="text-align: left;color: red;font-size: 13px;position: absolute; bottom: 7px;left: 16px;"></div>
                                 </div>
                             </form>
@@ -461,23 +628,55 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 {% if game_account %}
+                                    {% if not tournament_joined_today%}
+                                    <label for="gacc2">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
                                     <input type="text" class="input1"
-                                            name="account"
+                                            name="account" id="gacc2"
                                             placeholder="{% translate 'Enter your game account' %}"
                                             value="{{ game_account.account }}"
                                     />
+                                    {% elif tournament_joined_today and not tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Dear Customer, you are allowed to join one tournament per day. Please come back tomorrow to join other tournaments.' %}</label>
+                                    {% elif tournament_joined_today and tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
+                                        <input type="text" class="input1"
+                                               name="account" id="gacc1"
+                                               placeholder="{% translate 'Enter your game account' %}" required
+                                            value="{{ game_account.account }}"
+                                    />
+                                    {% endif %}
                                 {% else %}
+                                {% if not tournament_joined_today%}
+                                <label for="gacc2">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
                                     <input type="text" class="input1"
-                                            name="account"
+                                            name="account" id="gacc2"
                                             placeholder="{% translate 'Enter your game account' %}"
                                     />
+                                    {% elif tournament_joined_today and not tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Dear Customer, you are allowed to join one tournament per day. Please come back tomorrow to join other tournaments.' %}</label>
+                                    {% elif tournament_joined_today and tournament.allow_free_users%} 
+                                    <label for="gacc1">{% translate 'Game account is your in-game ID. You need to create it in the game itself to be eligible to participate in the tournament.' %}</label>
+                                        <input type="text" class="input1"
+                                               name="account" id="gacc1"
+                                               placeholder="{% translate 'Enter your game account' %}" required
+                                               value="{{ game_account.account }}"
+                                        />
+                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="col-md-12"
                                     style="text-align: right">
+                                {% if not tournament_joined_today%}
                                 <button type="submit" class="btn2 big"  >
                                     {% translate 'Submit' %}
                                 </button>
+                                {% else %} 
+                                <div class="info-box"></div>
+                                <div class="text-center">
+                                    <button data-dismiss="modal" class="btn3 mt-2">Ok</button>
+                                </div>
+                                </div>
+                                {% endif %}
                             </div>
                         </form>
                     </div>

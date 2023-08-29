@@ -108,8 +108,10 @@ $(document).on("submit", ".login-form", function (e) {
         response_msg.html('The number you have provided is invalid!').show();
         else if(e.status==458)
         response_msg.html('The max allowed sent pin codes have been reached! Please try again tomorrow.').show();
+        else if(e.status==555)
+        response_msg.html('No connection available, please try again later.').show();
         else
-        response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
+        response_msg.html('Something went wrong. Please try again later.').show();  // Error code: '+e.status
         setBtnLoading(btn, false);
 
         
@@ -171,7 +173,7 @@ $(document).on("submit", ".login-otp-form", function (e) {
     setBtnLoading(btn, true);
 
     postLoginOTP(form_data.data).then(res => {
-        console.log(res);
+        //console.log(res);
         $('.login-form').trigger("reset");
         setBtnLoading(btn, false);
     }).catch(e => {
@@ -182,13 +184,18 @@ $(document).on("submit", ".login-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
+        else if(e.status==480)
+        response_msg.html('Your subscription has ended. Please renew your subscription <a href="/register">here</a>.').show();
+        else if(e.status==481) 
+        response_msg.html('Your pincode has expired. Please try again.').show();
         else if(e.status==514){
-            $('#login-modal').modal("hide");
-            // $('.login-form').trigger("reset");
-            $('#wait-modal').modal("show");
-            get_wait_modal();}
+             $('#login-modal').modal("hide");
+             // $('.login-form').trigger("reset");
+             $('#wait-modal').modal("show");
+             get_wait_modal();
+        }
         else
-        response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
+        response_msg.html('Something went wrong. Please try again later.').show();  //  Error code: '+e.status
         setBtnLoading(btn, false);
     });
 })
@@ -201,6 +208,7 @@ function in_array(value, array){
 		return index;
 	}
 }
+
 function get_wait_modal() {
     $.ajax({
         url:"/wait", //the page containing python script
@@ -208,21 +216,32 @@ function get_wait_modal() {
         data: {},
         async:true,
         beforeSend: function(){
-                $('#waitmodalcontent').html("<img class='loading-img' src='/static/img/loading1.gif' /><br><div style='text-align: center;'>Loading...</div>");
+                //$('#waitmodalcontent').html("<img class='loading-img' src='/static/img/loading1.gif' /><br><div style='text-align: center;'>Loading...</div>");
+                $("#wait-modal .preload").removeClass("d-none");
               },
         success:function(result){
-            $('#waitmodalcontent').html(result);
+           // $('#waitmodalcontent').html(result); 
+           //alert("res:" + result);
+           //$("#wait-modal .preload").addClass("d-none");
+           //$(".please_wait").addClass("d-none");
+            
+           
+            // $('#waitmodalcontent').find(".success-bd").find(".desc").html(result);
+            // $('#waitmodalcontent').find(".error-bd").find(".desc").html(result);
+            $('#waitmodalcontent').find(".desc").html(result);
+                      
         }
+        
     });
 }
 function checkValidMtnNumber(number){
     var valid=true;
     var telcoPrefixes = [803, 806,703, 706, 813, 816, 810,  814, 903];
-    var xpref=[7025, 7026, 703, 704, 706, 803, 806, 810, 813, 814, 816, 903, 906,913,916]
+    var xpref=[7025, 7026, 703, 704, 706, 803, 806, 810, 813, 814, 816, 903, 906,913,916,102]; //added 102 for test
 
 
     //get value from textbox
-	phoneInputValue = number
+	phoneInputValue = number;
 
 	//get value length
 	var inputLength = phoneInputValue.length;
@@ -404,6 +423,9 @@ $(document).on("submit", ".frmregister", function (e) {
     var data = getFormData(form);
     var response_msg = form.find(".response-msg");
     response_msg.hide();response_msg.html('');
+
+    $(".sendcodemsg").html('').hide();
+    
     var btn = form.find("button[type=submit]");
     if($('input[name="phone_number"]').css('display')!="none" && data.data.phone_number=="")
        return;
@@ -443,22 +465,37 @@ $(document).on("submit", ".frmregister", function (e) {
     }
 
     setBtnLoading(btn, true);
+
+    data.data.subscription = 'free';//$('#user_sub_mod').val();
     
+    console.log("---aaa----");
+    console.log(data.data);
+    console.log("--aaa-----");
+    $("#reg_code").val("");
+
     postRegister(data.data).then(res => {
         //form.trigger("reset");
         setBtnLoading(btn, false);
         form.hide();
         $('body').addClass('tab2');
         $(".register-otp-form").show();
+        $(".sendcodemsg").html('A pin code has been sent to you. Please enter the pin code to proceed.').show(); 
+             
+
     }).catch(e => {
         if(e.status==306)
-        response_msg.html('The mobile number you have provided already exists!').show();
+        {
+            $("#reg_code").val("1");
+            $(".sendcodemsg").html('The mobile number you have provided already exists!').show();
+        }
         else if(e.status==472) //406 ?
-        response_msg.html('The number you have provided is invalid!').show();
+        $(".sendcodemsg").html('The number you have provided is invalid!').show();
         else if(e.status==458)
-        response_msg.html('The max allowed sent pin codes have been reached! Please try again tomorrow.').show();
+        $(".sendcodemsg").html('The max allowed sent pin codes have been reached! Please try again tomorrow.').show();
+        else if(e.status==555)
+        $(".sendcodemsg").html('No connection available, please try again later.').show();
         else
-        response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
+        $(".sendcodemsg").html('Something went wrong. Please try again later.').show();  //  Error code: '+e.status
         setBtnLoading(btn, false);
     });
 
@@ -472,6 +509,7 @@ $(document).on("submit", ".register-otp-form", function (e) {
     var response_msg = form.find(".response-msg");
     var data = getFormData(form);
     data.data.phone_number = $('.frmregister').find('input[name="phone_number"]').val();
+    data.data.refid = refid;
     if(data.data.phone_number!=undefined){
         var firststr = data.data.phone_number;
         if(data.data.phone_number.length == 11){ 
@@ -498,7 +536,7 @@ $(document).on("submit", ".register-otp-form", function (e) {
     }
     
     
-    data.data.subscription = $('.frmregister').find('select[name="subscription"]').val();
+    data.data.subscription = 'free'; //$('#user_sub_mod').val();//$('.frmregister').find('select[name="subscription"]').val();
     
     // if($('input[name="code"]').val()!="123456"){
     //     response_msg.html('Please enter a valid pincode!').show();
@@ -525,19 +563,71 @@ $(document).on("submit", ".register-otp-form", function (e) {
         response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
         else if(e.status==472)
         response_msg.html('Invalid Phone Number provided!').show();
-<<<<<<< HEAD
-=======
+        else if(e.status==481) 
+        response_msg.html('Your pincode has expired. Please try again.').show();
         else if(e.status==514){
             $('#wait-modal').modal("show");
             get_wait_modal();}
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
         else
-        response_msg.html('Unkown error! Please contact the site administrator. Error code: '+e.status).show();
+        response_msg.html('Something went wrong. Please try again later.').show(); //  Error code: '+e.status
         setBtnLoading(btn, false);
         ///location.reload();
     });
 })
 
+// Register Form Submit
+$(document).on("submit", ".frmregister.frm2", function (e) {
+    e.preventDefault();
+    var form = $(this);
+    var response_msg = form.find(".response-msg");
+    var data = getFormData(form);
+    
+    data.data.refid = refid;
+   
+    data.data.subscription = 'free'; //$('.frmregister2').find('select[name="subscription"]').val();
+  
+    response_msg.hide();
+    var btn = form.find("button[type=submit]");
+    setBtnLoading(btn, true);
+
+    postRegister2OTP(data.data).then(res => {
+        localStorage.removeItem("last_profile_edit");
+        location.href = location.href.replace('/register','');
+    }).catch(e => {
+        console.log("e", e);
+        if(e.status==471) //406 ?
+        response_msg.html('Exceed maximum allowed attempts! Please try again later.').show();
+        else if(e.status==514){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
+        else
+        response_msg.html('Something went wrong. Please try again later.').show(); //  Error code: '+e.status
+        setBtnLoading(btn, false);
+        ///location.reload();
+    });
+})
+
+
+function secondForm(){
+    var form = $('.frmregister3');
+    
+    var data = getFormData(form);
+    
+    // data.data.refid = refid;
+   
+    // data.data.subscription = $('.frmregister2').find('select[name="subscription"]').val();
+  
+    postRegister3OTP(data.data).then(res => {
+        location.reload();
+    }).catch(e => {
+        console.log("e", e);
+        if(e.status==514){
+            $('#wait-modal').modal("show");
+            get_wait_modal();}
+        
+        ///location.reload();
+    });
+}
 
 // Edit Profile Form Submit
 $(document).on("submit", "#edit-profile-form", function (e) {
@@ -609,7 +699,6 @@ $(document).on("submit", "#send-coins-form", function (e) {
         response_msg.html("Coins are now transferred to your friend.").show();
         setTimeout(function(){ $("#send-coins").modal("hide");},3000);
         $('#user-coins').css('background','#EA2D2D');
-        
     }).fail(function (ee) {
         response_msg.html("This amount exceeds your balance.").show();
         setBtnLoading(btn, false);

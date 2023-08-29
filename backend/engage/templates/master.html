@@ -7,9 +7,17 @@
 {% get_countries as countries %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C0XVDBF16H"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C0XVDBF16H');
+    </script>
+
     <link rel="icon" href="{% static 'img/favicon.png' %}">
     {% block meta %}
         <meta charset="UTF-8">
@@ -20,9 +28,7 @@
     {% block stylesheets %}
         <link rel="stylesheet" href="{% static 'libs/bs4/bootstrap.min.css' %}">
         <link rel=" stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-              integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+              href="{% static 'css/all.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'libs/slick/slick.min.css' %}">
         <link rel="stylesheet"
               href="{% static 'libs/slick/slick-theme.min.css' %}">
@@ -42,34 +48,29 @@
         <script type="application/javascript"
                 src="{% static 'libs/jquery-3.6.0.min.js' %}"></script>
         <script type="application/javascript"
-                src="{% static 'js/api.js' %}?v=6"></script>
-        <script type="application/javascript"
                 src="{% static 'libs/bs4/bootstrap.min.js' %}"></script>
         <script type="application/javascript"
                 src="{% static 'libs/slick/slick.min.js' %}"></script>
         <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
         <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script type="application/javascript"
-                src="{% static 'libs/videojs/video.min.js' %}"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
-                integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@15.0.0/dist/smooth-scroll.polyfills.min.js"></script>
-
+        <!-- <script type="application/javascript"
+                src="{% static 'libs/videojs/video.min.js' %}"></script> -->
+        <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging-compat.js"></script>
+        <script src="{% static 'libs/jquery.cookie.min.js' %}"></script>
+        <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=6374daa41de3a500195a088f&product=inline-share-buttons' async='async'></script>
         <script>
             var serverTime = Math.floor(Date.parse("{% now 'c' %}") / 1000);
             var xtoken = $.cookie("csrftoken");
 
             
             var is_authenticated = false;
-            var get_tournaments_url = '/api/tournaments/'
-            var get_list_tournaments = '/api/tournaments/get_tournaments'
-            var get_html5games_url = '/api/html5_games/'
-            var get_prizes_url = '/api/tournaments-prizes/'
-            var get_winners_url = '/api/winners/'
+            var get_tournaments_url = '/api/tournaments/';
+            var get_list_tournaments = '/api/tournaments/get_tournaments';
+            var get_html5games_url = '/api/html5_games/';
+            var get_prizes_url = '/api/tournaments-prizes/';
+            var get_winners_url = '/api/winners/';
             var post_contact_engage_url = "/api/contact/engage/";
             var post_contact_support_url = "/api/contact/support/";
             var get_tournament_participants = '{% url "tournament-get-participants" %}';
@@ -81,15 +82,15 @@
             function openModal(index,param0,param1,param2){
                 
                  var str="";var title="";var body="";
-				if(index==1){
-				 title='Congratulations';
-				 body='You have played and won the tournament ('+param0+'). You won ('+param1+').'
-				}
-				else if(index==2){
-				 title='Congratulations';
-				 body='You have played and won a prize in the tournament ('+param0+'). You won ('+param1+').'
-			 
-				}
+        				if(index==1){
+        				 title='Congratulations';
+        				 body='You have played and won the tournament ('+param0+'). You won ('+param1+').'
+        				}
+        				else if(index==2){
+        				 title='Congratulations';
+        				 body='You have played and won a prize in the tournament ('+param0+'). You won ('+param1+').'
+        			 
+        				}
                 else if(index==3){
                     title='Congratulations';
                     if(param0=="1")
@@ -144,7 +145,125 @@
                 var currentyear = new Date().getFullYear();
                 $('.currentyear').text(currentyear);
             })
-           
+           $(window).on('load', function() {
+    hashchanged();  
+});
+
+function hashchanged() {
+    
+    setTimeout(function(){
+    var hash = window.location.hash;
+    if($('.homsec').length!=0){
+        switch (hash) {
+            case "#home-tournaments":
+            
+                var c=$("#sec-3").offset().top;
+            
+        
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#sec-3").offset().top-50,
+                    },
+                    c/1.35
+                );
+                $("#sec-3 a.tour-btn").click();
+                resetStar($('#hometournaments'));
+                break;
+
+            case "#home-games":
+                var i=$("#sec-3").offset().top;
+                $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#sec-3").offset().top-50,
+                    },
+                    i/1.35
+                );
+                $("#sec-3 a.games-btn").click();
+                resetStar($('#homegames'));
+                break;
+
+            case "#winners":
+                var w=$(".sec-3-1").offset().top;
+                    $([document.documentElement, document.body]).animate({
+                            scrollTop: $(".sec-3-1").offset().top-50,
+                        },
+                        w/1.35
+                    );
+                    
+                
+                    resetStar($('#li_winners'));
+                    
+                    break;
+        
+            case "#redeem-coins":
+                var t=$("#prizes_page").offset().top;
+                $("#prizes_page #coins").click();
+                // $([document.documentElement, document.body]).animate({
+                //         scrollTop: $("#prizes_page").offset().top-50,
+                //     },
+                //     t/1.35
+                // );
+            // resetStar($('#a-redeem'));
+                break;
+            
+            case"#tournament-prizes":
+                    //var t=$("#prizes_page").offset().top;
+                // $("#prizes_page #tournaments").click();
+                    // $([document.documentElement, document.body]).animate({
+                    //         scrollTop: $("#prizes_page").offset().top-50,
+                    //     },
+                    //     t/1.35
+                    // );
+                //  resetStar($('#a-prize'));
+                    break;
+            default:
+                if (hash.length > 1) {
+                    $("a[href='" + hash + "']").click();
+                }
+                break;
+        }
+    }
+    else{
+        switch (hash) {
+            case "#home-tournaments":
+                window.location.href='/home'+hash;
+                break;
+
+            case "#home-games":
+                window.location.href='/home'+hash;
+                break;
+
+            case "#winners":
+                var w=$(".sec-3-1").offset().top;
+                    $([document.documentElement, document.body]).animate({
+                            scrollTop: $(".sec-3-1").offset().top-50,
+                        },
+                        w/1.35
+                    );
+                    
+                
+                    resetStar($('#li_winners'));
+                    
+                    break;
+        
+            case "#redeem-coins":
+                var t=$("#prizes_page").offset().top;
+                $("#prizes_page #coins").click();
+                
+                break;
+            
+            case"#tournament-prizes":
+                    break;
+            default:
+                if (hash.length > 1) {
+                    $("a[href='" + hash + "']").click();
+                }
+                break;
+        }
+    }
+   },500);
+    $(window).trigger("resize");
+    
+  
+}
             
         </script>
        
@@ -160,13 +279,13 @@
                     measurementId: "{{ fcm_config.measurementId }}",
                 }; {% endcomment %}
                 var firebaseConfig = {
-                    apiKey: "AIzaSyA0HHeMbJieI4Qp5tyxn765mk0IWllTCco",
-                    authDomain: "engageplaywin-ced7f.firebaseapp.com",
-                    projectId: "engageplaywin-ced7f",
-                    storageBucket: "engageplaywin-ced7f.appspot.com",
-                    messagingSenderId: "615474016768",
-                    appId: "1:615474016768:web:7cfa190a078416cc3a9ee5",
-                    measurementId: "G-4FTX1VRLYN"
+                    apiKey: "AIzaSyClFi6oYdwKrbbTYBSNRdbYmLXJ4uR-vHI",
+                    authDomain: "engageplaywin-4b74b.firebaseapp.com",
+                    projectId: "engageplaywin-4b74b",
+                    storageBucket: "engageplaywin-4b74b.appspot.com",
+                    messagingSenderId: "729860295401",
+                    appId: "1:729860295401:web:b732dc0c7618190cf53e78",
+                    measurementId: "G-C0XVDBF16H"
                   };
                 var user_subscription = '{{ user.subscription }}';
                 var profileData = {
@@ -199,7 +318,9 @@
                 is_authenticated = true;
                 var get_user_notifications_url = '{% url "fcm-get-user-notifications" %}'; 
                 var get_new_notifications_url = '{% url "fcm-get-new-notifications" %}';
+                var get_new_early_notifications_url = '{% url "fcm-get-new-early-notifications" %}';
                 var get_early_notifications_url = '{% url "fcm-get-early-notifications" %}';
+                var read_all_notifications_url = '{% url "fcm-read-all-notifications" %}';
 
                 var set_notification_status_url = '{% url "fcm-set-notification-status" %}';
                 var claim_gift_url = '{% url "fcm-claim-gift" %}';
@@ -213,14 +334,22 @@
                 var friends_list_reject = '{% url "friendlist-reject-friend-request" %}';
                 var user_uid = '{{ user.uid }}'
                 var upgrade_subscription = "{% url 'user-upgrade-subscription' 'user_uid' %}";
+                var check_user_status = "{% url 'user-check-userstatus' 'user_uid' %}"; 
                 var update_log = "{% url 'user-update-log' 'user_uid' %}"; 
                 var check_usercoin = "{% url 'user-check-usercoin' 'user_uid' %}"; 
                 var featured_game_retrieve =  '/api/featured_games/';
+                var update_go_premium_flag = "{% url 'user-update-go-premium-flag' 'user_uid' %}"
+                var update_joined_tournaments = "{% url 'user-update-joined-tournaments' 'user_uid' %}";
+                
             </script>
             <script type="application/javascript"
                 src="{% static 'js/fcm.js' %}"></script>
         {% endif %}
-
+        {% if user.subscription == "free" or not user.is_billed %}
+                  <script type="text/javascript" src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+                  <script src="{% static 'js/ads2.js' %}"></script> 
+                  
+        {% endif %}
         <script type="application/javascript"
                 src="{% static 'js/scripts.js' %}?v=6"></script>
         <script type="application/javascript"
@@ -228,24 +357,175 @@
         <script type="application/javascript"
                 src="{% static 'js/api.js' %}?v=6"></script>
     {% endblock %}
+
+    <style type="text/css">
+      @media screen and (orientation:portrait)
+        {
+            .rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev,
+            .fruit_slasher .rotate_dev, #game-fullscreen-modal .fruit_slasher #rtdev.rotate_dev,
+            .fishing_frenzy .rotate_dev, #game-fullscreen-modal .fishing_frenzy #rtdev.rotate_dev{
+                display: block!important;                
+            }
+            
+             .speed_racer .rotate_dev, #game-fullscreen-modal .speed_racer #rtdev.rotate_dev,
+            .sliding_bricks .rotate_dev, #game-fullscreen-modal .sliding_bricks #rtdev.rotate_dev,
+            .ski_rush .rotate_dev, #game-fullscreen-modal .ski_rush #rtdev.rotate_dev,
+            .reversi .rotate_dev, #game-fullscreen-modal .reversi #rtdev.rotate_dev,
+            .pac_maker .rotate_dev, #game-fullscreen-modal .pac_maker #rtdev.rotate_dev,
+            .kickups .rotate_dev, #game-fullscreen-modal .kickups #rtdev.rotate_dev,
+            .galactic_war .rotate_dev, #game-fullscreen-modal .galactic_war #rtdev.rotate_dev,
+            .fruit_matching .rotate_dev, #game-fullscreen-modal .fruit_matching #rtdev.rotate_dev,
+            .driver_highway .rotate_dev, #game-fullscreen-modal .driver_highway #rtdev.rotate_dev,
+            .ultimate_boxing .rotate_dev, #game-fullscreen-modal .ultimate_boxing #rtdev.rotate_dev,
+             .the_running_champion .rotate_dev, #game-fullscreen-modal .the_running_champion #rtdev.rotate_dev,
+             .tetris_cube .rotate_dev, #game-fullscreen-modal .tetris_cube #rtdev.rotate_dev,
+             .shot_pong .rotate_dev, #game-fullscreen-modal .shot_pong #rtdev.rotate_dev,
+             .retro_speed .rotate_dev, #game-fullscreen-modal .retro_speed #rtdev.rotate_dev,
+             .racing_game_challenge .rotate_dev, #game-fullscreen-modal .racing_game_challenge #rtdev.rotate_dev,
+             .pocket_jump .rotate_dev, #game-fullscreen-modal .pocket_jump #rtdev.rotate_dev,
+             .jump_red_square .rotate_dev, #game-fullscreen-modal .jump_red_square #rtdev.rotate_dev,
+             .jump_box_hero .rotate_dev, #game-fullscreen-modal .jump_box_hero #rtdev.rotate_dev,
+             .go_to_dot .rotate_dev, #game-fullscreen-modal .go_to_dot #rtdev.rotate_dev,
+             .flaying_triangle .rotate_dev, #game-fullscreen-modal .flaying_triangle #rtdev.rotate_dev,
+             .falling_dots .rotate_dev, #game-fullscreen-modal .falling_dots #rtdev.rotate_dev,
+             .spect .rotate_dev, #game-fullscreen-modal .spect #rtdev.rotate_dev,
+             .jumper_frog .rotate_dev, #game-fullscreen-modal .jumper_frog #rtdev.rotate_dev,
+             .drive_your_car .rotate_dev, #game-fullscreen-modal .drive_your_car #rtdev.rotate_dev,
+             .brick_out .rotate_dev, #game-fullscreen-modal .brick_out #rtdev.rotate_dev,
+             .american_football_kicks .rotate_dev, #game-fullscreen-modal .american_football_kicks #rtdev.rotate_dev{
+                display: none!important;  
+            }
+        }
+        @media screen and (orientation:landscape)
+        {
+            .rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev{
+                display: none!important;
+            }
+        }
+
+         /*iPhone X*/
+         @media only screen 
+    and (device-width : 375px) 
+    and (device-height : 812px) 
+    and (-webkit-device-pixel-ratio : 3) { 
+        #mainContainer, #adContainer, #game-fullscreen-modal #adContainer iframe{
+          
+           z-index:999999999999999999999!important;
+           position:fixed!important;
+           top:42px;
+           left:0px;
+           width:100vw;
+            height: 100vh;
+        }
+    }
+    
+    /*iPhone 8*/
+    @media only screen 
+    and (device-width : 375px) 
+    and (device-height : 667px) 
+    and (-webkit-device-pixel-ratio : 2) { 
+     #mainContainer, #adContainer, #game-fullscreen-modal #adContainer iframe{
+             z-index:999999999999999999999!important;
+           position:fixed!important;
+           top:42px;
+           left:0px;
+           width:100vw;
+            height: 100vh;
+        }
+    }
+    
+    /*iPhone 8 Plus*/
+    @media only screen 
+    and (device-width : 414px) 
+    and (device-height : 736px) 
+    and (-webkit-device-pixel-ratio : 3) { 
+     #mainContainer, #adContainer, #game-fullscreen-modal #adContainer iframe{
+            z-index:999999999999999999999!important;
+           position:fixed!important;
+           top:42px;
+           left:0px;
+           width:100vw;
+            height: 100vh;
+        }
+    }
+	
+.rotate_dev {
+       position: fixed;
+    top: 42px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+}
+
+.rotate_device{
+    color: #FFF;
+    font-size: 1.3rem;
+    text-align: center;
+    position: absolute;
+    /* top:25vh; */
+    top: 40vh;
+    left: 0px;
+    width: 100vw;
+}
+
+    @media screen and (orientation:portrait)
+        {
+            .rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev *{
+                display: block!important;               
+            }
+        }
+
+        @media screen and (orientation:landscape)
+        {
+            .rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev, #game-fullscreen-modal #rtdev.rotate_dev *{
+                display: none!important;
+            }
+            .info_box iframe .orientation-msg-container{ display:none!important; }
+        }
+
+    .lazy {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+        }
+    
+    .lazy.loaded {
+      opacity: 1;
+    }
+     #go-premium-modal ul{
+    color: #fff;
+    font-family: Tahoma;
+    font-size: 1.4rem;
+    width: 100%;
+    text-align: left;
+    list-style-type: none;
+    padding: 27px 27px 0;
+    max-width: 428px;
+    margin: 0 auto;}
+
+#go-premium-modal ul li{
+    padding: 13px 0px;
+    border-bottom: 1px solid #EF0C755E;}
+.caption_footer{
+	color: #7c2b938f;
+	font-family: tahoma;
+	font-size: 1.2rem;
+}   
+.sec-2 {
+    background-image: url(/static/img/assets/pic1.jpg);
+    background-size: 100%;
+    background-position: 0 -54px;
+    background-repeat: no-repeat;
+}
+
+    </style>
 </head>
 
 <body>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<nav>
-=======
-=======
->>>>>>> salibzzengage
-   
-    
-<nav class="hih">
-  
-<<<<<<< HEAD
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
-=======
->>>>>>> salibzzengage
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=G-C0XVDBF16H"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
+<nav class="hih">
     <div class="top-nav">
         <div class="row">
             {% block header %}
@@ -257,13 +537,18 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+
+                    {% if user.avatar %} 
+                    <div class="right r-nav loguser"> 
+                    {% else %}
                     <div class="right r-nav">
-                        <form action="#" class="search-box"
+                        {%endif%}                        
+                        <form action="#" class="search-box" id="searchb"
                               style="display: none;">
                             <select name="option" id="nav-search-select">
-                                {% comment %} <option value="tournaments">Tournaments</option>
-                                <option value="games">Games</option> {% endcomment %}
                                 <option value="users">Users</option>
+                                <option value="tournaments">{% translate 'Tournaments' %}</option>
+                                <option value="games">Games</option>  
                             </select>
                             <input name="search" type="text"
                                    placeholder="Search"/>
@@ -278,9 +563,16 @@
                                 </ul>
                             </div>
                         </form>
+                        {% if user.avatar %}
+                        <a class="raw-btn search-btn loguser" href="">
+                            <div class="fas fa-search"></div>
+                        </a>
+                        {% else %}
                         <a class="raw-btn search-btn" href="">
                             <div class="fas fa-search"></div>
                         </a>
+
+                        {% endif %}
                         {% if not user.is_authenticated %}
                             <a href="" data-toggle="modal"
                                data-target="#login-modal">
@@ -300,8 +592,9 @@
                                     <span><i style="font-size: 18px;"
                                              class="fas fa-bell"></i></span>
                                 {% if notifications > 0 %}         
-                                    <span class="badge badge-pill" style='background:#EA2D2D'
+                                    <span class="badge badge-pill" style='background:#dd19ba'
                                           id="notifications-count">{{ notifications }}</span>
+                                
                                 {% else %}  
                                     <span class="badge badge-pill" 
                                           id="notifications-count">{{ notifications }}</span>
@@ -311,6 +604,7 @@
                                 <div class="notification-drop">
                                     <div class="heading">
                                         <h4>{% translate 'Notifications' %}</h4>
+                                        <div class="rall">Read All</div>
                                     </div>
 
                                     <ul id="notification-list"
@@ -327,7 +621,7 @@
                             <a href="/prizes#redeem-coins" class="n-nav p-0">
                                 <span>
                                     <img src="{% static 'img/engage-coin.png' %}"
-                                         height="20" alt="">
+                                         height="21" alt="">
                                     <span class="badge badge-pill user-coins"
                                           id="user-coins">{{ user.coins|intcomma }}</span>
                                     <span id="actual-user-coins" style="display: none">{{ user.coins }}</span>
@@ -347,69 +641,74 @@
         <div class="midlle">
             <div class="row">
                 <div class="col-md-6">
-                    <a href="{% url 'home' %}">
+                    <a href="{% url 'home' %}" class="logonew">
                         <img src="{% static 'img/top-logo.png' %}" alt="logo">
                     </a>
                 </div>
-                <div class="col-md-6"></div>
+                <div class="col-md-6"><img src="{% static 'img/zong-logo.png' %}" alt="zonglogo">
             </div>
         </div>
+
+            <a class="user_profile_pic top_profile_pic" href="{% url 'profile' %}">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.image.url }}" alt="" border="0"  >           
+            {% endif %}
+            </a>
+
+        </div>
         <div class="bottom-nav">
-            
             <ul>
                 <li>
-                    <a id="hometournaments" href="/#home-tournaments">{% translate 'TOURNAMENTS' %}
+                    <a id="hometournaments" href="/home#home-tournaments">{% translate 'TOURNAMENTS' %}
                         {% if user.is_authenticated%}
-                        <i>{% translate 'new' %}</i>
+                        <i>{% translate '*' %}</i>
                         {% endif%}
                     </a>
                 </li>
                 <li>
-                    <a id="homegames" href="/#home-games">{% translate 'GAMES' %}
+                    <a id="homegames" href="/home#home-games">{% translate 'GAMES' %}
                         {% if user.is_authenticated %}
-                        <i>{% translate 'new' %}</i>
+                        <i>{% translate '*' %}</i>
                         {% endif%}
                     </a>
                 </li>
                 <li>
                     <a href="/prizes#tournament-prizes" id="a-prize">{% translate 'PRIZES' %}
                         {% if user.is_authenticated %}
-                        <i>{% translate 'new' %}</i>
+                        <i>{% translate '*' %}</i>
                         {% endif%}
                     </a>
                 </li>
                 <li>
                     <a href="/prizes#redeem-coins" id="a-redeem">{% translate 'REDEEM' %}
                         {% if user.is_authenticated %}
-                        <i>{% translate 'new' %}</i>
+                        <i>{% translate '*' %}</i>
                         {% endif%}
                     </a>
                 </li>
                 <li>
-                    <a id='li_winners' href="/#winners">{% translate 'WINNERS' %}
+                    <a id='a-winner' href='/winners'>{% translate 'WINNERS' %}
                         {% if user.is_authenticated %}
-                        <i>{% translate 'new' %}</i>
+                        <i>{% translate '*' %}</i>
                         {% endif%}
                     </a>
                 </li>
+                {% if user.is_authenticated and user.subscription == "free"%}
+                <li>
+                    <a  class="li_go_premium">{% translate 'GO PREMIUM' %}
+                       <i class="fa fa-solid fa-crown" style="color: #fff!important;position: absolute;background: transparent;font-size: 18px;top: 15px;left: 10px;display:block;"></i>
+                        
+                    </a>
+                </li>
+                {% endif %}
+                
             </ul>
-         
         </div>
-    {% endblock %} 
-   
-   
-           
-
-       
+    {% endblock %}
 </nav>
-<script type="application/javascript"
-src="{% static 'js/api.js' %}?v=6"></script>
-
 
 <aside class="sidebar" id="sidebar">
-    <div class="close">
-        <a href="" style="text-align: right;" id="sidebar-close">&times;</a>
-    </div>
+    <i class="fa fa-times" id="sidebar-close" onclick="closeSideMenu()" ></i>  
     <div class="content">
         <a class="sidebar-brand" href="{% url 'home' %}">
             <img src="{% static 'img/top-logo.png' %}" width="70"
@@ -418,10 +717,10 @@ src="{% static 'js/api.js' %}?v=6"></script>
         <ul class="s-menu">
             <li>
                 <a id="hometournaments"
-                   href="/#home-tournaments">{% translate 'TOURNAMENTS' %}</a>
+                   href="/home#home-tournaments">{% translate 'TOURNAMENTS' %}</a>
             </li>
             <li>
-                <a id="homegames" href="/#home-games">{% translate 'GAMES' %}</a>
+                <a id="homegames" href="/home#home-games">{% translate 'GAMES' %}</a>
             </li>
             <li>
                 <a id="a-prize" href="{% url 'prizes' %}" >{% translate 'PRIZES' %}</a>
@@ -430,11 +729,40 @@ src="{% static 'js/api.js' %}?v=6"></script>
                 <a href="/prizes#redeem-coins" id="a-redeem">{% translate 'REDEEM' %}</a>
             </li>
             <li>
-                <a href='/#winners' id="li_winners">{% translate 'WINNERS' %}</a>
+                <a href='/winners' id="li_winners">{% translate 'WINNERS' %}</a>
             </li>
+            {% if user.is_authenticated and user.subscription == "free"%}
+            <li>
+                <a class="li_go_premium" id="li_go_premium">
+                
+                <i class="fa fa-solid fa-crown" style="color: #feb930!important;position: absolute;background: transparent;font-size: 18px;top: 11px;left: 14px;display:block;"></i>{% translate 'GO PREMIUM' %}</a>
+                
+            </li>
+            {% endif %}
+
+
         </ul>
+
+        {% if user.avatar %}
+        <a class="profile_bande" href="{% url 'profile' %}">
+                 <div class="user_profile_pic">
+                    <img src="{{ user.avatar.image.url }}" alt="" border="0"  >
+                 </div>
+                 <div class="username_prof">
+                        <div style="color:#FFF; font-size: inherit;">{% translate 'MY PROFILE' %}</div>
+                        <div style="color: #dd19ba; font-size: 14px;">{{ user.nickname|default_if_none:"" }} </div>
+                 </div>
+        </a>
+        {% endif %}
+        
+         <hr style="opacity: 1!important; margin: 56px 20px 10px!important; background-color: #2C2F36!important"/>
+        <div class="smedias" style="margin: 0px 20px;padding-top: 20px;">
+            <a href="https://www.facebook.com/people/Engageplaywin/100087993253458/" target="_blank" style="display:block;float:left;margin: 0px 7px 0px 14px;padding: 0px;cursor: pointer;"><img src="{% static 'img/facebook.png' %}" border="0" style="width: 32px;" /></a>
+            <a href="https://www.instagram.com/mtnengageplaywin/" target="_blank" style="display:block;float:left;margin: 0px 7px 0px 29px;padding: 0px;cursor: pointer;"><img src="{% static 'img/instagram.png' %}" border="0" style="width: 32px;" /></a>
+            <a href="https://www.youtube.com/@mtnengage2468" target="_blank" style="display:block;float:left;margin: 0px 7px 0px 35px;padding: 0px;cursor: pointer;"><img src="{% static 'img/youtube.png' %}" border="0" style="width: 39px;margin-top:3px" /></a>
+        </div>
+        
     </div>
-   
 </aside>
 
 {% block top_section %}
@@ -455,7 +783,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
         <div class="bottom">
             <div class="row">
                 <div class="col-md-3 left">
-                    <p>© <span class="currentyear"></span>&nbsp;MTN Engage</p>
+                    <p>Â© <span class="currentyear"></span>&nbsp;Engage  <b>{% translate 'POWERED BY ZONG' %}</b></p>
                 </div>
                 <div class="col-md-6">
                     <ul class="middle">
@@ -490,7 +818,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                         <a href=""><i class="fab fa-twitch"></i></a>
                         <a href=""><i class="fab fa-twitter"></i></a>
                         <a href=""><i class="fab fa-facebook-f"></i></a>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -498,7 +826,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
 {% endblock %}
 
 {% block social_icons %}
-    <div class="social-fixed" style="z-index: 1200">
+    <!-- <div class="social-fixed" style="z-index: 1200">
         <ul>
             <li>
                 <a href="" style="background: #4469b0;">
@@ -521,7 +849,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                 </a>
             </li>
         </ul>
-    </div>
+    </div> -->
 {% endblock %}
 
 {% block modals %}
@@ -544,7 +872,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                 <div class="col-md-12 mb-3">
                                     <input type="text" step="1" class="input1"
                                            name="phone_number"
-                                           placeholder="Enter MTN Number" autocomplete="off"
+                                           placeholder="{% translate 'Enter MTN Number' %}" autocomplete="off"
                                            required>
                                     <div class="text-right">
                                         <button type="submit" class="btn3">
@@ -554,7 +882,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                 </div>
 
                                 <div class="col-md-12 mb-3">
-                                    <p>{% translate 'Don’t have an account?'%} <a
+                                    <p>{% translate 'Donâ€™t have an account?'%} <a
                                             class="go-to-register-btn"
                                             href="/register">{% translate 'Register!' %}</a>
                                     </p>
@@ -576,11 +904,28 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                     <input class="input1" required
                                            name="code" step="1"
                                            placeholder="Enter 6 Digits Code" autocomplete="off">
-                                    <div class="text-right">
-                                        <button type="submit" class="btn3">
-                                            {% translate 'Next' %}
-                                        </button>
-                                    </div>
+
+                                        <div class="previous_btn">
+                                        <a style="text-decoration: underline;cursor: pointer;" onclick="$('.login-otp-form').fadeOut(function(){ $('.login-otp-form').hide(); $('.login-form').show() })">
+                                            {% translate 'Change Number' %}
+                                        </a>
+                                        </div>      
+                                        <div class="text-right" style="margin-top: -24px;">
+                                            <button type="submit" class="btn3">
+                                                {% translate 'Next' %}
+                                            </button>
+                                        </div>  
+
+                                        <!-- <div class="previous_btn">
+                                            <button type="button" class="btn3" onclick="$('.login-otp-form').fadeOut(function(){ $('.login-otp-form').hide(); $('.login-form').show() })">
+                                                {% translate 'Change Number' %}
+                                            </button>
+                                        </div>
+                                        <div class="text-right" style="margin-top: -44px;">
+                                            <button type="submit" class="btn3" style="float:right!important">
+                                                {% translate 'Next' %}
+                                            </button>
+                                        </div> -->
 
                                     <br>
                                     <div class=" text-center text-color-4-light font-weight-bold"
@@ -594,24 +939,43 @@ src="{% static 'js/api.js' %}?v=6"></script>
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
-        <div id="wait-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div id="wait-modal" data-target="#wait-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <!-- <div class="close-box">
                         <a data-dismiss="modal" href=""><i
                                 class="fas fa-times"></i></a>
                     </div> -->
-                    <div class="modal-header">
+                    <!-- <div class="modal-header">
                         <h3>{% translate 'Please wait for confirmation' %}</h3>
+                    </div> -->
+                    <div class="modal-body text-center" id="waitmodalcontent">
+                        <div class="preload justify-content-center">
+                            <img src="{% static 'img/preloader.svg' %}" />
+                            <!-- <div class="d-none counter " style="font-size: 36px;">45</div> -->
                     </div>
-                    <div class="modal-body" id="waitmodalcontent">
-                        
-                        
+                        <div class="msg d-none">
+                            <div class="msg-bd error-bd d-none">                                
+                                <img src="{% static 'img/close.png' %}" class="img-bd errico"  />
+                                <div class="tit"></div>
+                                <!-- <div class="desc errdesc">Something went wrong, Try again!</div> -->
+                            </div>
+                            <div class="msg-bd success-bd d-none">                                
+                                <img src="{% static 'img/check.png' %}" class="img-bd"  />
+                                <div class="tit"></div>
+                                <!-- <div class="desc sucdesc">Subscription Success !</div> -->
+                            </div>
+                            <div class="desc">{% translate 'Loading...' %}</div>
 
+                            <button id="subscribeRetry" class="btn btn-primary" onclick="document.location.reload(true);">
+                                <span class="" data-target="#sub" id="subSubscribe" role="status" aria-hidden="true">OK</span>
+                            </button>
+                            <button id="subscribeClose" class="btn btn-primary d-none" data-dismiss="modal">
+                                <span class="" data-target="#sub" id="subSubscribeClose" role="status" aria-hidden="true">{% translate 'Close' %}</span>
+                            </button>
+                        </div>                       
+                        <div class="please_wait" style="padding-top:20px;padding-bottom:30px;">{% translate 'Please wait while we process your request...' %}</div>
                         
                     </div>
                 </div>
@@ -619,20 +983,24 @@ src="{% static 'js/api.js' %}?v=6"></script>
         </div>
         {% if user_id %}
         <script>
+            //$("#wait-modal .preload").removeClass("d-none");            
+           // $("#wait-modal .img-bd").addClass("d-none");
+            //$("#wait-modal .msg-bd.error-bd").removeClass("d-none");
+            //$("#wait-modal #subSubscribe").html('Retry');
+            //$("#wait-modal .msg-bd .desc").html("Text goes here");
+
             $('#wait-modal').modal("show");
             get_wait_modal();
         </script>
         {% endif %}
->>>>>>> 261e4ae744acf5effe2f6c6570b0798b662c789a
-=======
->>>>>>> salibzzengage
     {% endif %}
 
     <div id="contact-modal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="close-box" onclick="$('#contact-modal').find('iframe').remove();$('#contact-modal').removeClass('show');$('#contact-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                    <img src="{% static 'img/bgclose.png' %}"
+                <div class="close-box" onclick="$('#contact-modal').find('iframe').remove();$('#contact-modal').removeClass('show');$('#contact-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                    <img src="{% static 'img/bottom-logo.png' %}"
                                              height="40" alt="" style="position:absolute;top:0;left:0;">
                     <a data-dismiss="modal" style="" >
                         <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -663,7 +1031,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                         Country
                                     </option>
                                     <option value="AF">Afghanistan</option>
-                                    <option value="AX">Åland Islands</option>
+                                    <option value="AX">Ã…land Islands</option>
                                     <option value="AL">Albania</option>
                                     <option value="DZ">Algeria</option>
                                     <option value="AS">American Samoa</option>
@@ -733,10 +1101,10 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                     <option value="CR">Costa Rica</option>
                                     <option value="HR">Croatia</option>
                                     <option value="CU">Cuba</option>
-                                    <option value="CW">Curaçao</option>
+                                    <option value="CW">CuraÃ§ao</option>
                                     <option value="CY">Cyprus</option>
                                     <option value="CZ">Czechia</option>
-                                    <option value="CI">Côte d'Ivoire</option>
+                                    <option value="CI">CÃ´te d'Ivoire</option>
                                     <option value="DK">Denmark</option>
                                     <option value="DJ">Djibouti</option>
                                     <option value="DM">Dominica</option>
@@ -892,8 +1260,8 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                         (the)
                                     </option>
                                     <option value="RW">Rwanda</option>
-                                    <option value="RE">Réunion</option>
-                                    <option value="BL">Saint Barthélemy</option>
+                                    <option value="RE">RÃ©union</option>
+                                    <option value="BL">Saint BarthÃ©lemy</option>
                                     <option value="SH">Saint Helena, Ascension
                                         and Tristan da Cunha
                                     </option>
@@ -1029,8 +1397,9 @@ src="{% static 'js/api.js' %}?v=6"></script>
     <div id="support-modal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="close-box" onclick="$('#support-modal').find('iframe').remove();$('#support-modal').removeClass('show');$('#support-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                    <img src="{% static 'img/bgclose.png' %}"
+                <div class="close-box" onclick="$('#support-modal').find('iframe').remove();$('#support-modal').removeClass('show');$('#support-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                    <img src="{% static 'img/bottom-logo.png' %}"
                                              height="40" alt="" style="position:absolute;top:0;left:0;">
                     <a data-dismiss="modal" style="" >
                         <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1141,7 +1510,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                             <div class="col-md-12 mb-3">
                                 <input type="text" class="input1"
                                        name="phone_number"
-                                       placeholder="Enter MTN Number"
+                                       placeholder="{% translate 'Enter MTN Number' %}"
                                        required>
                                 <div class="text-right">
                                     <button type="submit" class="btn3">{% translate 'Next' %}
@@ -1173,7 +1542,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                        name="code"
                                        placeholder="Enter 6 Digits Code">
                                 <div class="text-right">
-                                    <button type="submit" class="btn3">Next
+                                    <button type="submit" class="btn3">{% translate 'Next' %}
                                     </button>
                                 </div>
 
@@ -1231,12 +1600,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
             </div>
             <div class="col-md-12 text-center">
                 <div class="info-box"></div>
-                <button id="upgrade-btn" data-dismiss="modal" class="btn2 big c2">
-                    {% translate 'Upgrade' %}
-                </button>
-                <button data-dismiss="modal" class="btn2 big">
-                    {% translate 'Cancel' %}
-                </button>
+               
                 <p></p>
             </div>
         </div>
@@ -1316,10 +1680,11 @@ src="{% static 'js/api.js' %}?v=6"></script>
 </div>
 
 <div class="modal fade" id="game-fullscreen-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
-        <div class="modal-content" style="background:#000;"> 
-            <div class="close-box" onclick="$('#game-fullscreen-modal').find('iframe').remove();$('#game-fullscreen-modal').removeClass('show');$('#game-fullscreen-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
+        <div class="modal-content" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);"> 
+            <div class="close-box" onclick="$('#game-fullscreen-modal').find('iframe').remove();$('#game-fullscreen-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open');$('#playButton').show();$('#adContainer').html('');$(window).scrollTop($('.sec-3').offset().top); closeVideoAd();" style="background:#1C1E4E;">
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1328,7 +1693,45 @@ src="{% static 'js/api.js' %}?v=6"></script>
                 <div class="info-box">
 
                 </div>
+
+                <div class="rotate_dev">
+                    <div class="rotate_device">Please rotate your device.</div>
+                </div>
+
+                {% if user.subscription == "free" or not user.is_billed %}
                 
+                  <div id="mainContainer">
+                    <div id="content">
+                      <video id="contentElement" playsinline>
+                        <source src="{% static 'js/blank.mp4' %}"></source>
+                            </video>
+                     </div>   
+                    <div id="adContainer"></div>
+
+                    <div id="play_btn_cont">
+                        <button id="playButton"><div class="play"></div></button>
+                    </div>
+                    <div id="pause_btn_cont">
+                        <button id="pauseButton"><div class="pause"></div></button>
+                    </div>                    
+                    
+
+                  </div>
+                 
+                  <div class="close_video_ad" onclick="closeVideoAd()">x</div>
+                  <div class="pink_info">{% translate 'Please resume and watch full video to collect your reward' %}</div>
+                  <div id="timerAd"></div>
+                
+                  <script type="text/javascript">
+                  $("#game-fullscreen-modal").on('show.bs.modal', function(){                        
+                        console.log("game on show.bs.modal attempt autoplay");                    
+                        initDesktopAutoplayExample();
+                    });
+                    
+                   </script>
+
+                    {% endif %}
+                    
             </div>
         </div>
     </div>
@@ -1344,12 +1747,13 @@ src="{% static 'js/api.js' %}?v=6"></script>
             </div>
             <div class="modal-body" style="height:300px;position:relative;width:726px;">
                 <div style="width:710px;height:300px;position:relative;">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5410356273400358"
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1363749472822465"
                     crossorigin="anonymous"></script>
-    <!-- engage add -->
+    
     <ins class="adsbygoogle"
          style="display:inline-block;width:728px;height:300px"
-         data-ad-client="ca-pub-5410356273400358"
+         data-ad-client="ca-pub-1363749472822465"
+         data-adtest="on"
          data-ad-format="Rewarded"
          data-full-width-responsive="true"></ins>
     <script>
@@ -1365,7 +1769,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
     <div class="modal-dialog modal-md" role="document" style="height:400px;">
         <div class="modal-content">
             <div class="close-box">
-                <img src="{% static 'img/bgclose.png' %}"
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal">
                     <i class="fas fa-times" ></i></a>
@@ -1380,10 +1784,11 @@ src="{% static 'js/api.js' %}?v=6"></script>
     </div>
 </div>  
 <div class="modal fade" id="faq-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
         <div class="modal-content"> 
-            <div class="close-box" onclick="$('#faq-modal').find('iframe').remove();$('#faq-modal').removeClass('show');$('#faq-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
+            <div class="close-box" onclick="$('#faq-modal').find('iframe').remove();$('#faq-modal').removeClass('show');$('#faq-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1436,10 +1841,11 @@ src="{% static 'js/api.js' %}?v=6"></script>
     </div>
 </div>
 <div class="modal fade" id="privacy-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
         <div class="modal-content"> 
-            <div class="close-box" onclick="$('#privacy-modal').find('iframe').remove();$('#privacy-modal').removeClass('show');$('#privacy-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
+            <div class="close-box" onclick="$('#privacy-modal').find('iframe').remove();$('#privacy-modal').removeClass('show');$('#privacy-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1450,67 +1856,12 @@ src="{% static 'js/api.js' %}?v=6"></script>
             <div class='page-box'>
             <div class="text-container">
                 <div class="content">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Mauris malesuada odio tellus, sit amet efficitur augue
-                        pellentesque id. Donec mollis neque a arcu vestibulum,
-                        ac posuere odio tincidunt. Donec malesuada hendrerit
-                        tincidunt. Donec commodo ante nisl, ut euismod orci
-                        iaculis vitae. Donec elementum in augue vitae volutpat.
-                        Aenean lectus est, pellentesque vel enim et, porta
-                        consequat urna. In sed quam vel ex fringilla imperdiet.
-                        Phasellus luctus rutrum hendrerit. Donec mattis
-                        fringilla augue eget congue. Ut vel ullamcorper eros,
-                        nec laoreet nisi. Maecenas convallis tortor odio, sit
-                        amet tincidunt nisi semper pharetra.</p>
+                     <p>{% translate 'To be transparent with your users about what personal information you collect and what you do with it, you are required to publish a Privacy Policy agreement on your website or give in-app access to it.' %}</p>
 
-                    <p>Curabitur arcu nunc, laoreet et ligula in, volutpat
-                        aliquet est. Nam auctor, mi ac sodales venenatis, massa
-                        diam volutpat lectus, a fermentum massa nunc sed libero.
-                        Quisque ut rutrum odio. Curabitur ex ipsum, volutpat non
-                        magna quis, euismod pharetra ex. Etiam eget metus id
-                        nisi tristique ullamcorper ornare ut quam. Suspendisse
-                        quis nunc faucibus, pretium arcu ut, aliquet massa.
-                        Etiam in tortor quis justo commodo pellentesque sit amet
-                        ut odio. Vivamus pellentesque porttitor mauris, non
-                        rhoncus ex lacinia ut. In facilisis vulputate purus id
-                        imperdiet. Aliquam sit amet porta sem, quis tempus
-                        eros.</p>
+                    <p> {% translate 'Websites usually post a link to the complete Privacy Policy agreement from the footer of the website, whereas apps generally add the Privacy Policy to an "About" or "Legal" menu.' %}</p>
 
-                    <p>Maecenas nec felis ac sem maximus vehicula ac in nibh.
-                        Nunc ac vulputate tortor. Proin faucibus accumsan mi
-                        vitae egestas. Proin fringilla malesuada imperdiet. Nunc
-                        ornare risus magna, a ultrices arcu vehicula id. Nam
-                        condimentum erat enim, sed consequat neque hendrerit in.
-                        Suspendisse iaculis et turpis at laoreet.</p>
+                    <p> {% translate 'Another popular location for ecommerce store apps and websites is the checkout page, or account registration page if you don\'t have an ecommerce component but allow users to create accounts.' %}</p>
 
-                    <p>Proin lacinia lorem quis odio accumsan volutpat.
-                        Pellentesque ex felis, semper eu congue a, ornare sed
-                        mauris. Sed porta est eu euismod gravida. In posuere
-                        nunc non turpis sagittis, vitae aliquam nulla
-                        scelerisque. Quisque lacus metus, interdum in tincidunt
-                        vitae, condimentum sit amet neque. Nullam lacinia erat
-                        sagittis mollis dapibus. Etiam elementum nisi sed est
-                        egestas, sodales gravida sapien ornare. In quam dolor,
-                        ornare vitae arcu id, gravida convallis libero.
-                        Curabitur eu neque et magna aliquam facilisis vel ut mi.
-                        Duis ut risus sed sem vehicula porta. Sed maximus nulla
-                        sit amet nulla consequat, quis eleifend ante congue.
-                        Quisque eget nibh in nulla condimentum efficitur in
-                        sodales erat. In eget nisi et ligula accumsan bibendum
-                        et vel ante. Nam fringilla mauris in urna condimentum
-                        ultrices et eget turpis.</p>
-
-                    <p>Vivamus placerat urna sit amet arcu molestie, sit amet
-                        viverra lorem interdum. Vivamus eu libero elit. Sed id
-                        ultricies purus. Praesent tincidunt a enim at sodales.
-                        Quisque eleifend massa id efficitur tempus. Orci varius
-                        natoque penatibus et magnis dis parturient montes,
-                        nascetur ridiculus mus. Integer iaculis auctor massa
-                        vitae tempor. Nam at ipsum molestie, auctor lorem sit
-                        amet, pretium tellus. Pellentesque a porttitor neque.
-                        Praesent eget quam sed neque dapibus sagittis. Nulla
-                        facilisi. Maecenas fermentum aliquet felis, eget
-                        ultricies velit convallis in.</p>
                 </div>
             </div>
             </div>
@@ -1519,10 +1870,11 @@ src="{% static 'js/api.js' %}?v=6"></script>
 </div>
 
 <div class="modal fade" id="disclaimer-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
         <div class="modal-content"> 
-            <div class="close-box" onclick="$('#disclaimer-modal').find('iframe').remove();$('#disclaimer-modal').removeClass('show');$('#disclaimer-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
+            <div class="close-box" onclick="$('#disclaimer-modal').find('iframe').remove();$('#disclaimer-modal').removeClass('show');$('#disclaimer-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1533,13 +1885,13 @@ src="{% static 'js/api.js' %}?v=6"></script>
             <div class='page-box'>
             <div class="text-container">
                 <div class="content">
-                    <p>All the information on this website is published in good faith and for general information purpose only.</p>
+                    <p>{% translate 'All the information on this website is published in good faith and for general information purpose only.' %}</p>
 
-                    <p>MTN Engage does not make any warranties about the completeness, reliability and accuracy of this information. Any action you take upon the information you find on this website (MTN Engage), is strictly at your own risk. MTN Engage will not be liable for any losses and/or damages in connection with the use of our website.</p>
+                    <p>{% translate 'MTN Engage does not make any warranties about the completeness, reliability and accuracy of this information. Any action you take upon the information you find on this website (MTN Engage), is strictly at your own risk. MTN Engage will not be liable for any losses and/or damages in connection with the use of our website.' %}</p>
     
-                    <p>From our website, you can visit other websites by following hyperlinks to such external sites. While we strive to provide only quality links to useful and ethical websites, we have no control over the content and nature of these sites. These links to other websites do not imply a recommendation for all the content found on these sites. Site owners and content may change without notice and may occur before we have the opportunity to remove a link which may have gone 'bad'.</p>
+                    <p>{% translate 'From our website, you can visit other websites by following hyperlinks to such external sites. While we strive to provide only quality links to useful and ethical websites, we have no control over the content and nature of these sites. These links to other websites do not imply a recommendation for all the content found on these sites. Site owners and content may change without notice and may occur before we have the opportunity to remove a link which may have gone \'bad\'.' %}</p>
     
-                    <p>Please be also aware that when you leave our website, other sites may have different privacy policies and terms which are beyond our control. Please be sure to check the Privacy Policies of these sites as well as their "Terms of Service" before engaging in any business or uploading any information.</p>
+                    <p>{% translate 'Please be also aware that when you leave our website, other sites may have different privacy policies and terms which are beyond our control. Please be sure to check the Privacy Policies of these sites as well as their "Terms of Service" before engaging in any business or uploading any information.' %}</p>
     
                     </div></div>
             </div></div>
@@ -1547,11 +1899,12 @@ src="{% static 'js/api.js' %}?v=6"></script>
 </div>
 
 <div class="modal fade" id="terms-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
         <div class="modal-content"> 
-            <div class="close-box" onclick="$('#terms-modal').find('iframe').remove();$('#terms-modal').removeClass('show');$('#terms-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
-                                         height="40" alt="" style="position:absolute;top:0;left:0;">
+            <div class="close-box" onclick="$('#terms-modal').find('iframe').remove();$('#terms-modal').removeClass('show');$('#terms-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                <img src="{% static 'img/bottom-logo.png' %}"
+                                         height="40" alt="" style="position:absolute;top:0;left:0;margin-left: 27px;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
             </div>
@@ -1570,10 +1923,11 @@ src="{% static 'js/api.js' %}?v=6"></script>
 </div>
 
 <div class="modal fade" id="about-modal" tabindex="-1" role="dialog" style="width:100%;height:100%;">
-    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;margin:0!important;"> 
+    <div class="modal-dialog modal-md" role="document" style="max-width:100%!important;"> 
         <div class="modal-content"> 
-            <div class="close-box" onclick="$('#about-modal').find('iframe').remove();$('#about-modal').removeClass('show');$('#about-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background:#1C1E4E;">
-                <img src="{% static 'img/bgclose.png' %}"
+            <div class="close-box" onclick="$('#about-modal').find('iframe').remove();$('#about-modal').removeClass('show');$('#about-modal').hide();$('.modal-backdrop').remove();$('body').removeClass('modal-open')" style="background: -webkit-gradient(linear, right top, left top, from(#33144d), to(#1b1349));
+    background: linear-gradient(-90deg, #33144d, #1b1349);">
+                <img src="{% static 'img/bottom-logo.png' %}"
                                          height="40" alt="" style="position:absolute;top:0;left:0;">
                 <a data-dismiss="modal" style="" >
                     <i class="fas fa-times" style="color:#fff;"></i></a>
@@ -1642,7 +1996,7 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                 <div class="input2 mb-3">
                                     <label for="">{% translate 'Name' %}</label>
                                     <div class="right">
-                                        <input name="name" type="text" required
+                                        <input name="name" type="text" spellcheck="false" required id="profile_name"
                                                value="{{ user.nickname|default_if_none:"" }}">
                                     </div>
                                 </div>
@@ -1656,72 +2010,76 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                     </div>
                                 </div>
 
-                                <div class="input2 mb-3">
+                                <div class="input2 mb-3"  {% if user.profile.birthdate %} style="background-color: #ddd;" {% endif %}>
                                     <label for="">{% translate 'Date Of Birth' %}</label>
                                     <div class="right">
-
-                                        <select value="{{ user.profile.birthdate|date:'m' }}"
-                                                name="data_month" required
-                                                class="text-center">
-                                            <option value="01"
-                                                    {% if user.profile.birthdate|date:'m' == '01' %}selected{% endif %}>
-                                                Jan
-                                            </option>
-                                            <option value="02"
-                                                    {% if user.profile.birthdate|date:'m' == '02' %}selected{% endif %}>
-                                                Feb
-                                            </option>
-                                            <option value="03"
-                                                    {% if user.profile.birthdate|date:'m' == '03' %}selected{% endif %}>
-                                                Mar
-                                            </option>
-                                            <option value="04"
-                                                    {% if user.profile.birthdate|date:'m' == '04' %}selected{% endif %}>
-                                                Apr
-                                            </option>
-                                            <option value="05"
-                                                    {% if user.profile.birthdate|date:'m' == '05' %}selected{% endif %}>
-                                                May
-                                            </option>
-                                            <option value="06"
-                                                    {% if user.profile.birthdate|date:'m' == '06' %}selected{% endif %}>
-                                                Jun
-                                            </option>
-                                            <option value="07"
-                                                    {% if user.profile.birthdate|date:'m' == '07' %}selected{% endif %}>
-                                                Jul
-                                            </option>
-                                            <option value="08"
-                                                    {% if user.profile.birthdate|date:'m' == '08' %}selected{% endif %}>
-                                                Aug
-                                            </option>
-                                            <option value="09"
-                                                    {% if user.profile.birthdate|date:'m' == '09' %}selected{% endif %}>
-                                                Sep
-                                            </option>
-                                            <option value="10"
-                                                    {% if user.profile.birthdate|date:'m' == '10' %}selected{% endif %}>
-                                                Oct
-                                            </option>
-                                            <option value="11"
-                                                    {% if user.profile.birthdate|date:'m' == '11' %}selected{% endif %}>
-                                                Nov
-                                            </option>
-                                            <option value="12"
-                                                    {% if user.profile.birthdate|date:'m' == '12' %}selected{% endif %}>
-                                                Dec
-                                            </option>
-                                        </select>
-
-                                        <select name="data_day" required
+                                        <div style="float:left;position:relative;margin-right: 22px;">                       
+                                            <select value="{{ user.profile.birthdate|date:'m' }}" {% if user.profile.birthdate %} style="pointer-events: none;" {% endif %}
+                                                    name="data_month" required
+                                                    class="text-center">
+                                                <option value="01"
+                                                        {% if user.profile.birthdate|date:'m' == '01' %}selected{% endif %}>
+                                                    Jan
+                                                </option>
+                                                <option value="02"
+                                                        {% if user.profile.birthdate|date:'m' == '02' %}selected{% endif %}>
+                                                    Feb
+                                                </option>
+                                                <option value="03"
+                                                        {% if user.profile.birthdate|date:'m' == '03' %}selected{% endif %}>
+                                                    Mar
+                                                </option>
+                                                <option value="04"
+                                                        {% if user.profile.birthdate|date:'m' == '04' %}selected{% endif %}>
+                                                    Apr
+                                                </option>
+                                                <option value="05"
+                                                        {% if user.profile.birthdate|date:'m' == '05' %}selected{% endif %}>
+                                                    May
+                                                </option>
+                                                <option value="06"
+                                                        {% if user.profile.birthdate|date:'m' == '06' %}selected{% endif %}>
+                                                    Jun
+                                                </option>
+                                                <option value="07"
+                                                        {% if user.profile.birthdate|date:'m' == '07' %}selected{% endif %}>
+                                                    Jul
+                                                </option>
+                                                <option value="08"
+                                                        {% if user.profile.birthdate|date:'m' == '08' %}selected{% endif %}>
+                                                    Aug
+                                                </option>
+                                                <option value="09"
+                                                        {% if user.profile.birthdate|date:'m' == '09' %}selected{% endif %}>
+                                                    Sep
+                                                </option>
+                                                <option value="10"
+                                                        {% if user.profile.birthdate|date:'m' == '10' %}selected{% endif %}>
+                                                    Oct
+                                                </option>
+                                                <option value="11"
+                                                        {% if user.profile.birthdate|date:'m' == '11' %}selected{% endif %}>
+                                                    Nov
+                                                </option>
+                                                <option value="12"
+                                                        {% if user.profile.birthdate|date:'m' == '12' %}selected{% endif %}>
+                                                    Dec
+                                                </option>
+                                            </select>
+                                            <i class="fa fa-chevron-down" aria-hidden="true" style="right:-17px;"></i>
+                                       </div>    
+                                       <div style="float:left;position:relative;margin-right: 22px;"> 
+                                        <select name="data_day" required {% if user.profile.birthdate %} style="pointer-events: none;" {% endif %}
                                                 class="text-center">
                                             {% for day in days %}
                                                 <option value="{{ day }}"
                                                         {% if user.profile.birthdate|date:'d' == day %}selected{% endif %}>{{ day }}</option>
                                             {% endfor %}
                                         </select>
-
-                                        <select name="data_year" required
+                                        <i class="fa fa-chevron-down" aria-hidden="true" style="right:-17px;"></i>
+                                    </div>
+                                    <div style="float:left;position:relative;"> 
+                                        <select name="data_year" required {% if user.profile.birthdate %} style="pointer-events: none;" {% endif %}
                                                 class="text-center"
                                                 id="">
                                             {% for year in years %}
@@ -1729,12 +2087,15 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                                         {% if user.profile.birthdate|date:'Y' == year %}selected{% endif %}>{{ year }}</option>
                                             {% endfor %}
                                         </select>
+                                        <i class="fa fa-chevron-down" aria-hidden="true" style="right:-15px;"></i>
+                                    </div>
+                                        <div style="clear: both;"></div>
                                     </div>
                                 </div>
 
                                 <div class="input2 mb-3">
                                     <label for="">{% translate 'Nationality' %}</label>
-                                    <div class="right">
+                                    <div class="right" style="position:relative">
                                         <select
                                                 name="country"
                                                 required>
@@ -1751,12 +2112,13 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                                 {% endif %}           
                                             {% endfor %}
                                         </select>
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
                                 <div class="input2 mb-3">
                                     <label for="">{% translate 'Gender' %}</label>
-                                    <div class="right">
+                                    <div class="right" style="position:relative">
                                         <select name="gender" id="" required>
                                             <option value="male"
                                                     {% if user.profile.gender == 'male' %}selected{% endif %}>
@@ -1767,18 +2129,20 @@ src="{% static 'js/api.js' %}?v=6"></script>
                                                 {% translate 'Female' %}
                                             </option>
                                         </select>
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
                                 <div class="input2 mb-3">
                                     <label for="">{% translate 'State' %} <br/></label>
-                                    <div class="right">
+                                    <div class="right" style="position:relative">
                                         <select name="residency" id="" required>
                                             {% for state in states %}
                                                 <option value="{{ state }}"
                                                         {% if user.profile.residency == state %}selected{% endif %}>{{ state }}</option>
                                             {% endfor %}
                                         </select>
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -1815,17 +2179,248 @@ src="{% static 'js/api.js' %}?v=6"></script>
             </div>
         </div>
     </div>
+    
+ 
 {% endif %}
+
+<div id="congrats-modal1" class="modal fade hp_tourn">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div> -->
+            <div class="modal-header">
+                <h3>{% translate 'CONGRATULATIONS' %}</h3>
+            </div>
+            <div class="modal-body">
+                   <div class="modal_contenu">
+                        <div class="purple">{% translate 'You have Earned 50 coins by clicking on the video.' %}</div>
+                        <div class="pink">{% translate 'Watch and click to earn more!' %}</div>
+                        <!-- <div class="tourn_btn">WATCH</div> -->
+                        <div class="tourn_btn" onclick="$('#congrats-modal1').modal('hide'); closeVideoAd(); initDesktopAutoplayExample();">{% translate 'WATCH' %}</div>
+                   </div>
+            </div>
+             <div class="pic_modal"><img src="{% static 'img/50-coins.png' %}" /></div>   
+        </div>
+    </div>
+</div>
+
+<div id="congrats-modal2" class="modal fade hp_tourn">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div> -->
+            <div class="modal-header">
+                <h3>{% translate 'CONGRATULATIONS' %}</h3>
+            </div>
+            <div class="modal-body">
+                   <div class="modal_contenu">
+                        <div class="purple">{% translate 'You have earned 5 coins for watching!' %}</div>
+                        <div class="pink">{% translate 'Earn 50 coins by clicking on the video.' %}</div>
+                        <!-- <div class="tourn_btn">WATCH</div> -->
+                        <div class="tourn_btn" onclick="$('#congrats-modal2').modal('hide');$('#playButton, #pauseButton, #timerAd').css('display','none');$('#adContainer').html(''); initDesktopAutoplayExample();">WATCH</div>
+                   </div>
+            </div>
+             <div class="pic_modal"><img src="{% static 'img/5-coins.png' %}" /></div>   
+        </div>
+    </div>
+</div>
+
+
+<div id="congrats-modal3" class="modal fade hp_tourn">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div> -->
+            <div class="modal-header">
+                <h3>{% translate 'LIMIT REACHED' %}</h3>
+            </div>
+            <div class="modal-body">
+                   <div class="modal_contenu">
+                        <!-- <div class="purple">You have Earned 50 coins by clicking on the video.</div> -->
+                        <div class="purple" style="margin-bottom: 36px;">You have reached your maximum limit of
+                            videos for today, <span class="pink" style="margin-bottom: 0px;">{% translate 'earn more coins later.' %}</span></div>
+                        <!-- <div class="tourn_btn">CLOSE</div> -->
+                        <div class="tourn_btn" onclick="$('#congrats-modal3').modal('hide');">{% translate 'CLOSE' %}</div>
+                   </div>
+            </div>
+             <div class="pic_modal"><img src="{% static 'img/limit-reached.png' %}" /></div>   
+        </div>
+    </div>
+</div>
+
+<div id="congrats-modal4" class="modal fade hp_tourn">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="close-box">
+                <a data-dismiss="modal" href=""><i class="fas fa-times"></i></a>
+            </div> -->
+            <div class="modal-header">
+                <h3>{% translate 'VIDEO NOT READY YET' %}</h3>
+            </div>
+            <div class="modal-body">
+                   <div class="modal_contenu">
+                        <div class="purple">{% translate 'The next video is not yet ready,' %}' </div>
+                        <div class="pink" style="margin-bottom: 38px;">{% translate 'please try again later' %}</div>
+                        <!-- <div class="tourn_btn">CLOSE</div> -->
+                        <div class="tourn_btn" onclick="$('#congrats-modal4').modal('hide');">{% translate 'CLOSE' %}</div>
+                   </div>
+            </div>
+             <div class="pic_modal"><img src="{% static 'img/video-not-ready-yet.png' %}" /></div>   
+        </div>
+    </div>
+</div>
+
+
+<div id="upgrade-package-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content" style="text-align: center; background-color: #1D0F26; border-radius: 10px;">          
+             
+            <div class="modal-body" style="padding-top: 47px; width: 84%; margin: 0px auto 6px;">                    
+                <div style="color:#FF0090">{% translate 'SUBSCRIBERS ONLY!' %}</div>
+                <div style="margin-bottom: 20px;color: #FFF;font-size: 0.8rem;">{% translate 'PLEASE UPGRADE FROM THE PACKAGE TO N50 PACKAGE TO BE ABLE TO JOIN TOURNAMENTS. TO UPGRADE PLEASE CLICK ON THE BUTTON BELOW.' %}</div>                    
+                <div class="btn_upgrade" style="cursor: pointer; background-color: #FF0090; height: 44px; padding-top: 10px; font-weight: 800; border-radius: 4px; color: #181022; text-align: center; max-width: 100%; margin: 0px auto 20px;">{% translate 'UPGRADE PACKAGE' %}</div>                   
+            </div>
+                
+        </div>
+    </div>
+</div>
+
+<div id="upgrade-package-pgame-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content" style="text-align: center; background-color: #1D0F26; border-radius: 10px;">          
+             
+            <div class="modal-body" style="padding-top: 47px; width: 84%; margin: 0px auto 6px;">                    
+                <div style="color:#FF0090">{% translate 'SUBSCRIBERS ONLY!' %}</div>
+                <div style="margin-bottom: 20px;color: #FFF;font-size: 0.8rem;">{% translate 'PLEASE UPGRADE FROM THE PACKAGE TO N50 PACKAGE TO BE ABLE TO PLAY PREMIUM GAMES. TO UPGRADE PLEASE CLICK ON THE BUTTON BELOW.' %}</div>                    
+                <div class="btn_upgrade" style="cursor: pointer; background-color: #FF0090; height: 44px; padding-top: 10px; font-weight: 800; border-radius: 4px; color: #181022; text-align: center; max-width: 100%; margin: 0px auto 20px;">{% translate 'UPGRADE PACKAGE' %}</div>                   
+            </div>
+                
+        </div>
+    </div>
+</div>
+
+
+{% if user.is_authenticated and user.subscription == "free" and user.go_premium_sent == False%}
+<!-- <div id="go-premium-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content" style="text-align: center; background-color: #0D132D; ">          
+            <div class="modal-body" style="padding: 20px 0 52px 0;margin: 0px auto 6px;">                    
+                <div class="close-box" style="background: transparent; float: right; margin-bottom: 52px; margin-right: 17px;">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times" style="color: black; background-color: #EF0C75; cursor: pointer; width: 27px; height: 28px; text-align: center; padding-top: 3px; border-radius: 20px; top: 31px; position: absolute; right: 19px;"></i></a>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <img src='/static/img/premium_puic.jpg'/>
+                </div>                    
+               <div class="btn_upgrade" style="cursor: pointer; background-color: #FF0090; font-weight: bold; color: #181022; text-align: center; max-width: 292px; margin: 33px auto 0; height: 57px; line-height: 57px; text-transform: uppercase; font-size: 25px;">{% translate 'I Agree' %}</div>                   
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div id="go-premium-modal" class="modal fade show" style="padding-right: 6px; display: block;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="text-align: center; background-color: #0D132D;">          
+
+            <div class="modal-body" style="padding: 20px 0 52px 0;margin: 0px auto 6px;">                    
+                <div class="close-box" style="background: transparent; float: right; margin-bottom: 36px; margin-right: 17px;">
+                    <a data-dismiss="modal" href=""><i class="fas fa-times" style="color: black; background-color: #EF0C75; cursor: pointer; width: 27px; height: 28px; text-align: center; padding-top: 3px; border-radius: 20px; top: 31px; position: absolute; right: 19px;"></i></a>
+
+                </div>
+                <div style="margin-bottom: 20px;">
+				    <img src='/static/img/premium_puic.jpg'/>
+                   <ul>
+					  <li>1. PLAY ALL TROURNAMENTS</li>
+					  <li>2. WIN CASH & DATA</li>
+					  <li>3. UNLOCK ALL GAMES</li>
+                      <li>4. EARN MORE COINS</li>
+					  <li>5. ACCESS ALL AVATARS</li>
+					  <li>6. UNLIMITED FRIENDS</li>
+                      <li style="border:0">7. ACCESS ALL OTHER FEATURES</li>
+					</ul>
+                </div>    
+               <div class="caption_footer">Daily Subscription N50 <br/> Cancel Anytime</div>                
+               <div class="btn_upgrade" style="cursor: pointer; background-color: #FF0090; font-weight: bold; color: #181022; text-align: center; max-width: 292px; margin: 33px auto 0; height: 57px; line-height: 57px; text-transform: uppercase; font-size: 25px;">I Agree</div>                   
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+ {% endif %}
+
 
 {% block javascript %}
 {% if user.is_authenticated %}
             
             <script type="application/javascript"
                 src="{% static 'js/fcm.js' %}"></script>
- {% endif %}        
+ {% endif %} 
+
+
 {% endblock %}
 
+{% comment %}
+<div class="page_loder" id="page_loder">
+    <div class="pg_loader"></div>
+</div>
+ 
+
+<script type="text/javascript">
+window.addEventListener('load', function () {
+    document.getElementById("page_loder").style.display = "none";
+})
+
+function closeSideMenu()
+{
+    document.getElementById('sidebar').classList.remove('active');
+}
 
 
+screen.orientation.addEventListener("change", function(e) {
+    // Do something on change
+     
+});
+
+
+</script>
+
+{% endcomment %}
+
+<input type="hidden" id="userSub" value="{{user.subscription}}" />
+<input type="hidden" id="userIsBilled" value="{{user.is_billed}}" />
+
+  <script>
+function lazyLoadImage() {
+    var lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+    
+    if ("IntersectionObserver" in window) {
+      let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            let lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.src;
+            lazyImage.classList.add("loaded");
+            lazyImageObserver.unobserve(lazyImage);
+          }
+        });
+      });
+      
+      lazyImages.forEach(function(lazyImage) {
+        lazyImageObserver.observe(lazyImage);
+      });
+    }
+}
+$(window).on("scroll", function() {
+    lazyLoadImage();
+  });
+
+  </script>
+  
 </body>
 </html>
+

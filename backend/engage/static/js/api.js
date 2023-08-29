@@ -2,7 +2,67 @@ var tournaments_has_next = true;
 var tournaments_page = 1;
 var state='all'
 var game = '0';
-// hello worlddd 
+var t=0;
+
+// URLs:
+var get_tournaments_url = '/api/tournaments/';
+var get_list_tournaments = '/api/tournaments/get_tournaments';
+var get_html5games_url = '/api/html5_games/';
+var get_prizes_url = '/api/tournaments-prizes/';
+var get_winners_url = '/api/winners/';
+var post_contact_engage_url = "/api/contact/engage/";
+var post_contact_support_url = "/api/contact/support/";
+var sections_log = '/api/users/sections_log/sections_log/';
+//End URLS
+
+function hoo(){
+    if(t>=1){
+       window.location.hash="#home-tournaments";
+      
+    }
+       }
+   
+
+
+       $("#li_go_premium").on("click", function () {
+        setBtnLoading($(this), true);
+      
+        function upgrade_subsp() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: upgrade_subscription.replace("user_uid", user_uid),
+                    headers: {
+                        "X-CSRFToken": xtoken,
+                    },
+                    type: "post",
+                    data: {},
+                    error: function (value) {
+                        reject(value);
+                    },
+                    success: function (value) {
+                        value.is_sub
+                        resolve(value);
+                        if (value.is_sub == 'false')
+                        {
+                            window.location.href="/secured"
+                        }
+                        else{
+                            window.location.reload(true);
+                        }
+                    },
+                });
+            });
+        }
+      
+        upgrade_subsp().then(function (_) {
+            //window.location.reload(true);
+        }).catch(function (error) {
+            showInfoModal('Error!', '<p>Something went wrong, please try again later.</p>')
+        });
+      });
+    
+    
+
 // login phone
 function postLogin(data) {
 
@@ -102,6 +162,55 @@ function postRegisterOTP(data) {
     });
 }
 
+
+function postRegister2OTP(data) {
+
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'api/auth/register2/',
+            headers: {
+                "X-CSRFToken": xtoken,
+            },
+            type: "post",
+            data: {
+                code: data.code,
+                subscription:data.subscription,
+                csrfmiddlewaretoken: data.csrfmiddlewaretoken
+            },
+            error: function (value) {
+                reject(value);
+            },
+            success: function (value) {
+                resolve(value);
+            },
+        });
+    });
+}
+
+
+function postRegister3OTP(data) {
+
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'api/auth/register3/',
+            headers: {
+                "X-CSRFToken": xtoken,
+            },
+            type: "post",
+            data: {
+                code: data.code,
+                csrfmiddlewaretoken: data.csrfmiddlewaretoken
+            },
+            error: function (value) {
+                reject(value);
+            },
+            success: function (value) {
+                resolve(value);
+            },
+        });
+    });
+}
+
 function getRandom(arr, n) {
     var result = new Array(n),
         len = arr.length,
@@ -154,11 +263,11 @@ function fillTopUpcomingTournaments(data){
                         <a rel="bookmark"
                         href="/tournaments/${item.slug}">${item.name}</a>
                     </h4>
-                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()}, ${start_date.getFullYear()} - <span style='color:#F6236F;'>${tConvert(start_date)}  ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
+                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()} <span class="up_on_pre_year">, ${start_date.getFullYear()} </span> - <span>${tConvert(start_date)}  ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
                     <div class='middle-text'>
                         <div class='image1'>
                             <i class='fas fa-male'></i>
-                            <span>${item.current_participants}/${item.max_participants}</span>
+                            <span>${item.max_participants}</span>
                         </div>
                         <div class='image2'>
                             <i class="fas fa-users"></i>
@@ -171,7 +280,7 @@ function fillTopUpcomingTournaments(data){
                 html+=`<p class="post-meta">
                    <i class="fas fa-clock"></i>
                    <i class="fas fa-users"></i>
-                   <span>${item.current_participants}/${item.max_participants}</span>
+                   <span>${item.max_participants}</span>
                    </p>`;
                  
                 
@@ -185,7 +294,7 @@ function fillTopUpcomingTournaments(data){
                 html+=`<div class='label'>${state}</div>`;
                 if(state=='ongoing' && item.live_link){
                     html+=`<i class='fa fa-eye'></i>
-                           <a class='watch_live' onclick=openLiveModal('${item.live_link}')>WATCH LIVE NOW</a>`;
+                           <a class='watch_live' onclick=openLiveWindow('${item.live_link}')>WATCH LIVE NOW</a>`;
                 }
                 
                 
@@ -209,11 +318,17 @@ function load (pg) {
         
         var box = $(".tournaments-list");
         var box_mobile = $(".tournaments-list1 .list");
+        var content = $(".tournaments-list1");
+        content.html("");
+        content.addClass("is-loading");
+        content.append(
+            "<li class='loading-item'><img class='loading-img white' src='/static/img/loading1.gif' /></li>"
+        );
         box_mobile.html("");
         box.html("");
         box.addClass("is-loading");
         box.append(
-            "<li class='loading-item'><img class='loading-img' src='/static/img/loading1.gif' /></li>"
+            "<li class='loading-item'><img class='loading-img white' src='/static/img/loading1.gif' /></li>" //me
         );
 		tournaments_page = pg;
         $.ajax({
@@ -232,7 +347,9 @@ function load (pg) {
             success: function (data) {
                 box.html("");
                 box.removeClass("is-loading");
+                content.removeClass("is-loading");
                 box.find('.loading-item').remove();
+                content.find('.loading-item').remove();
 
                
               
@@ -297,11 +414,11 @@ function load (pg) {
                                         <a rel="bookmark"
                                         href="/tournaments/${item.slug}">${item.name}</a>
                                     </h4>
-                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()}, ${start_date.getFullYear()} - <span style='color:#F6236F;'>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
+                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()} <span class="up_on_pre_year">, ${start_date.getFullYear()} </span> - <span>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
                                     <div class='middle-text'>
                                         <div class='image1'>
                                             <i class='fas fa-male'></i>
-                                            <span>${item.current_participants}/${item.max_participants}</span>
+                                            <span>${item.max_participants}</span>
                                         </div>
                                         <div class='image2'>
                                             <i class="fas fa-users"></i>
@@ -326,7 +443,7 @@ function load (pg) {
                                 html+=`<p class="post-meta">
                                 <i class="fas fa-clock"></i>
                                 <i class="fas fa-users"></i>
-                                <span>${item.current_participants}/${item.max_participants}</span>
+                                <span>${item.max_participants}</span>
                                 </p>`;
                                 if(state=='previous'){
                                     html+=`<div class="winners">
@@ -346,7 +463,7 @@ function load (pg) {
                                 html+=`<div class='label'>${state}</div>`;
                                 if(state=='ongoing' && item.live_link){
                                     html+=`<i class='fa fa-eye'></i>
-                                        <a class='watch_live' onclick=openLiveModal('${item.live_link}')>WATCH LIVE NOW</a>`;
+                                        <a class='watch_live' onclick=openLiveWindow('${item.live_link}')>WATCH LIVE NOW</a>`;
                                 }
                                 
                                 if(state=='upcoming'){
@@ -360,6 +477,7 @@ function load (pg) {
                         
                     
                             box.append('<div class="package">'+html+'</div>');
+
                     
         
                         if(state=='upcoming'){
@@ -421,11 +539,11 @@ function load (pg) {
                                         <a rel="bookmark"
                                         href="/tournaments/${item.slug}">${item.name}</a>
                                     </h4>
-                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()}, ${start_date.getFullYear()} - <span style='color:#F6236F;'>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
+                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()} <span class="up_on_pre_year">, ${start_date.getFullYear()}</span> - <span>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
                                     <div class='middle-text'>
                                         <div class='image1'>
                                             <i class='fas fa-male'></i>
-                                            <span>${item.current_participants}/${item.max_participants}</span>
+                                            <span>${item.max_participants}</span>
                                         </div>
                                         <div class='image2'>
                                             <i class="fas fa-users"></i>
@@ -450,7 +568,7 @@ function load (pg) {
                                 html+=`<p class="post-meta">
                                 <i class="fas fa-clock"></i>
                                 <i class="fas fa-users"></i>
-                                <span>${item.current_participants}/${item.max_participants}</span>
+                                <span>${item.max_participants}</span>
                                 </p>`;
                                 if(state=='previous'){
                                     html+=`<div class="winners">
@@ -470,7 +588,7 @@ function load (pg) {
                                 html+=`<div class='label'>${state}</div>`;
                                 if(state=='ongoing' && item.live_link){
                                     html+=`<i class='fa fa-eye'></i>
-                                        <a class='watch_live' onclick=openLiveModal('${item.live_link}')>WATCH LIVE NOW</a>`;
+                                        <a class='watch_live' onclick=openLiveWindow('${item.live_link}')>WATCH LIVE NOW</a>`;
                                 }
                                 
                                 if(state=='upcoming'){
@@ -484,6 +602,7 @@ function load (pg) {
                         
                     // if(index%2==0){
                             box.append('<div class="package">'+html+'</div>');
+
                     // }
                     // else
                         // $('.desktopversion .package').eq($('.desktopversion .package').length-1).append(html); 
@@ -549,11 +668,20 @@ function get_tournament(game,str) {
         if(tournaments_has_next || str=='prev'){
         var box = $(".tournaments-list");
         var box_mobile = $(".tournaments-list1 .list");
+        var content = $(".tournaments-list1");
+        content.find(".package .list").html("");
+        content.addClass("is-loading");
+        content.find('.loading-item').remove();
+        content.append(
+            "<li class='loading-item'><img class='loading-img white' src='/static/img/loading1.gif' /></li>"
+        );
+        content.find('.no-data').remove();
         box_mobile.html("");
+        box_mobile.addClass('hide');
         box.html("");
         box.addClass("is-loading");
         box.append(
-            "<li class='loading-item'><img class='loading-img' src='/static/img/loading1.gif' /></li>"
+            "<li class='loading-item'><img class='loading-img white' src='/static/img/loading1.gif' /></li>"
         );
         $.ajax({
             url: get_list_tournaments,
@@ -570,9 +698,15 @@ function get_tournament(game,str) {
             },
             success: function (data) {
                 box.html("");
+
                 box.removeClass("is-loading");
+                content.removeClass("is-loading");
                 box.find('.loading-item').remove();
-                hashchangeddd();
+                content.find('.loading-item').remove();
+                t=t+1;
+
+                //hashchangeddd();
+
                
                 var new_upcomings = [];
                
@@ -586,6 +720,7 @@ function get_tournament(game,str) {
                 if(data.data.length == 0){
                     $('.firstTab .back,.firstTab .next').addClass('off');
                     box.html("<span class='no-data'>No Data Found</span>");
+                    $('.mobileversion').find('.list').addClass('hide'); 
                     return;
                 }
                 paginator({
@@ -627,7 +762,7 @@ function get_tournament(game,str) {
                         var options = { month: 'long'};
                     
                         var html = `
-                            <div class="newsbv-item `+state+`">
+                            <div class="newsbv-item  tour_${item.id}  `+state+`">
                                 <div class="newsb-thumbnail">
                                     <a rel="bookmark"
                                     href="/tournaments/${item.slug}">
@@ -642,11 +777,11 @@ function get_tournament(game,str) {
                                         <a rel="bookmark"
                                         href="/tournaments/${item.slug}">${item.name}</a>
                                     </h4>
-                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()}, ${start_date.getFullYear()} - <span style='color:#F6236F;'>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
+                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()} <span class="up_on_pre_year">, ${start_date.getFullYear()} </span> - <span>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
                                     <div class='middle-text'>
                                         <div class='image1'>
                                             <i class='fas fa-male'></i>
-                                            <span>${item.current_participants}/${item.max_participants}</span>
+                                            <span>${item.max_participants}</span>
                                         </div>
                                         <div class='image2'>
                                             <i class="fas fa-users"></i>
@@ -671,7 +806,7 @@ function get_tournament(game,str) {
                                 html+=`<p class="post-meta">
                                 <i class="fas fa-clock"></i>
                                 <i class="fas fa-users"></i>
-                                <span>${item.current_participants}/${item.max_participants}</span>
+                                <span>${item.max_participants}</span>
                                 </p>`;
                                 if(state=='previous'){
                                     html+=`<div class="winners">
@@ -691,7 +826,7 @@ function get_tournament(game,str) {
                                 html+=`<div class='label'>${state}</div>`;
                                 if(state=='ongoing' && item.live_link){
                                     html+=`<i class='fa fa-eye'></i>
-                                        <a class='watch_live' onclick=openLiveModal('${item.live_link}')>WATCH LIVE NOW</a>`;
+                                        <a class='watch_live' onclick=openLiveWindow('${item.live_link}')>WATCH LIVE NOW</a>`;
                                 }
                                 
                                 if(state=='upcoming'){
@@ -704,19 +839,41 @@ function get_tournament(game,str) {
                                 html+=`</div>`;
                         
                     // if(index%2==0){
+                            
                             box.append('<div class="package">'+html+'</div>');
                     // }
                     // else
                         // $('.desktopversion .package').eq($('.desktopversion .package').length-1).append(html); 
         
+                       
                         if(state=='upcoming'){
-                            $('.mobileversion').find('.package').eq(1).find('.list').append(html);
+                            if ($(`.tour_${item.id}`, box_mobile).length === 0) {
+                                if($('.mobileversion').find('.package').eq(1).find('.list').length!=0)
+                                $('.mobileversion').find('.package').eq(1).find('.list').append(html).removeClass('hide');
+                                else
+                                $('.mobileversion').find('.package').eq(1).append('<div class="list">'+ html+'</div>');
+                            }
+                           
                         }
                         else if(state=='ongoing'){
-                            $('.mobileversion').find('.package').eq(0).find('.list').append(html);
+                            if ($(`.tour_${item.id}`, box_mobile).length === 0) {
+                                if($('.mobileversion').find('.package').eq(0).find('.list').length!=0)  
+                                $('.mobileversion').find('.package').eq(0).find('.list').append(html).removeClass('hide');
+                                else
+                                $('.mobileversion').find('.package').eq(0).append('<div class="list">'+ html+'</div>');
+
+                            }
+                            
                         }
                         else if(state=='previous'){
-                            $('.mobileversion').find('.package').eq(2).find('.list').append(html);
+                             if ($(`.tour_${item.id}`, box_mobile).length === 0) 
+                             {
+                                if($('.mobileversion').find('.package').eq(2).find('.list').length!=0)  
+                                $('.mobileversion').find('.package').eq(2).find('.list').append(html).removeClass('hide');
+                                else
+                                $('.mobileversion').find('.package').eq(2).append('<div class="list">'+ html+'</div>');
+                             }
+                           
                         }
                         
                         
@@ -768,11 +925,11 @@ function get_tournament(game,str) {
                                         <a rel="bookmark"
                                         href="/tournaments/${item.slug}">${item.name}</a>
                                     </h4>
-                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()},${start_date.getFullYear()}  - <span style='color:#F6236F;'>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
+                                    <h3 class="newsb-date">${new Intl.DateTimeFormat('en-US', options).format(start_date)} ${start_date.getDate()} <span class="up_on_pre_year">,${start_date.getFullYear()}</span>  - <span>${tConvert(start_date)} ${item.label_next_time!=null ? item.label_next_time : '' }</span></h3>
                                     <div class='middle-text'>
                                         <div class='image1'>
                                             <i class='fas fa-male'></i>
-                                            <span>${item.current_participants}/${item.max_participants}</span>
+                                            <span>${item.max_participants}</span>
                                         </div>
                                         <div class='image2'>
                                             <i class="fas fa-users"></i>
@@ -797,7 +954,7 @@ function get_tournament(game,str) {
                                 html+=`<p class="post-meta">
                                 <i class="fas fa-clock"></i>
                                 <i class="fas fa-users"></i>
-                                <span>${item.current_participants}/${item.max_participants}</span>
+                                <span>${item.max_participants}</span>
                                 </p>`;
                                 if(state=='previous'){
                                     html+=`<div class="winners">
@@ -817,7 +974,7 @@ function get_tournament(game,str) {
                                 html+=`<div class='label'>${state}</div>`;
                                 if(state=='ongoing' && item.live_link){
                                     html+=`<i class='fa fa-eye'></i>
-                                        <a class='watch_live' onclick=openLiveModal('${item.live_link}')>WATCH LIVE NOW</a>`;
+                                        <a class='watch_live' onclick=openLiveWindow('${item.live_link}')>WATCH LIVE NOW</a>`;
                                 }
                                 
                                 if(state=='upcoming'){
@@ -908,7 +1065,56 @@ function getTournaments(status, btn) {
         btn.closest("ul").find("a").removeClass("active");
         btn.addClass("active");
     }
+    setTimeout(function(){
+    
+     if(status == 'upcoming')
+    {
+        $(".newsbv.tournaments-list").find(".package").each(function(){
+            var item = $(this).find(".newsbv-item").eq(0);
+            if(!$(item).hasClass("upcoming"))
+            $(this).remove();
+        });       
+        
+        if($(".newsbv-item.upcoming").length == 0)
+        {
+            $(".newsbv.tournaments-list").html('<span class="no-data">No Data Found</span>');
+            $(".newsbv.tournaments-list1 .package").eq(0).html('<span class="no-data">There are no upcoming tournaments.</span>');
+        }
+         
+    }  
+    if(status == 'ongoing')
+    {
+        $(".newsbv.tournaments-list").find(".package").each(function(){
+            var item = $(this).find(".newsbv-item").eq(1);
+            if(!$(item).hasClass("ongoing"))
+            $(this).remove();
+        });
+        
+        if($(".newsbv-item.ongoing").length == 0)
+        {
+            $(".newsbv.tournaments-list").html('<span class="no-data">No Data Found</span>');
+            $(".newsbv.tournaments-list1 .package").eq(1).html('<span class="no-data">There are no ongoing tournaments.</span>');
+            
+        }
+    }  
+    if(status == 'previous')
+    {
+        $(".newsbv.tournaments-list").find(".package").each(function(){
+            var item = $(this).find(".newsbv-item").eq(2);
+            if(!$(item).hasClass("previous"))
+                $(this).remove();
+        });
 
+        if($(".newsbv-item.previous").length == 0)
+        {
+            $(".newsbv.tournaments-list").html('<span class="no-data">No Data Found</span>');
+            $(".newsbv.tournaments-list1 .package").eq(2).html('<span class="no-data">There are no previous tournaments.</span>');
+        }   
+              
+    }  
+    
+    },1000);
+    
     return false;
 }
 
@@ -936,6 +1142,7 @@ function goNext(){
 }
 
 function fillTournaments(){
+    hiya();
     if($('.firstTab').find('.button-small.active').hasClass('all')){
         getTournaments('all', $('.firstTab').find('.button-small.active'));
     }
@@ -949,6 +1156,11 @@ function fillTournaments(){
         getTournaments('previous', $('.firstTab').find('.button-small.active'));
     }
 
+}
+
+function showVideoAd(){
+    if($('#userSub').val() == "free")
+       $('#page-content').show(); 
 }
 
 var html5games_ajax = null;
@@ -983,6 +1195,7 @@ function getHtml5games(type, btn) {
             box.html("");
 
             value.results.forEach((item) => {
+                // ${is_authenticated ?  'onclick="showVideoAd()"' : ''}
                 var html = `
                     <li>
                         <a class="html5-game ${item.is_locked ? 'is-locked' : ''}" 
@@ -1175,6 +1388,7 @@ var winners_ajax = null;
 //get participants
 
 function getWinners(game, tournament) {
+    if($('.home-winners').length!=0){
     if (winners_ajax) winners_ajax.abort();
 
     var box = $(".sec-3-1 .col-8");
@@ -1182,7 +1396,7 @@ function getWinners(game, tournament) {
     box.append(
         `
             <tr class="loading-tr">
-                <td><img class='loading-img' src='/static/img/loading1.gif' /></td>
+                <td><img class='loading-img white' src='/static/img/loading1.gif' /></td>
             </tr>
         `
     );
@@ -1210,14 +1424,14 @@ function getWinners(game, tournament) {
             if(value.length == 0){
                 var loading = box.find(".loading-tr");
                 loading.html("<span class='no-data'>No Data Found</span>");
-                var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+` <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  0 winners</font></h2> <div class='container'><div class='scroll_wrapper'>`;
+                var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+` <font>&nbsp;&nbsp;&nbsp;  0 winners</font></h2> <div class='container'><div class='scroll_wrapper'>`;
                 box.append(html);
                 $('.sec-3-1 .scroll_wrapper,.sec-3-1 .col-8,.sec-3-1 .container').css('height','auto');
                 return;
             }
             
             var counter = 1;
-            var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+" <font color='#F6236F'>&nbsp;&nbsp;&nbsp;  "+ value.length+` winners </font></h2> <div class='container'><div class='scroll_wrapper'>`;
+            var html =` <h2 class='home-winners-results-title winners-title'>`+$('.hiddenTournament_select').find('option[value='+selected_tournament+']').attr('gname')+" <font>&nbsp;&nbsp;&nbsp;  "+ value.length+` winners </font></h2> <div class='container'><div class='scroll_wrapper'>`;
             value.forEach((item) => {
                 if(counter==1 || counter == 5 || counter == 9 || counter == 13){
                     html +=`<div class='package'>`;
@@ -1245,6 +1459,7 @@ function getWinners(game, tournament) {
     });
 
     return false;
+    }
 }
 function get_participants() {
     return new Promise((resolve, reject) => {
@@ -1255,7 +1470,7 @@ function get_participants() {
             },
             type: "get",
             data: {
-                size: 12,
+                size: 1000,
                 slug: tournament_slug,
                 page: participants_page,
             },
@@ -1312,7 +1527,7 @@ function checkLogMenus(){
 //**********/
 $(function () {
    $('.top-nav .search-box').find('input[name="search"]').keyup(function(){
-     if($(this).val().length < 3){
+     if($(this).val().length < 1){
         $('.results-box').hide();
         return;
      }
@@ -1334,7 +1549,7 @@ $(function () {
 
         switch (option) {
             case "tournaments":
-                url = "/api/tournaments/?size=6&search=" + text;
+                url = "/api/tournaments/get_tournaments2/?search="+text;
                 break;
 
             case "games":
@@ -1342,7 +1557,7 @@ $(function () {
                 break;
 
             case "users":
-                url = "/api/users/?size=30&search=" + text;
+                url = "/api/users/?size=999&search=" + text;
                 break;
         }
 
@@ -1369,7 +1584,7 @@ $(function () {
                         headers: {},
                         type: "get",
                         data: {},
-                        error: function (value) {
+                        error: function (data) {
                             search_ajax = null;
                             var html = `
                                     <li class="msg-text">
@@ -1378,18 +1593,18 @@ $(function () {
                                     `;
                             box.html(html);
                         },
-                        success: function (value) {
+                        success: function (data) {
                             box.find(".loading-item").remove();
                             search_ajax = null;
 
-                            if (value.next) {
+                            if (data.next) {
                                 has_next = true;
-                                url = value.next;
+                                url = data.next;
                             } else {
                                 has_next = false;
                             }
-
-                            if (value.results.length == 0) {
+                            if(option != "tournaments"){
+                            if (data.results.length == 0) {
                                 var html = `
                                     <li class="msg-text">
                                         No Results Found!
@@ -1398,10 +1613,19 @@ $(function () {
 
                                 box.append(html);
                             }
+                            }
+                            else{
+                                if (data.data.length == 0) {
+                                    var html = `
+                                        <li class="msg-text">
+                                            No Results Found!
+                                        </li>
+                                        `;
 
-                            value.results.forEach((item) => {
+                                    box.append(html);
+                                }
+                                data.data.forEach((item) => { 
                                 var html = "";
-                                if (option == "tournaments") {
                                     html = `
                                         <li>
                                             <a href="/tournaments/${item.slug}">
@@ -1418,20 +1642,30 @@ $(function () {
                                                     <p class="post-meta">
                                                         <i class="fas fa-clock"></i>
                                                         <span>${
-                                                          item.starts_in < 0
+                                                          item.start_date < 0
                                                             ? "Past"
-                                                            : "Starts in: " + item.starts_in
+                                                            : "Starts in: " + item.start_date
                                                         }</span>
                                                         <i class="fas fa-users"></i>
-                                                        <span>${
-                                                          item.current_participants
-                                                        }/${item.max_participants}</span>
+                                                        <span>${item.max_participants}</span>
                                                     </p>
                                                 </div>
                                             </a>
                                         </li>
                                     `;
+                                    box.append(html); 
+
+
+
+
+
+
+                                });
+
                                 }
+
+                            data.results.forEach((item) => {
+                                
 
                                 if (option == "games") {
                                     html = `
@@ -1589,7 +1823,7 @@ function getLastPlayedGames(uid, box, size) {
                var loading = box.find("div");
                 // loading.html("<span class='no-data'>No Data Found</span>");
                 loading.html("");
-                var html = `<a class="game" href="/#home-games" style='width:100%;padding-top:4px!important;display:block;'>
+                var html = `<a class="game no_game" href="/#home-games" style='width:100%;padding-top:4px!important;display:block;'>
                                 <div class="img" style='width: 173px;height:115px;'>
                                     <img src="/static/img/start-playing-and-winning.png">
                                 </div>
