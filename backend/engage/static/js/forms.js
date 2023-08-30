@@ -5,7 +5,7 @@ $(document).on("submit", "#contact-form", function (e) {
     var data = getFormData(form);
 
     var btn = form.find("button[type=submit]");
-    setBtnLoading(btn, true);
+    setBtnLoading(btn, true);  
 
     $.ajax({
         url: post_contact_engage_url,
