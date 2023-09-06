@@ -6840,7 +6840,7 @@ i.fa.fa-times#sidebar-close {
   }
   nav .top-nav .search-box#searchb {
     width: calc(100vw - 28px)!important;
-    left: -65px!important;/*0*/
+    left: 0px!important;/*0*/
     max-width: calc(100vw - 28px)!important;
 }
   nav .show-notification .notification-drop {
@@ -6882,58 +6882,19 @@ nav .midlle a.logonew img {
   }
   }
 
-  @media (width:712px) or (width:640px) or ((width:732px) and (orientation:landscape)) or ((width:745px) and (orientation:landscape))
-  or ((width:667px) and (orientation:landscape))  or ((width:653px) and (orientation:landscape)){
-    nav .top-nav .search-box#searchb {
-      left: -69px!important;
-  }
-  }
-  @media ((width:640px) and (height:360px) and (orientation:landscape)) or ((width:731px) and (orientation:landscape))
-   or ((width:736px) and (orientation:landscape)){
-    nav .top-nav .search-box#searchb {
-      left: -65px!important;
-  }
-  }
 
-  @media ((width:533px) or (width:568px)) and (orientation:landscape){
-    nav .top-nav .search-box#searchb {
-      left: -51px!important;
-  }
-  }
-
-/* @media (max-width:639px){
-  .remove-btn.rem2{
-    display: block;
-  }
-  .remove-btn.rem1{
-    display: none;
-  }
-} */
 
 @media (width:600px)  
 {
   nav .top-nav .right.loguser {
     right: calc(100vw - 254px);
   }
-  nav .top-nav .search-box#searchb {
-    left: -60px!important;
-}
+
 }
 
-@media (width:540px) 
-{
-  nav .top-nav .search-box#searchb {
-    left: -50px!important;
-  }
-}
 
-@media (width:360px) or (width:384px) or (width:412px) or (width:480px) or (width:393px) or (width:353px) or (width:375px) or (width:414px)
-or (width:390px) or (width:411px)
-{
-  nav .top-nav .search-box#searchb {
-    left: -56px!important;
-}
-}
+
+
 
 @media (width:320px)
 {
