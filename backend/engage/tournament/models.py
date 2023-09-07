@@ -307,7 +307,10 @@ class TournamentParticipant(TimeStampedModel):
     tracker = FieldTracker()
 
     def __str__(self):
-        return self.participant.username
+        try:
+            return self.participant.username
+        except User.DoesNotExist:
+            return "" 
 
     class Meta:
         verbose_name = 'participant'

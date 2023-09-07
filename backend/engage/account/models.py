@@ -161,7 +161,10 @@ class UserGameLinkedAccount(TimeStampedModel):
         unique_together = (('user', 'game','tournament'),)
         
     def __str__(self):
-        return f'{self.account}-{self.user.mobile if self.user.mobile else ""}'    
+        try:
+            return f'{self.account}-{self.user.mobile if self.user and self.user.mobile else ""}'
+        except User.DoesNotExist:
+            return f'{self.account}-'
     
 
 class FriendList(TimeStampedModel):
