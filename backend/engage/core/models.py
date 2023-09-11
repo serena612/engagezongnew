@@ -270,7 +270,7 @@ class Notifications(TimeStampedModel):
     claim_instantly = models.BooleanField(default=False)
     is_gift = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    is_popup = models.BooleanField(default=False,verbose_name='display as popup') 
+    is_popup = models.BooleanField(default=False,_name='display as popup') 
     package = models.ManyToManyField('core.package',verbose_name="Package")
 
 

@@ -1,5 +1,6 @@
 from tabnanny import verbose
 import uuid
+from xml.dom import ValidationErr
 
 from ckeditor.fields import RichTextField
 from django.db import models
@@ -101,9 +102,18 @@ class RedeemPackage(TimeStampedModel):
     title = models.CharField(max_length=256)
     image = models.ImageField(upload_to='packages/')
     coins = models.PositiveIntegerField(null=True)
+    cash_amount = models.PositiveIntegerField(blank=True, null=True,verbose_name="Amount")
 
     def __str__(self):
         return self.title
+
+
+    
+    def clean(self):
+        # if self.prize_type == 'data' and not self.actual_package:
+        #     raise ValidationError('A package must be selected if prize type is data.')
+        if self.prize_type == 'cash' and not self.cash_amount:
+            raise ValidationErr('A cash amount must be entered if prize type is cash.')    
 
     class Meta:
         verbose_name_plural = 'Redeem Packages'

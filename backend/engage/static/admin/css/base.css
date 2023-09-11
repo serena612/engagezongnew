@@ -1,2 +1,6 @@
-
-/* a, a:visited, a:hover, a:focus { color:#007bff !important; } */
+.app-account.module{display:none;}
+.module ul.actionlist{
+    max-height: calc(100vh - 76px);
+    overflow-y: auto;}
+    
+     #operator_form .field-actual_package{display: none!important;}
