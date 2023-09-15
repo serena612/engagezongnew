@@ -1142,6 +1142,7 @@ function goNext(){
 }
 
 function fillTournaments(){
+    
     hiya();
     if($('.firstTab').find('.button-small.active').hasClass('all')){
         getTournaments('all', $('.firstTab').find('.button-small.active'));

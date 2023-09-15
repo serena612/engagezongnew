@@ -1231,3 +1231,22 @@ function resetStar(obj){
         }, 
     }) 
   }
+
+  var hasScrolledToTarget = false;
+$(window).scroll(function() {
+    if($('.homsec').length!=0){
+    if (hasScrolledToTarget) return;
+      var targetOffset = $("#tournaments").offset().top;
+      var scrollTop = $(window).scrollTop();
+      if (targetOffset - scrollTop < 500 ) {
+          hasScrolledToTarget = true; 
+          myFunction();
+          
+      }
+    }
+    
+});
+
+function myFunction() {
+   $('.firstTab').find('a').eq(0).click();
+  }
