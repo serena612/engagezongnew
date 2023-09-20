@@ -745,12 +745,21 @@ function hashchanged() {
 
         {% if user.avatar %}
         <a class="profile_bande" href="{% url 'profile' %}">
+                
                  <div class="user_profile_pic">
                     <img src="{{ user.avatar.image.url }}" alt="" border="0"  >
                  </div>
+                 
                  <div class="username_prof">
                         <div style="color:#FFF; font-size: inherit;">{% translate 'MY PROFILE' %}</div>
-                        <div style="color: #dd19ba; font-size: 14px;">{{ user.nickname|default_if_none:"" }} </div>
+                        <div style="color: #951313; font-size: 14px;">{{ user.nickname|default_if_none:"" }} </div>
+                 </div>
+        </a>
+        {% else %}
+        <a class="profile_bande" href="{% url 'profile' %}">
+                 <div class="username_prof" style="padding-left:0!important;">
+                        <div style="color:#FFF; font-size: inherit;">{% translate 'MY PROFILE' %}</div>
+                        <div style="color: #951313; font-size: 14px;">{{ user.nickname|default_if_none:"" }} </div>
                  </div>
         </a>
         {% endif %}
